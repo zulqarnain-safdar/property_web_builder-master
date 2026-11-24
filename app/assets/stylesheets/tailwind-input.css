@@ -1,0 +1,638 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   Self-hosted fonts via jsDelivr CDN
+   Using CDN to avoid font file serving issues with asset pipeline
+   ========================================================================== */
+
+/* Open Sans - Primary sans-serif font */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource/open-sans@5.2.5/files/open-sans-latin-400-normal.woff2') format('woff2'),
+       url('https://cdn.jsdelivr.net/npm/@fontsource/open-sans@5.2.5/files/open-sans-latin-400-normal.woff') format('woff');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource/open-sans@5.2.5/files/open-sans-latin-500-normal.woff2') format('woff2'),
+       url('https://cdn.jsdelivr.net/npm/@fontsource/open-sans@5.2.5/files/open-sans-latin-500-normal.woff') format('woff');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource/open-sans@5.2.5/files/open-sans-latin-600-normal.woff2') format('woff2'),
+       url('https://cdn.jsdelivr.net/npm/@fontsource/open-sans@5.2.5/files/open-sans-latin-600-normal.woff') format('woff');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource/open-sans@5.2.5/files/open-sans-latin-700-normal.woff2') format('woff2'),
+       url('https://cdn.jsdelivr.net/npm/@fontsource/open-sans@5.2.5/files/open-sans-latin-700-normal.woff') format('woff');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Vollkorn - Primary serif font */
+@font-face {
+  font-family: 'Vollkorn';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource/vollkorn@5.2.5/files/vollkorn-latin-400-normal.woff2') format('woff2'),
+       url('https://cdn.jsdelivr.net/npm/@fontsource/vollkorn@5.2.5/files/vollkorn-latin-400-normal.woff') format('woff');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Vollkorn';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource/vollkorn@5.2.5/files/vollkorn-latin-500-normal.woff2') format('woff2'),
+       url('https://cdn.jsdelivr.net/npm/@fontsource/vollkorn@5.2.5/files/vollkorn-latin-500-normal.woff') format('woff');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Vollkorn';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource/vollkorn@5.2.5/files/vollkorn-latin-600-normal.woff2') format('woff2'),
+       url('https://cdn.jsdelivr.net/npm/@fontsource/vollkorn@5.2.5/files/vollkorn-latin-600-normal.woff') format('woff');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Base theme customizations shared by all themes */
+@theme {
+  /* These are set via CSS variables for per-tenant customization */
+  --color-primary: var(--pwb-primary-color, #3b82f6);
+  --color-secondary: var(--pwb-secondary-color, #64748b);
+  --color-accent: var(--pwb-accent-color, #f59e0b);
+  --color-services-bg: var(--services-bg-color, #f8fafc);
+  --color-services-card: var(--services-card-bg, #ffffff);
+  --color-services-text: var(--services-text-color, #1e293b);
+
+  /* Font families - now using self-hosted fonts */
+  --font-family-sans: 'Open Sans', var(--font-primary, system-ui, sans-serif);
+  --font-family-serif: 'Vollkorn', var(--font-secondary, Georgia, serif);
+
+  /* Border radius */
+  --radius: var(--border-radius, 0.375rem);
+  --radius-lg: var(--border-radius, 0.5rem);
+}
+
+/* ==========================================================================
+   Search Layout - Explicit non-nested responsive rules
+   These override Tailwind's nested @media syntax for better browser support
+   ========================================================================== */
+@media (min-width: 1024px) {
+  /* Sidebar filters: 1/4 width on large screens (LEFT side) */
+  .search-layout .search-sidebar {
+    width: 25%;
+    /* No order property - sidebar stays LEFT per HTML source order */
+  }
+
+  /* Search results: 3/4 width on large screens (RIGHT side) */
+  .search-layout .search-results,
+  .search-layout .search-results-main {
+    width: 75%;
+  }
+
+  /* Show filters on large screens */
+  .search-layout .search-sidebar .filter-toggle {
+    display: none;
+  }
+
+  .search-layout .search-sidebar .filter-content {
+    display: block !important;
+  }
+}
+
+/* ==========================================================================
+   Team Grid - Explicit non-nested responsive rules
+   ========================================================================== */
+@media (min-width: 640px) {
+  .team-grid-members {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .team-grid-members {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+}
+
+/* ==========================================================================
+   Contact Page Grid - Explicit non-nested responsive rules
+   ========================================================================== */
+@media (min-width: 1024px) {
+  .contact-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+/* ==========================================================================
+   Services/Features Grid - Explicit non-nested responsive rules
+   ========================================================================== */
+@media (min-width: 768px) {
+  .services-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+/* ==========================================================================
+   Custom Checkbox Styling
+   Native checkboxes need explicit styling since they're replaced elements
+   ========================================================================== */
+input[type="checkbox"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: #fff;
+  border: 1px solid #d1d5db;
+  border-radius: 0.25rem;
+  width: 1rem;
+  height: 1rem;
+  cursor: pointer;
+  position: relative;
+}
+
+input[type="checkbox"]:checked {
+  background-color: #2563eb;
+  border-color: #2563eb;
+}
+
+input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 2px;
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+input[type="checkbox"]:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+}
+
+input[type="checkbox"]:hover {
+  border-color: #9ca3af;
+}
+
+/* ==========================================================================
+   Content Section Typography
+   Styles for headings and text within user-generated content areas
+   ========================================================================== */
+.content-html-section h1,
+.content-html-section h2,
+.content-html-section h3,
+.content-html-section h4 {
+  font-weight: 600;
+  color: #1e293b;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.3;
+}
+
+.content-html-section h1 {
+  font-size: 2rem;
+}
+
+.content-html-section h2 {
+  font-size: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.content-html-section h3 {
+  font-size: 1.25rem;
+}
+
+.content-html-section h4 {
+  font-size: 1.125rem;
+}
+
+.content-html-section p {
+  margin-bottom: 1rem;
+  line-height: 1.7;
+  color: #475569;
+}
+
+.content-html-section ul,
+.content-html-section ol {
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+  color: #475569;
+}
+
+.content-html-section li {
+  margin-bottom: 0.5rem;
+}
+
+.content-html-section a {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.content-html-section a:hover {
+  color: #1d4ed8;
+}
+
+/* ==========================================================================
+   Property Detail Page Layout
+   Controls layout for property detail pages on desktop vs mobile
+   ========================================================================== */
+
+/* Property detail page wrapper - constrain max width on desktop */
+.property-detail-page {
+  width: 100%;
+}
+
+/* Property detail container - max width constraint */
+.property-detail-container {
+  width: 100%;
+  max-width: 80rem; /* 1280px - matches max-w-7xl */
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .property-detail-container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+/* Property detail two-column layout */
+.property-detail-layout {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: -1rem;
+  margin-right: -1rem;
+}
+
+/* Main content column - full width on mobile, 3/4 on desktop */
+.property-detail-main {
+  width: 100%;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* Sidebar column - full width on mobile, 1/4 on desktop */
+.property-detail-sidebar {
+  width: 100%;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  margin-top: 2rem;
+}
+
+@media (min-width: 1024px) {
+  .property-detail-main {
+    width: 66.666667%; /* 2/3 */
+  }
+
+  .property-detail-sidebar {
+    width: 33.333333%; /* 1/3 */
+    margin-top: 0;
+  }
+
+  /* Alternative 3/4 + 1/4 layout */
+  .property-detail-layout.layout-wide .property-detail-main {
+    width: 75%;
+  }
+
+  .property-detail-layout.layout-wide .property-detail-sidebar {
+    width: 25%;
+  }
+}
+
+/* Map section - full width but constrained container */
+.property-detail-map {
+  width: 100%;
+}
+
+.property-detail-map-inner {
+  width: 100%;
+  max-width: 80rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .property-detail-map-inner {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+/* ==========================================================================
+   Search Results View Modes
+   Controls layout for grid and list views of property cards
+   ========================================================================== */
+
+/* Base property card inner - default to column layout */
+.property-item .property-card-inner {
+  flex-direction: column;
+}
+
+.property-item .property-image {
+  width: 100%;
+}
+
+.property-item .property-image img {
+  height: 12rem;
+}
+
+/* List view container */
+.search-results-grid.results-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* List view: horizontal card layout */
+.results-list .property-item .property-card-inner {
+  flex-direction: row;
+}
+
+.results-list .property-item .property-image {
+  width: 33.333333%;
+  flex-shrink: 0;
+}
+
+.results-list .property-item .property-image img {
+  height: 100%;
+  min-height: 200px;
+}
+
+.results-list .property-item .property-details {
+  width: 66.666667%;
+}
+
+/* Stack list items vertically on mobile */
+@media (max-width: 767px) {
+  .results-list .property-item .property-card-inner {
+    flex-direction: column;
+  }
+
+  .results-list .property-item .property-image {
+    width: 100%;
+  }
+
+  .results-list .property-item .property-image img {
+    height: 12rem;
+  }
+
+  .results-list .property-item .property-details {
+    width: 100%;
+  }
+}
+
+/* ==========================================================================
+   PWB Semantic Color Utilities
+   Dynamic palette-aware utility classes using CSS custom properties
+   These classes work with --pwb-primary, --pwb-secondary, --pwb-accent, etc.
+   set per-tenant via the palette system
+   ========================================================================== */
+
+/* Primary color utilities - backgrounds
+   Uses --pwb-primary-color (set by palette_css) with fallback to --primary-color */
+.bg-pwb-primary { background-color: var(--pwb-primary-color, var(--primary-color, #3b82f6)); }
+.bg-pwb-primary-50 { background-color: var(--pwb-primary-50, color-mix(in srgb, var(--pwb-primary-color, var(--primary-color, #3b82f6)) 10%, white)); }
+.bg-pwb-primary-100 { background-color: var(--pwb-primary-100, color-mix(in srgb, var(--pwb-primary-color, var(--primary-color, #3b82f6)) 20%, white)); }
+.bg-pwb-primary-200 { background-color: var(--pwb-primary-200, color-mix(in srgb, var(--pwb-primary-color, var(--primary-color, #3b82f6)) 35%, white)); }
+.bg-pwb-primary-300 { background-color: var(--pwb-primary-300, color-mix(in srgb, var(--pwb-primary-color, var(--primary-color, #3b82f6)) 50%, white)); }
+.bg-pwb-primary-400 { background-color: var(--pwb-primary-400, color-mix(in srgb, var(--pwb-primary-color, var(--primary-color, #3b82f6)) 70%, white)); }
+.bg-pwb-primary-500 { background-color: var(--pwb-primary-500, var(--pwb-primary-color, var(--primary-color, #3b82f6))); }
+.bg-pwb-primary-600 { background-color: var(--pwb-primary-600, color-mix(in srgb, var(--pwb-primary-color, var(--primary-color, #3b82f6)) 85%, black)); }
+.bg-pwb-primary-700 { background-color: var(--pwb-primary-700, color-mix(in srgb, var(--pwb-primary-color, var(--primary-color, #3b82f6)) 70%, black)); }
+.bg-pwb-primary-800 { background-color: var(--pwb-primary-800, color-mix(in srgb, var(--pwb-primary-color, var(--primary-color, #3b82f6)) 55%, black)); }
+.bg-pwb-primary-900 { background-color: var(--pwb-primary-900, color-mix(in srgb, var(--pwb-primary-color, var(--primary-color, #3b82f6)) 40%, black)); }
+
+/* Primary color utilities - text (full scale including light shades for dark backgrounds) */
+.text-pwb-primary { color: var(--pwb-primary-color, var(--primary-color, #3b82f6)); }
+.text-pwb-primary-50 { color: var(--pwb-primary-50, color-mix(in srgb, var(--pwb-primary-color, var(--primary-color, #3b82f6)) 10%, white)); }
+.text-pwb-primary-100 { color: var(--pwb-primary-100, color-mix(in srgb, var(--pwb-primary-color, var(--primary-color, #3b82f6)) 20%, white)); }
+.text-pwb-primary-200 { color: var(--pwb-primary-200, color-mix(in srgb, var(--pwb-primary-color, var(--primary-color, #3b82f6)) 35%, white)); }
+.text-pwb-primary-300 { color: var(--pwb-primary-300, color-mix(in srgb, var(--pwb-primary-color, var(--primary-color, #3b82f6)) 50%, white)); }
+.text-pwb-primary-400 { color: var(--pwb-primary-400, color-mix(in srgb, var(--pwb-primary-color, var(--primary-color, #3b82f6)) 70%, white)); }
+.text-pwb-primary-500 { color: var(--pwb-primary-500, var(--pwb-primary-color, var(--primary-color, #3b82f6))); }
+.text-pwb-primary-600 { color: var(--pwb-primary-600, color-mix(in srgb, var(--pwb-primary-color, var(--primary-color, #3b82f6)) 85%, black)); }
+.text-pwb-primary-700 { color: var(--pwb-primary-700, color-mix(in srgb, var(--pwb-primary-color, var(--primary-color, #3b82f6)) 70%, black)); }
+.text-pwb-primary-800 { color: var(--pwb-primary-800, color-mix(in srgb, var(--pwb-primary-color, var(--primary-color, #3b82f6)) 55%, black)); }
+.text-pwb-primary-900 { color: var(--pwb-primary-900, color-mix(in srgb, var(--pwb-primary-color, var(--primary-color, #3b82f6)) 40%, black)); }
+
+/* Primary color utilities - borders */
+.border-pwb-primary { border-color: var(--pwb-primary-color, var(--primary-color, #3b82f6)); }
+.border-pwb-primary-200 { border-color: var(--pwb-primary-200, color-mix(in srgb, var(--pwb-primary-color, var(--primary-color, #3b82f6)) 35%, white)); }
+.border-pwb-primary-300 { border-color: var(--pwb-primary-300, color-mix(in srgb, var(--pwb-primary-color, var(--primary-color, #3b82f6)) 50%, white)); }
+
+/* Primary color utilities - ring */
+.ring-pwb-primary { --tw-ring-color: var(--pwb-primary-color, var(--primary-color, #3b82f6)); }
+
+/* Secondary color utilities - backgrounds
+   Uses --pwb-secondary-color (set by palette_css) with fallback to --secondary-color */
+.bg-pwb-secondary { background-color: var(--pwb-secondary-color, var(--secondary-color, #64748b)); }
+.bg-pwb-secondary-50 { background-color: var(--pwb-secondary-50, color-mix(in srgb, var(--pwb-secondary-color, var(--secondary-color, #64748b)) 10%, white)); }
+.bg-pwb-secondary-100 { background-color: var(--pwb-secondary-100, color-mix(in srgb, var(--pwb-secondary-color, var(--secondary-color, #64748b)) 20%, white)); }
+.bg-pwb-secondary-200 { background-color: var(--pwb-secondary-200, color-mix(in srgb, var(--pwb-secondary-color, var(--secondary-color, #64748b)) 35%, white)); }
+.bg-pwb-secondary-300 { background-color: var(--pwb-secondary-300, color-mix(in srgb, var(--pwb-secondary-color, var(--secondary-color, #64748b)) 50%, white)); }
+.bg-pwb-secondary-400 { background-color: var(--pwb-secondary-400, color-mix(in srgb, var(--pwb-secondary-color, var(--secondary-color, #64748b)) 70%, white)); }
+.bg-pwb-secondary-500 { background-color: var(--pwb-secondary-500, var(--pwb-secondary-color, var(--secondary-color, #64748b))); }
+.bg-pwb-secondary-600 { background-color: var(--pwb-secondary-600, color-mix(in srgb, var(--pwb-secondary-color, var(--secondary-color, #64748b)) 85%, black)); }
+.bg-pwb-secondary-700 { background-color: var(--pwb-secondary-700, color-mix(in srgb, var(--pwb-secondary-color, var(--secondary-color, #64748b)) 70%, black)); }
+.bg-pwb-secondary-800 { background-color: var(--pwb-secondary-800, color-mix(in srgb, var(--pwb-secondary-color, var(--secondary-color, #64748b)) 55%, black)); }
+.bg-pwb-secondary-900 { background-color: var(--pwb-secondary-900, color-mix(in srgb, var(--pwb-secondary-color, var(--secondary-color, #64748b)) 40%, black)); }
+
+/* Secondary color utilities - text (full scale for all contrast scenarios) */
+.text-pwb-secondary { color: var(--pwb-secondary-color, var(--secondary-color, #64748b)); }
+.text-pwb-secondary-50 { color: var(--pwb-secondary-50, color-mix(in srgb, var(--pwb-secondary-color, var(--secondary-color, #64748b)) 10%, white)); }
+.text-pwb-secondary-100 { color: var(--pwb-secondary-100, color-mix(in srgb, var(--pwb-secondary-color, var(--secondary-color, #64748b)) 20%, white)); }
+.text-pwb-secondary-200 { color: var(--pwb-secondary-200, color-mix(in srgb, var(--pwb-secondary-color, var(--secondary-color, #64748b)) 35%, white)); }
+.text-pwb-secondary-300 { color: var(--pwb-secondary-300, color-mix(in srgb, var(--pwb-secondary-color, var(--secondary-color, #64748b)) 50%, white)); }
+.text-pwb-secondary-400 { color: var(--pwb-secondary-400, color-mix(in srgb, var(--pwb-secondary-color, var(--secondary-color, #64748b)) 70%, white)); }
+.text-pwb-secondary-500 { color: var(--pwb-secondary-500, var(--pwb-secondary-color, var(--secondary-color, #64748b))); }
+.text-pwb-secondary-600 { color: var(--pwb-secondary-600, color-mix(in srgb, var(--pwb-secondary-color, var(--secondary-color, #64748b)) 85%, black)); }
+.text-pwb-secondary-700 { color: var(--pwb-secondary-700, color-mix(in srgb, var(--pwb-secondary-color, var(--secondary-color, #64748b)) 70%, black)); }
+.text-pwb-secondary-800 { color: var(--pwb-secondary-800, color-mix(in srgb, var(--pwb-secondary-color, var(--secondary-color, #64748b)) 55%, black)); }
+.text-pwb-secondary-900 { color: var(--pwb-secondary-900, color-mix(in srgb, var(--pwb-secondary-color, var(--secondary-color, #64748b)) 40%, black)); }
+
+/* Secondary color utilities - borders */
+.border-pwb-secondary { border-color: var(--pwb-secondary-color, var(--secondary-color, #64748b)); }
+.border-pwb-secondary-200 { border-color: var(--pwb-secondary-200, color-mix(in srgb, var(--pwb-secondary-color, var(--secondary-color, #64748b)) 35%, white)); }
+.border-pwb-secondary-700 { border-color: var(--pwb-secondary-700, color-mix(in srgb, var(--pwb-secondary-color, var(--secondary-color, #64748b)) 70%, black)); }
+
+/* Accent color utilities - backgrounds
+   Uses --pwb-accent-color (set by palette_css) with fallback to --accent-color */
+.bg-pwb-accent { background-color: var(--pwb-accent-color, var(--accent-color, #f59e0b)); }
+.bg-pwb-accent-500 { background-color: var(--pwb-accent-500, var(--pwb-accent-color, var(--accent-color, #f59e0b))); }
+.bg-pwb-accent-600 { background-color: var(--pwb-accent-600, color-mix(in srgb, var(--pwb-accent-color, var(--accent-color, #f59e0b)) 85%, black)); }
+
+/* Accent color utilities - text */
+.text-pwb-accent { color: var(--pwb-accent-color, var(--accent-color, #f59e0b)); }
+.text-pwb-accent-300 { color: var(--pwb-accent-300, color-mix(in srgb, var(--pwb-accent-color, var(--accent-color, #f59e0b)) 50%, white)); }
+.text-pwb-accent-400 { color: var(--pwb-accent-400, color-mix(in srgb, var(--pwb-accent-color, var(--accent-color, #f59e0b)) 70%, white)); }
+.text-pwb-accent-600 { color: var(--pwb-accent-600, color-mix(in srgb, var(--pwb-accent-color, var(--accent-color, #f59e0b)) 85%, black)); }
+
+/* Accent color utilities - borders */
+.border-pwb-accent { border-color: var(--pwb-accent-color, var(--accent-color, #f59e0b)); }
+
+/* Accent color utilities - ring */
+.ring-pwb-accent { --tw-ring-color: var(--pwb-accent-color, var(--accent-color, #f59e0b)); }
+
+/* Hover variants for primary colors */
+.hover\:bg-pwb-primary:hover { background-color: var(--pwb-primary-color, var(--primary-color, #3b82f6)); }
+.hover\:bg-pwb-primary-50:hover { background-color: var(--pwb-primary-50, color-mix(in srgb, var(--pwb-primary-color, var(--primary-color, #3b82f6)) 10%, white)); }
+.hover\:bg-pwb-primary-200:hover { background-color: var(--pwb-primary-200, color-mix(in srgb, var(--pwb-primary-color, var(--primary-color, #3b82f6)) 35%, white)); }
+.hover\:bg-pwb-primary-600:hover { background-color: var(--pwb-primary-600, color-mix(in srgb, var(--pwb-primary-color, var(--primary-color, #3b82f6)) 85%, black)); }
+.hover\:bg-pwb-primary-700:hover { background-color: var(--pwb-primary-700, color-mix(in srgb, var(--pwb-primary-color, var(--primary-color, #3b82f6)) 70%, black)); }
+.hover\:bg-pwb-primary-800:hover { background-color: var(--pwb-primary-800, color-mix(in srgb, var(--pwb-primary-color, var(--primary-color, #3b82f6)) 55%, black)); }
+.hover\:text-pwb-primary:hover { color: var(--pwb-primary-color, var(--primary-color, #3b82f6)); }
+.hover\:text-pwb-primary-50:hover { color: var(--pwb-primary-50, color-mix(in srgb, var(--pwb-primary-color, var(--primary-color, #3b82f6)) 10%, white)); }
+.hover\:text-pwb-primary-100:hover { color: var(--pwb-primary-100, color-mix(in srgb, var(--pwb-primary-color, var(--primary-color, #3b82f6)) 20%, white)); }
+.hover\:text-pwb-primary-200:hover { color: var(--pwb-primary-200, color-mix(in srgb, var(--pwb-primary-color, var(--primary-color, #3b82f6)) 35%, white)); }
+.hover\:text-pwb-primary-300:hover { color: var(--pwb-primary-300, color-mix(in srgb, var(--pwb-primary-color, var(--primary-color, #3b82f6)) 50%, white)); }
+.hover\:text-pwb-primary-400:hover { color: var(--pwb-primary-400, color-mix(in srgb, var(--pwb-primary-color, var(--primary-color, #3b82f6)) 70%, white)); }
+.hover\:text-pwb-primary-600:hover { color: var(--pwb-primary-600, color-mix(in srgb, var(--pwb-primary-color, var(--primary-color, #3b82f6)) 85%, black)); }
+.hover\:text-pwb-primary-700:hover { color: var(--pwb-primary-700, color-mix(in srgb, var(--pwb-primary-color, var(--primary-color, #3b82f6)) 70%, black)); }
+.hover\:border-pwb-primary:hover { border-color: var(--pwb-primary-color, var(--primary-color, #3b82f6)); }
+
+/* Hover variants for secondary colors */
+.hover\:bg-pwb-secondary:hover { background-color: var(--pwb-secondary-color, var(--secondary-color, #64748b)); }
+.hover\:bg-pwb-secondary-100:hover { background-color: var(--pwb-secondary-100, color-mix(in srgb, var(--pwb-secondary-color, var(--secondary-color, #64748b)) 20%, white)); }
+.hover\:bg-pwb-secondary-200:hover { background-color: var(--pwb-secondary-200, color-mix(in srgb, var(--pwb-secondary-color, var(--secondary-color, #64748b)) 35%, white)); }
+.hover\:bg-pwb-secondary-600:hover { background-color: var(--pwb-secondary-600, color-mix(in srgb, var(--pwb-secondary-color, var(--secondary-color, #64748b)) 85%, black)); }
+.hover\:bg-pwb-secondary-700:hover { background-color: var(--pwb-secondary-700, color-mix(in srgb, var(--pwb-secondary-color, var(--secondary-color, #64748b)) 70%, black)); }
+.hover\:bg-pwb-secondary-800:hover { background-color: var(--pwb-secondary-800, color-mix(in srgb, var(--pwb-secondary-color, var(--secondary-color, #64748b)) 55%, black)); }
+.hover\:bg-pwb-secondary-900:hover { background-color: var(--pwb-secondary-900, color-mix(in srgb, var(--pwb-secondary-color, var(--secondary-color, #64748b)) 40%, black)); }
+.hover\:text-pwb-secondary:hover { color: var(--pwb-secondary-color, var(--secondary-color, #64748b)); }
+.hover\:text-pwb-secondary-50:hover { color: var(--pwb-secondary-50, color-mix(in srgb, var(--pwb-secondary-color, var(--secondary-color, #64748b)) 10%, white)); }
+.hover\:text-pwb-secondary-100:hover { color: var(--pwb-secondary-100, color-mix(in srgb, var(--pwb-secondary-color, var(--secondary-color, #64748b)) 20%, white)); }
+.hover\:text-pwb-secondary-200:hover { color: var(--pwb-secondary-200, color-mix(in srgb, var(--pwb-secondary-color, var(--secondary-color, #64748b)) 35%, white)); }
+.hover\:text-pwb-secondary-300:hover { color: var(--pwb-secondary-300, color-mix(in srgb, var(--pwb-secondary-color, var(--secondary-color, #64748b)) 50%, white)); }
+.hover\:text-pwb-secondary-400:hover { color: var(--pwb-secondary-400, color-mix(in srgb, var(--pwb-secondary-color, var(--secondary-color, #64748b)) 70%, white)); }
+.hover\:text-pwb-secondary-600:hover { color: var(--pwb-secondary-600, color-mix(in srgb, var(--pwb-secondary-color, var(--secondary-color, #64748b)) 85%, black)); }
+.hover\:text-pwb-secondary-700:hover { color: var(--pwb-secondary-700, color-mix(in srgb, var(--pwb-secondary-color, var(--secondary-color, #64748b)) 70%, black)); }
+.hover\:text-pwb-secondary-900:hover { color: var(--pwb-secondary-900, color-mix(in srgb, var(--pwb-secondary-color, var(--secondary-color, #64748b)) 40%, black)); }
+
+/* Hover variants for accent colors */
+.hover\:bg-pwb-accent:hover { background-color: var(--pwb-accent-color, var(--accent-color, #f59e0b)); }
+.hover\:text-pwb-accent:hover { color: var(--pwb-accent-color, var(--accent-color, #f59e0b)); }
+.hover\:text-pwb-accent-300:hover { color: var(--pwb-accent-300, color-mix(in srgb, var(--pwb-accent-color, var(--accent-color, #f59e0b)) 50%, white)); }
+.hover\:text-pwb-accent-400:hover { color: var(--pwb-accent-400, color-mix(in srgb, var(--pwb-accent-color, var(--accent-color, #f59e0b)) 70%, white)); }
+.hover\:border-pwb-accent:hover { border-color: var(--pwb-accent-color, var(--accent-color, #f59e0b)); }
+
+/* Focus variants */
+.focus\:ring-pwb-primary:focus { --tw-ring-color: var(--pwb-primary-color, var(--primary-color, #3b82f6)); }
+.focus\:ring-pwb-accent:focus { --tw-ring-color: var(--pwb-accent-color, var(--accent-color, #f59e0b)); }
+.focus\:border-pwb-primary:focus { border-color: var(--pwb-primary-color, var(--primary-color, #3b82f6)); }
+.focus\:border-pwb-accent:focus { border-color: var(--pwb-accent-color, var(--accent-color, #f59e0b)); }
+.focus\:outline-pwb-primary:focus { outline-color: var(--pwb-primary-color, var(--primary-color, #3b82f6)); }
+
+/* Active variants */
+.active\:bg-pwb-primary-800:active { background-color: var(--pwb-primary-800, color-mix(in srgb, var(--pwb-primary-color, var(--primary-color, #3b82f6)) 55%, black)); }
+
+/* Gradient utilities with palette colors */
+.from-pwb-primary { --tw-gradient-from: var(--pwb-primary-color, var(--primary-color, #3b82f6)); }
+.to-pwb-primary { --tw-gradient-to: var(--pwb-primary-color, var(--primary-color, #3b82f6)); }
+.from-pwb-primary-600 { --tw-gradient-from: var(--pwb-primary-600, color-mix(in srgb, var(--pwb-primary-color, var(--primary-color, #3b82f6)) 85%, black)); }
+.to-pwb-primary-700 { --tw-gradient-to: var(--pwb-primary-700, color-mix(in srgb, var(--pwb-primary-color, var(--primary-color, #3b82f6)) 70%, black)); }
+.from-pwb-secondary { --tw-gradient-from: var(--pwb-secondary-color, var(--secondary-color, #64748b)); }
+.to-pwb-secondary { --tw-gradient-to: var(--pwb-secondary-color, var(--secondary-color, #64748b)); }
+
+/* Button component classes using palette colors */
+.btn-pwb-primary {
+  background-color: var(--pwb-primary-color, var(--primary-color, #3b82f6));
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+.btn-pwb-primary:hover {
+  background-color: var(--pwb-primary-700, color-mix(in srgb, var(--pwb-primary-color, var(--primary-color, #3b82f6)) 70%, black));
+}
+.btn-pwb-primary:focus {
+  outline: 2px solid var(--pwb-primary-color, var(--primary-color, #3b82f6));
+  outline-offset: 2px;
+}
+
+.btn-pwb-secondary {
+  background-color: var(--pwb-secondary-color, var(--secondary-color, #64748b));
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+.btn-pwb-secondary:hover {
+  background-color: var(--pwb-secondary-700, color-mix(in srgb, var(--pwb-secondary-color, var(--secondary-color, #64748b)) 70%, black));
+}
+
+.btn-pwb-outline {
+  background-color: transparent;
+  color: var(--pwb-primary-color, var(--primary-color, #3b82f6));
+  border: 2px solid var(--pwb-primary-color, var(--primary-color, #3b82f6));
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+.btn-pwb-outline:hover {
+  background-color: var(--pwb-primary-color, var(--primary-color, #3b82f6));
+  color: white;
+}
+
+/* Link styles using palette colors */
+.link-pwb-primary {
+  color: var(--pwb-primary-color, var(--primary-color, #3b82f6));
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.link-pwb-primary:hover {
+  color: var(--pwb-primary-700, color-mix(in srgb, var(--pwb-primary-color, var(--primary-color, #3b82f6)) 70%, black));
+  text-decoration: underline;
+}
+
+/* Badge/tag styles using palette colors */
+.badge-pwb-primary {
+  background-color: var(--pwb-primary-100, color-mix(in srgb, var(--pwb-primary-color, var(--primary-color, #3b82f6)) 20%, white));
+  color: var(--pwb-primary-800, color-mix(in srgb, var(--pwb-primary-color, var(--primary-color, #3b82f6)) 55%, black));
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.badge-pwb-secondary {
+  background-color: var(--pwb-secondary-100, color-mix(in srgb, var(--pwb-secondary, var(--secondary-color, #64748b)) 20%, white));
+  color: var(--pwb-secondary-800, color-mix(in srgb, var(--pwb-secondary, var(--secondary-color, #64748b)) 55%, black));
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}

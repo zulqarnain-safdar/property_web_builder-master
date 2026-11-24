@@ -1,0 +1,262 @@
+---
+en:
+  aboutUs: About Us
+  address: Address
+  back: Back
+  changePassword: Change Password
+  contact:
+    emailSubject: Contact from your website
+    error: Sorry, there has been an error.
+    success: Thank you for your message. We will contact you soon!
+  contactUs: Contact
+  contactUsPrompt: Fill in the following form to contact us
+  devise:
+    user_update_success: You have successfully updated your account.
+    user_update_success_title: Congratulations
+  editarPropiedad: Edit a property
+  email: Email
+  'false': 'No'
+  findAProperty: Find a property
+  findByReference: Find by reference
+  forRent: For Rent
+  forSale: For Sale
+  go: Go
+  labels:
+    create: Create
+    edit: Edit
+    latestProperties: Latest properties
+    new: New
+    ourServices: Our services
+    save: Save
+  leaveBlank: leave it blank if you don't want to change it
+  legalAdvice: Legal Notice
+  listadoPropiedades: List of properties
+  mailers:
+    confirm_registration: Please confirm your account through the link below
+    from: From
+    general_enquiry_targeting_agency:
+      title: General enquiry from your website
+    general_enquiry_targeting_enquirer:
+      message_title: ''
+      subject: ''
+    message: Message
+    phone: Tel
+    property: Property
+    property_enquiry_targeting_agency:
+      title: Enquiry regarding a property
+    received_on: Received on
+    welcome: Welcome
+  menu_admin: admin
+  message: Message
+  name: Name
+  navbar:
+    about-us: About Us
+    admin: Admin
+    buy: Properties to buy
+    contact-us: Contact
+    home: Home
+    legal: Legal Notice
+    privacy: Privacy Policy
+    rent: Properties to rent
+    sell: Sell
+  needCurrentPwd: we need your current password to confirm your changes
+  newPassword: New Password
+  noResultsForSearch: Sorry, no results found
+  nuevoPropiedad: New property
+  orderBy:
+    priceAscending: "↓ Price (ascending)"
+    priceDescending: "↑ Price (descending)"
+  pages:
+    aboutUs: About us
+    sell: Sell
+  placeHolders:
+    email: Your email
+    message: Write your message here
+    name: Your name
+    subject: Subject
+    tel: Fixed or mobile
+  # privacyPolicy: Privacy Policy
+  property:
+    description: Description
+    details: Details
+    extras: Features
+    furniture: Furniture
+    goToProperty: View Property
+    highlightedProperty: Outstanding Property
+    locality: Locality
+    map: Map
+    monthlyRentalPriceHighSeason: Monthly Price (High Season)
+    monthlyRentalPriceLowSeason: Monthly Price (Low Season)
+    monthlyRentalPriceStandardSeason: Monthly Price (Standard Season)
+    operationType: Operation Type
+    price: Price
+    propertyType: Property Type
+    ref: Ref
+    bedrooms: Bedrooms
+    bathrooms: Bathrooms
+  propertyForRent: Property for rent
+  propertyForSale: Property for sale
+  propertyNotFound: Property not found
+  similarProperties: Similar properties
+  pwb:
+    copyright: "%{company_name} Inc. All rights reserved."
+    createPrompt: Create your estate agency website
+    createTagLine: Please enter the details for your account
+    getStarted: Get started now
+    registerNow: Register now
+    tagLine: Professional websites for estate agents in minutes
+    tagLineExt: Beautiful websites that have to be seen to be believed.<br>No one
+      gets you online quicker.
+    consent:
+      title: Save Your Preferences Locally
+      description: We can save your favorite properties and recent searches in your browser for easy access. This data stays on your device and is never sent to our servers.
+      accept: Enable Saving
+      decline: No Thanks
+      settings: Settings
+      settings_title: Privacy Settings
+      essential: Essential
+      essential_desc: Required for the website to function. No personal data is stored.
+      preferences: Favorites & Searches
+      preferences_desc: Save your favorite properties and recent searches locally in your browser for quick access.
+      save: Save Settings
+      cancel: Cancel
+      close: Close
+    favorites:
+      toggle: Save to favorites
+      my_favorites: My Favorites
+      saved_properties: Saved Properties
+      clear_all: Clear All
+      no_favorites: No favorites yet
+      empty_message: Click the heart icon on any property to save it here
+      added: Added to favorites
+      removed: Removed from favorites
+      max_reached: "Maximum %{count} favorites reached. Remove some to add more."
+    searches:
+      my_searches: My Searches
+      saved_searches: Saved Searches
+      recent: Recent
+      no_saved: No saved searches
+      no_recent: No recent searches
+      empty_message: Your search history will appear here
+      save: Save Search
+      save_search: Save this search
+      save_button: Save
+      cancel: Cancel
+      name_your_search: Name Your Search
+      search_name_placeholder: "e.g., 3 Bedroom Houses"
+      saved: "Search \"%{name}\" saved!"
+      deleted: Search deleted
+      cleared: All searches cleared
+      enter_name: Please enter a name for this search
+      no_criteria: No search criteria to save
+      max_reached: "Maximum %{count} saved searches. Delete some to add more."
+      duplicate: "A search named \"%{name}\" already exists. Replace it?"
+  requestPropertyInfo: Request info
+  search: Search
+  searchForProperties: Search for properties
+  selectpicker:
+    countSelectedText: Selected {0} of {1}
+    noneResultsText: No results found {0}
+    noneSelectedText: Nothing selected
+  send: Send
+  setup:
+    claimSubdomain: Claim this url
+    createdSuccessfully: Site created successfully
+    goToYourSite: Go to your site
+    loggedInAs: 'Logged in as '
+    logout: Logout
+    selectUrl: Select a url
+    selectUrlMessage: You have successfully created an account - now select the url
+      for your new site
+    subdomain: subdomain
+    subdomainMissing: Please enter a name for the subdomain
+    thankYouForTrusting: Thank you for trusting %{company_name}
+    urlNotAvailable: Sorry, this url is not available
+    weAreCreatingSite: We are creating your site
+  signIn: Sign In
+  signOut: Sign Out
+  simple_form:
+    error_notification:
+      default_message: 'Please review the problems below:'
+    labels:
+      search:
+        count_bathrooms: Bathrooms (min)
+        count_bedrooms: Bedrooms (min)
+        for_rent_price_from: Rent From (Monthly)
+        for_rent_price_till: Rent Till (Monthly)
+        for_sale_price_from: Price From
+        for_sale_price_till: Price Till
+        in_locality: Locality
+        in_zone: Zone
+        locality: Locality
+        property_state: Property State
+        property_type: Property Type
+    'no': 'No'
+    required:
+      mark: "*"
+      text: required
+    'yes': 'Yes'
+  subject: Subject
+  tel: Telephone
+  'true': 'Yes'
+  update: Update
+  webContentSections:
+    aboutUs: About us
+    contactInformation: Contact information
+    home: Home
+    sell: Sell
+    tagLine: Tag Line
+  price_game:
+    title: "Guess the Price - %{property}"
+    heading: "Can You Guess the Price?"
+    subheading_sale: "Take your best guess at this property's asking price"
+    subheading_rental: "Take your best guess at the monthly rent"
+    meta_description: "Test your property valuation skills! Can you guess the price of %{property}?"
+    og_title: "Can You Guess the Price?"
+    og_description: "Test your property valuation skills! Take a guess at this property's price."
+    photos: "photos"
+    bedrooms: "Bedrooms"
+    bathrooms: "Bathrooms"
+    year_built: "Year Built"
+    features: "Features"
+    more: "more"
+    question_sale: "What's the asking price?"
+    question_rental: "What's the monthly rent?"
+    one_chance: "You only get one guess - make it count!"
+    enter_guess: "Enter your guess..."
+    submit_guess: "Submit My Guess"
+    already_guessed: "You've already guessed for this listing"
+    invalid_guess: "Please enter a valid price"
+    challenge_friends: "Challenge your friends!"
+    copy_link: "Copy Link"
+    powered_by: "Brought to you by %{agency}"
+    direction:
+      above: "above"
+      below: "below"
+    feedback:
+      invalid: "Unable to calculate score"
+      excellent: "Excellent! Only %{diff}%% %{direction} the actual price!"
+      amazing: "Amazing guess! %{diff}%% %{direction}."
+      great: "Great guess! %{diff}%% %{direction}."
+      very_close: "Very close! %{diff}%% %{direction}."
+      good: "Good effort! %{diff}%% %{direction}."
+      not_bad: "Not bad! %{diff}%% %{direction}."
+      keep_trying: "Keep trying! %{diff}%% %{direction}."
+      room_for_improvement: "Room for improvement. %{diff}%% %{direction}."
+      way_off: "Way off! %{diff}%% %{direction}."
+      better_luck: "Better luck next time! %{diff}%% %{direction}."
+    result:
+      excellent: "Excellent!"
+      great: "Great Guess!"
+      good: "Good Effort!"
+      not_bad: "Not Bad!"
+      keep_trying: "Keep Trying!"
+      score: "Score: %{score}/100"
+      your_guess: "Your Guess"
+      actual_price: "Actual Price"
+      view_listing: "View Full Listing"
+    leaderboard:
+      title: "Top Guessers"
+      you: "You"
+      player: "Player %{number}"
+      showing_top: "Showing top %{count} guesses"

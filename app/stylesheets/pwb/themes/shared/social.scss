@@ -1,0 +1,76 @@
+// Social Media Icons Styling
+// Supports: Facebook, Instagram, LinkedIn, YouTube, Twitter/X, WhatsApp
+
+.social-icons .fa {
+  font-size: 1.5em;
+}
+
+// Icon base styles
+.social-icons .fa {
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  color: #FFF;
+  color: rgba(255, 255, 255, 0.8);
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+// Icon shape variants
+.social-icons.icon-circle .fa { 
+  border-radius: 50%;
+}
+.social-icons.icon-rounded .fa {
+  border-radius: 5px;
+}
+.social-icons.icon-flat .fa {
+  border-radius: 0;
+}
+
+// Hover states
+.social-icons .fa:hover,
+.social-icons .fa:active {
+  color: #FFF;
+  box-shadow: 1px 1px 3px #333;
+}
+
+.social-icons.icon-zoom .fa:hover,
+.social-icons.icon-zoom .fa:active { 
+  transform: scale(1.1);
+}
+
+.social-icons.icon-rotate .fa:hover,
+.social-icons.icon-rotate .fa:active { 
+  transform: scale(1.1) rotate(360deg);
+}
+
+// Platform-specific colors (6 supported platforms)
+.social-icons .fa-facebook,
+.social-icons .fa-facebook-square {
+  background-color: #1877F2;
+}
+
+.social-icons .fa-instagram {
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+}
+
+.social-icons .fa-linkedin,
+.social-icons .fa-linkedin-square {
+  background-color: #0A66C2;
+}
+
+.social-icons .fa-youtube,
+.social-icons .fa-youtube-play,
+.social-icons .fa-youtube-square {
+  background-color: #FF0000;
+}
+
+.social-icons .fa-twitter,
+.social-icons .fa-twitter-square {
+  background-color: #1DA1F2;
+}
+
+.social-icons .fa-whatsapp {
+  background-color: #25D366;
+}

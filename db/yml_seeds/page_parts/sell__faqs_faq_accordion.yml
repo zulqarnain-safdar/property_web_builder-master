@@ -1,0 +1,114 @@
+- page_slug: sell
+  page_part_key: faqs/faq_accordion
+  block_contents: {}
+  order_in_editor: 2
+  show_in_editor: true
+  editor_setup:
+    tabTitleKey: "pageSections.faqAccordion.title"
+    tabInfoKey: "pageSections.faqAccordion.info"
+    default_sort_order: 2
+    default_visible_on_page: true
+    editorBlocks:
+      - - label: section_title
+          isSingleLineText: "true"
+        - label: section_subtitle
+          isMultipleLineText: "true"
+      - - label: faq_1_question
+          isSingleLineText: "true"
+        - label: faq_1_answer
+          isHtml: "true"
+      - - label: faq_2_question
+          isSingleLineText: "true"
+        - label: faq_2_answer
+          isHtml: "true"
+      - - label: faq_3_question
+          isSingleLineText: "true"
+        - label: faq_3_answer
+          isHtml: "true"
+      - - label: faq_4_question
+          isSingleLineText: "true"
+        - label: faq_4_answer
+          isHtml: "true"
+      - - label: faq_5_question
+          isSingleLineText: "true"
+        - label: faq_5_answer
+          isHtml: "true"
+      - - label: faq_6_question
+          isSingleLineText: "true"
+        - label: faq_6_answer
+          isHtml: "true"
+  template: |
+    <section class="pwb-section pwb-section--faq faq-section py-16 bg-white">
+      <div class="pwb-container max-w-4xl mx-auto px-4">
+        {% if page_part["section_title"]["content"] %}
+          <div class="pwb-section__header text-center mb-12">
+            <h2 class="pwb-section__title text-3xl font-bold text-pwb-secondary-900 mb-4">{{ page_part["section_title"]["content"] }}</h2>
+            {% if page_part["section_subtitle"]["content"] %}
+              <p class="pwb-section__subtitle text-lg text-pwb-secondary-600">{{ page_part["section_subtitle"]["content"] }}</p>
+            {% endif %}
+          </div>
+        {% endif %}
+        <div class="pwb-faq-accordion space-y-4">
+          {% if page_part["faq_1_question"]["content"] %}
+            <details class="pwb-faq-item bg-pwb-secondary-50 rounded-lg">
+              <summary class="pwb-faq-item__question p-4 font-semibold text-pwb-secondary-900 cursor-pointer hover:bg-pwb-secondary-100 rounded-lg">
+                {{ page_part["faq_1_question"]["content"] }}
+              </summary>
+              <div class="pwb-faq-item__answer p-4 pt-0 text-pwb-secondary-600">
+                {{ page_part["faq_1_answer"]["content"] }}
+              </div>
+            </details>
+          {% endif %}
+          {% if page_part["faq_2_question"]["content"] %}
+            <details class="pwb-faq-item bg-pwb-secondary-50 rounded-lg">
+              <summary class="pwb-faq-item__question p-4 font-semibold text-pwb-secondary-900 cursor-pointer hover:bg-pwb-secondary-100 rounded-lg">
+                {{ page_part["faq_2_question"]["content"] }}
+              </summary>
+              <div class="pwb-faq-item__answer p-4 pt-0 text-pwb-secondary-600">
+                {{ page_part["faq_2_answer"]["content"] }}
+              </div>
+            </details>
+          {% endif %}
+          {% if page_part["faq_3_question"]["content"] %}
+            <details class="pwb-faq-item bg-pwb-secondary-50 rounded-lg">
+              <summary class="pwb-faq-item__question p-4 font-semibold text-pwb-secondary-900 cursor-pointer hover:bg-pwb-secondary-100 rounded-lg">
+                {{ page_part["faq_3_question"]["content"] }}
+              </summary>
+              <div class="pwb-faq-item__answer p-4 pt-0 text-pwb-secondary-600">
+                {{ page_part["faq_3_answer"]["content"] }}
+              </div>
+            </details>
+          {% endif %}
+          {% if page_part["faq_4_question"]["content"] %}
+            <details class="pwb-faq-item bg-pwb-secondary-50 rounded-lg">
+              <summary class="pwb-faq-item__question p-4 font-semibold text-pwb-secondary-900 cursor-pointer hover:bg-pwb-secondary-100 rounded-lg">
+                {{ page_part["faq_4_question"]["content"] }}
+              </summary>
+              <div class="pwb-faq-item__answer p-4 pt-0 text-pwb-secondary-600">
+                {{ page_part["faq_4_answer"]["content"] }}
+              </div>
+            </details>
+          {% endif %}
+          {% if page_part["faq_5_question"]["content"] %}
+            <details class="pwb-faq-item bg-pwb-secondary-50 rounded-lg">
+              <summary class="pwb-faq-item__question p-4 font-semibold text-pwb-secondary-900 cursor-pointer hover:bg-pwb-secondary-100 rounded-lg">
+                {{ page_part["faq_5_question"]["content"] }}
+              </summary>
+              <div class="pwb-faq-item__answer p-4 pt-0 text-pwb-secondary-600">
+                {{ page_part["faq_5_answer"]["content"] }}
+              </div>
+            </details>
+          {% endif %}
+          {% if page_part["faq_6_question"]["content"] %}
+            <details class="pwb-faq-item bg-pwb-secondary-50 rounded-lg">
+              <summary class="pwb-faq-item__question p-4 font-semibold text-pwb-secondary-900 cursor-pointer hover:bg-pwb-secondary-100 rounded-lg">
+                {{ page_part["faq_6_question"]["content"] }}
+              </summary>
+              <div class="pwb-faq-item__answer p-4 pt-0 text-pwb-secondary-600">
+                {{ page_part["faq_6_answer"]["content"] }}
+              </div>
+            </details>
+          {% endif %}
+        </div>
+      </div>
+    </section>

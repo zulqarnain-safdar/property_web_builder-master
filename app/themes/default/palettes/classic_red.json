@@ -1,0 +1,33 @@
+{
+  "id": "classic_red",
+  "name": "Classic Red",
+  "description": "Bold and energetic with professional appeal",
+  "preview_colors": [
+    "#e91b23",
+    "#2c3e50",
+    "#3498db"
+  ],
+  "is_default": true,
+  "colors": {
+    "primary_color": "#e91b23",
+    "secondary_color": "#2c3e50",
+    "accent_color": "#3498db",
+    "background_color": "#ffffff",
+    "text_color": "#333333",
+    "header_background_color": "#ffffff",
+    "header_text_color": "#333333",
+    "footer_background_color": "#2c3e50",
+    "footer_text_color": "#ffffff",
+    "link_color": "#e91b23",
+    "card_background_color": "#ffffff",
+    "card_text_color": "#333333",
+    "border_color": "#e5e7eb",
+    "surface_color": "#ffffff",
+    "surface_alt_color": "#f9fafb",
+    "success_color": "#10b981",
+    "warning_color": "#f59e0b",
+    "error_color": "#ef4444",
+    "muted_text_color": "#6b7280",
+    "link_hover_color": "#c30000"
+  }
+}

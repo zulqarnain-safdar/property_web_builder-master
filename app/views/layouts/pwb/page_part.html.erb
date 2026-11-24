@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= @page&.page_title %> - <%= @page_part_key %></title>
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <%# Fonts (Vollkorn, Open Sans) loaded via Fontsource in Tailwind CSS %>
+    <%
+      theme_name = @current_website&.theme_name || 'default'
+      tailwind_file = "tailwind-#{theme_name}"
+      # All themes now use Tailwind CSS
+    %>
+        <%= stylesheet_link_tag tailwind_file, "data-turbo-track": "reload" %>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.5.2/flowbite.min.css" rel="stylesheet" />
+    <%
+      case theme_name
+      when 'brisbane'
+    %>
+        <%= stylesheet_link_tag "brisbane_theme", media: "all" %>
+    <% else %>
+        <%= stylesheet_link_tag "pwb/themes/default", media: "all" %>
+    <% end %>
+    <style>
+      <%= custom_styles(theme_name) %>
+    </style>
+    <%= javascript_include_tag "pwb/application", async: false %>
+    <%= csrf_meta_tags %>
+  </head>
+  <body class="tnt-body page-part-body <%= @current_website&.theme_name || 'default' %>-theme">
+    <div class="page-part-container">
+      <%= yield %>
+    </div>
+  </body>
+</html>

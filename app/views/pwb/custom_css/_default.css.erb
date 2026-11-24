@@ -1,0 +1,744 @@
+/* Custom CSS for Default Theme (Tailwind/Flowbite) */
+/* This file is rendered as a partial by the custom_styles helper */
+
+<%# Include base CSS variables with dark mode support %>
+<%= render partial: '/pwb/custom_css/base_variables', locals: {} %>
+
+:root {
+  --primary-color: var(--pwb-primary-color);
+  --secondary-color: var(--pwb-secondary-color);
+  --services-bg-color: var(--pwb-surface-alt-color);
+  --services-card-bg: var(--pwb-card-background-color);
+  --services-text-color: var(--pwb-text-color);
+  --font-primary: <%= @current_website.style_variables['font_primary'] || 'Open Sans' %>;
+  --font-secondary: <%= @current_website.style_variables['font_secondary'] || 'Vollkorn' %>;
+  --border-radius: <%= @current_website.style_variables['border_radius'] || '0.5rem' %>;
+  --container-padding: <%= @current_website.style_variables['container_padding'] || '1rem' %>;
+}
+
+.default-theme {
+  /* Add any theme-specific overrides here that need access to Ruby variables */
+}
+
+/* Services Section Styles */
+.services-section-wrapper {
+  background-color: var(--services-bg-color);
+  padding: 5rem 1rem;
+}
+
+.services-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.service-card {
+  background: var(--services-card-bg);
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  padding: 2.5rem;
+  flex: 1 1 300px;
+  text-align: center;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.service-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.service-icon-wrapper {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(59, 130, 246, 0.1); /* Light blue background based on default primary */
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.service-icon-wrapper i {
+  font-size: 2.5rem;
+  color: var(--primary-color);
+}
+
+.service-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--services-text-color);
+}
+
+.service-content {
+  color: #4b5563;
+  line-height: 1.7;
+  font-size: 1.05rem;
+}
+
+/* Specific card tweaks if needed */
+.service-card-a {}
+.service-card-b {}
+.service-card-c {}
+
+/* Hero Section Styles */
+.hero-section {
+  position: relative;
+  background-color: #111827; /* bg-gray-900 */
+  height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.hero-bg-wrapper {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.hero-bg-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.55; /* Reduced from 0.6 for better text contrast (WCAG AA) */
+}
+
+.hero-bg-placeholder {
+  width: 100%;
+  height: 100%;
+  background-color: #1f2937; /* bg-gray-800 */
+  opacity: 0.6;
+}
+
+.hero-content-wrapper {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  max-width: 56rem; /* max-w-4xl */
+  margin-left: auto;
+  margin-right: auto;
+  /* Prevent CLS by reserving minimum height for hero content */
+  min-height: 200px;
+}
+
+.hero-title {
+  font-size: 2.25rem; /* text-4xl */
+  font-weight: 800; /* font-extrabold */
+  letter-spacing: -0.025em; /* tracking-tight */
+  color: white;
+  text-shadow: 0 10px 15px rgba(0, 0, 0, 0.1); /* drop-shadow-lg */
+}
+
+@media (min-width: 640px) {
+  .hero-title {
+    font-size: 3rem; /* sm:text-5xl */
+  }
+}
+
+@media (min-width: 768px) {
+  .hero-title {
+    font-size: 3.75rem; /* md:text-6xl */
+  }
+}
+
+.hero-subtitle {
+  margin-top: 1.5rem; /* mt-6 */
+  font-size: 1.25rem; /* text-xl */
+  color: #ffffff; /* White for maximum contrast (was #f3f4f6) */
+  text-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Stronger shadow for readability */
+}
+
+/* Hero overlay for better text contrast (WCAG AA: 4.5:1 minimum) */
+.hero-bg-wrapper::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1;
+}
+
+/* Ensure hero content is above overlay */
+.hero-content-wrapper {
+  position: relative;
+  z-index: 10;
+}
+
+/* Styling for the list-carousel content inside hero-subtitle */
+.hero-subtitle .list-carousel {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.hero-subtitle .list-carousel li {
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.hero-subtitle .list-carousel li .hero-check-icon {
+  display: inline-flex;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-right: 0.35rem;
+  color: var(--primary-color);
+  background-color: currentColor;
+  mask: url('<%= asset_path("icons/check.svg") %>') center / contain no-repeat;
+  -webkit-mask: url('<%= asset_path("icons/check.svg") %>') center / contain no-repeat;
+}
+
+/* Our Agency Section */
+.our-agency-section {
+  padding: 4rem 0;
+  background-color: #fff;
+}
+
+.agency-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.agency-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+@media (min-width: 768px) {
+  .agency-content-wrapper {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.agency-text-column,
+.agency-image-column {
+  flex: 1;
+}
+
+.agency-title-wrapper {
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.agency-title {
+  font-size: 2rem;
+  font-weight: 800;
+  text-align: left;
+  color: #1f2937; /* gray-800 */
+  margin: 0;
+}
+
+.agency-title span {
+  position: relative;
+  display: inline-block;
+}
+
+/* Optional underline effect */
+.agency-title span::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  width: 60px;
+  height: 4px;
+  background-color: var(--primary-color);
+}
+
+.agency-description {
+  font-size: 1.125rem;
+  line-height: 1.8;
+  color: #4b5563; /* gray-600 */
+}
+
+.agency-image {
+  width: 100%;
+  height: auto;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease;
+}
+
+.agency-image:hover {
+  transform: scale(1.02);
+}
+
+/* Contact Us Component */
+.contact-us-component {
+  background-color: #ffffff;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.contact-us-container {
+  width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 1rem;
+  padding-left: 1rem;
+}
+
+@media (min-width: 640px) {
+  .contact-us-container {
+    max-width: 640px;
+  }
+}
+
+@media (min-width: 768px) {
+  .contact-us-container {
+    max-width: 768px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .contact-us-container {
+    max-width: 1024px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .contact-us-container {
+    max-width: 1280px;
+  }
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 2rem;
+}
+
+@media (min-width: 1024px) {
+  .contact-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.contact-form-column {
+  @media (min-width: 1024px) {
+    grid-column: span 2 / span 2;
+  }
+}
+
+.contact-info-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* space-y-6 */
+}
+
+.contact-map-wrapper {
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+}
+
+/* Search Component */
+.search-component {
+  background-color: #1f2937; /* bg-gray-800 */
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.search-container {
+  width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 1rem;
+  padding-left: 1rem;
+}
+
+@media (min-width: 640px) {
+  .search-container {
+    max-width: 640px;
+  }
+}
+
+@media (min-width: 768px) {
+  .search-container {
+    max-width: 768px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .search-container {
+    max-width: 1024px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .search-container {
+    max-width: 1280px;
+  }
+}
+
+.search-wrapper {
+  max-width: 56rem; /* max-w-4xl */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Footer Styles */
+.site-footer {
+  background-color: #1f2937; /* bg-gray-800 */
+  color: #ffffff;
+  margin-top: auto;
+}
+
+.footer-container {
+  width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 1rem;
+  padding-left: 1rem;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+@media (min-width: 640px) { .footer-container { max-width: 640px; } }
+@media (min-width: 768px) { .footer-container { max-width: 768px; } }
+@media (min-width: 1024px) { .footer-container { max-width: 1024px; } }
+@media (min-width: 1280px) { .footer-container { max-width: 1280px; } }
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .footer-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.footer-company-name {
+  font-size: 1.125rem; /* text-lg */
+  font-weight: 600; /* font-semibold */
+  margin-bottom: 1rem;
+}
+
+.footer-contact-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem; /* space-y-2 */
+  color: #e5e7eb; /* text-gray-200 - improved contrast (was #d1d5db) */
+}
+
+.footer-contact-item {
+  display: flex;
+  align-items: center;
+}
+
+.footer-icon {
+  margin-right: 0.75rem;
+  color: #60a5fa; /* text-blue-400 */
+}
+
+.footer-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.footer-link:hover {
+  color: #ffffff;
+}
+
+.footer-social-wrapper {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.footer-social-icons {
+  display: flex;
+  gap: 1rem; /* space-x-4 */
+}
+
+.social-icon-link {
+  color: #d1d5db; /* text-gray-300 */
+  transition: transform 0.2s;
+}
+
+.social-icon-link:hover {
+  color: #ffffff;
+  transform: scale(1.25);
+}
+
+.footer-extra-content {
+  color: #d1d5db; /* text-gray-300 */
+}
+
+.footer-divider {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  border-top: 1px solid #374151; /* border-gray-700 */
+}
+
+.footer-bottom-bar {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 768px) {
+  .footer-bottom-bar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 0.875rem; /* text-sm */
+  color: #d1d5db; /* text-gray-300 - improved contrast (was #9ca3af, now 7.5:1) */
+}
+
+.footer-bottom-link {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-bottom-link:hover {
+  color: #ffffff;
+}
+
+.footer-copyright {
+  margin-top: 1rem;
+  font-size: 0.875rem; /* text-sm */
+  color: #d1d5db; /* text-gray-300 - improved contrast (was #9ca3af) */
+}
+
+@media (min-width: 768px) {
+  .footer-copyright {
+    margin-top: 0;
+  }
+}
+
+.footer-brand-link {
+  color: #60a5fa; /* text-blue-400 */
+  text-decoration: none;
+}
+
+.footer-brand-link:hover {
+  color: #93c5fd; /* text-blue-300 */
+}
+
+/* Generic Content Container */
+.content-container {
+  width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 1rem;
+  padding-left: 1rem;
+}
+
+@media (min-width: 640px) { .content-container { max-width: 640px; } }
+@media (min-width: 768px) { .content-container { max-width: 768px; } }
+@media (min-width: 1024px) { .content-container { max-width: 1024px; } }
+@media (min-width: 1280px) { .content-container { max-width: 1280px; } }
+
+/* ============================================
+   DARK MODE SUPPORT
+   ============================================ */
+
+<%
+  dark_colors = @current_website&.dark_mode_enabled? ? (@current_website.dark_mode_colors || {}) : {}
+  dark_bg = dark_colors["background_color"] || "#121212"
+  dark_text = dark_colors["text_color"] || "#e8e8e8"
+  dark_primary = dark_colors["primary_color"] || "#60a5fa"
+  dark_secondary = dark_colors["secondary_color"] || "#93c5fd"
+%>
+
+<% if @current_website&.dark_mode_enabled? %>
+/* Auto dark mode - respects system preference */
+@media (prefers-color-scheme: dark) {
+  .pwb-auto-dark.default-theme,
+  .pwb-auto-dark .default-theme {
+    --services-bg-color: <%= dark_bg %>;
+    --services-card-bg: color-mix(in srgb, <%= dark_bg %> 85%, white);
+    --services-text-color: <%= dark_text %>;
+    background-color: <%= dark_bg %>;
+    color: <%= dark_text %>;
+  }
+}
+
+/* Forced dark mode - always dark */
+.pwb-dark.default-theme,
+.pwb-dark .default-theme,
+html.pwb-dark .default-theme {
+  --services-bg-color: <%= dark_bg %>;
+  --services-card-bg: color-mix(in srgb, <%= dark_bg %> 85%, white);
+  --services-text-color: <%= dark_text %>;
+  background-color: <%= dark_bg %>;
+  color: <%= dark_text %>;
+}
+
+/* Service cards dark mode */
+.pwb-dark .service-card,
+html.pwb-dark .service-card {
+  background: color-mix(in srgb, <%= dark_bg %> 85%, white);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.pwb-dark .service-content,
+html.pwb-dark .service-content {
+  color: color-mix(in srgb, <%= dark_text %> 80%, white);
+}
+
+/* Agency section dark mode */
+.pwb-dark .our-agency-section,
+html.pwb-dark .our-agency-section {
+  background-color: <%= dark_bg %>;
+}
+
+.pwb-dark .agency-title,
+html.pwb-dark .agency-title {
+  color: <%= dark_text %>;
+}
+
+.pwb-dark .agency-description,
+html.pwb-dark .agency-description {
+  color: color-mix(in srgb, <%= dark_text %> 80%, white);
+}
+
+/* Contact section dark mode */
+.pwb-dark .contact-us-component,
+html.pwb-dark .contact-us-component {
+  background-color: <%= dark_bg %>;
+}
+
+.pwb-dark .contact-map-wrapper,
+html.pwb-dark .contact-map-wrapper {
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Tailwind utility class overrides for dark mode */
+.pwb-dark .bg-white,
+html.pwb-dark .bg-white {
+  background-color: color-mix(in srgb, <%= dark_bg %> 85%, white) !important;
+}
+
+.pwb-dark .bg-gray-50,
+.pwb-dark .bg-gray-100,
+html.pwb-dark .bg-gray-50,
+html.pwb-dark .bg-gray-100 {
+  background-color: <%= dark_bg %> !important;
+}
+
+.pwb-dark .text-gray-900,
+.pwb-dark .text-gray-800,
+.pwb-dark .text-gray-700,
+html.pwb-dark .text-gray-900,
+html.pwb-dark .text-gray-800,
+html.pwb-dark .text-gray-700 {
+  color: <%= dark_text %> !important;
+}
+
+.pwb-dark .text-gray-600,
+.pwb-dark .text-gray-500,
+html.pwb-dark .text-gray-600,
+html.pwb-dark .text-gray-500 {
+  color: color-mix(in srgb, <%= dark_text %> 80%, white) !important;
+}
+
+.pwb-dark .border-gray-200,
+.pwb-dark .border-gray-300,
+html.pwb-dark .border-gray-200,
+html.pwb-dark .border-gray-300 {
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Card backgrounds */
+.pwb-dark .card,
+.pwb-dark [class*="card"],
+html.pwb-dark .card,
+html.pwb-dark [class*="card"] {
+  background: color-mix(in srgb, <%= dark_bg %> 85%, white);
+}
+
+/* Form inputs dark mode */
+.pwb-dark input,
+.pwb-dark select,
+.pwb-dark textarea,
+html.pwb-dark input,
+html.pwb-dark select,
+html.pwb-dark textarea {
+  background-color: color-mix(in srgb, <%= dark_bg %> 90%, white);
+  color: <%= dark_text %>;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.pwb-dark input::placeholder,
+.pwb-dark textarea::placeholder,
+html.pwb-dark input::placeholder,
+html.pwb-dark textarea::placeholder {
+  color: color-mix(in srgb, <%= dark_text %> 60%, transparent);
+}
+<% end %>
+
+/* ============================================
+   WCAG AA CONTRAST FIXES
+   ============================================ */
+
+/* Outline/Secondary buttons on dark backgrounds (hero, etc.) need visible background */
+.hero-section .btn-outline,
+.hero-section .btn-secondary,
+.hero-content-wrapper .btn-outline,
+.hero-content-wrapper .btn-secondary {
+  background: rgba(0, 0, 0, 0.35);
+  border-color: #ffffff;
+  color: #ffffff;
+}
+
+.hero-section .btn-outline:hover,
+.hero-section .btn-secondary:hover,
+.hero-content-wrapper .btn-outline:hover,
+.hero-content-wrapper .btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.95);
+  color: #1f2937;
+  border-color: #ffffff;
+}
+
+/* Testimonial text needs better contrast */
+.testimonial-text,
+.testimonial-content,
+.review-text,
+.quote-text {
+  color: #374151; /* text-gray-700 - 10.7:1 ratio on white (was #6B7280 at 4.1:1) */
+}
+
+/* Service content text - ensure good contrast */
+.service-content,
+.service-description {
+  color: #4b5563; /* text-gray-600 - 6.3:1 ratio on white */
+}
+
+/* Footer extra content */
+.footer-extra-content {
+  color: #e5e7eb; /* text-gray-200 - improved from #d1d5db */
+}
+
+/* Social icon links need better contrast */
+.social-icon-link {
+  color: #e5e7eb; /* text-gray-200 - improved contrast */
+}
+

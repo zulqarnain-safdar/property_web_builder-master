@@ -1,0 +1,66 @@
+<!-- Brisbane Luxury Theme - Property Listing Section -->
+<section class="section-luxury bg-luxury-pearl py-16">
+  <div class="container mx-auto px-6">
+    <!-- Section Header with Luxury Styling -->
+    <div class="text-center mb-12">
+      <span class="section-subtitle"><%= rent_or_sale == 'for_sale' ? 'Featured Listings' : 'Available Rentals' %></span>
+      <h3 class="section-title font-serif"><%= I18n.t title_key %></h3>
+      <div class="divider-gold"></div>
+    </div>
+
+    <!-- Property Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <% properties.each_with_index do |property, index| %>
+        <div class="card-luxury bg-white overflow-hidden group animate-on-scroll">
+          <!-- Property Image with Overlay -->
+          <%= link_to property.contextual_show_path(rent_or_sale), class: "block relative overflow-hidden", "aria-label": t("property.view_details_for", title: property.title.presence || property.reference, default: "View details for %{title}") do %>
+            <div class="property-image aspect-[4/3]">
+              <%= opt_image_tag((property.ordered_photo 1), quality: "auto",
+                height: 350, crop: "fill", class: "w-full h-full object-cover transition-transform duration-700 group-hover:scale-105",
+                loading: "lazy", use_picture: true,
+                sizes: "(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw",
+                alt: property.title.presence || "Property listing") %>
+              <!-- Subtle Gradient Overlay -->
+              <div class="absolute inset-0 bg-gradient-to-t from-luxury-navy/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            </div>
+          <% end %>
+
+          <!-- Property Details -->
+          <div class="p-6">
+            <h2 class="font-serif text-xl text-luxury-navy mb-2 line-clamp-1">
+              <%= link_to property.title, property.contextual_show_path(rent_or_sale),
+                  class: "hover:text-luxury-gold transition-colors duration-300" %>
+            </h2>
+            <p class="property-price text-luxury-gold mb-4">
+              <%= property_price(property, rent_or_sale) %>
+            </p>
+          </div>
+
+          <!-- Property Features -->
+          <div class="px-6 pb-6 pt-4 border-t border-luxury-navy/10">
+            <ul class="flex items-center justify-start space-x-6 text-sm text-luxury-charcoal/70" aria-label="<%= t('pwb.accessibility.property_features', default: 'Property features') %>">
+              <li class="flex items-center" aria-label="<%= t('pwb.accessibility.bedrooms_count', count: property.count_bedrooms, default: '%{count} bedrooms') %>">
+                <%= icon(:bed, size: :sm, class: "mr-2 text-luxury-gold", aria_hidden: true) %>
+                <span><%= format_bedroom_count(property.count_bedrooms) %></span>
+              </li>
+              <li class="flex items-center" aria-label="<%= t('pwb.accessibility.bathrooms_count', count: property.count_bathrooms, default: '%{count} bathrooms') %>">
+                <%= icon(:shower, size: :sm, class: "mr-2 text-luxury-gold", aria_hidden: true) %>
+                <span><%= format_bathroom_count(property.count_bathrooms) %></span>
+              </li>
+              <li class="flex items-center" aria-label="<%= t('pwb.accessibility.area_size', area: property.constructed_area, unit: area_unit(property), default: '%{area} %{unit}') %>">
+                <%= icon(:fullscreen, size: :sm, class: "mr-2 text-luxury-gold", aria_hidden: true) %>
+                <span><%= property.constructed_area %><%= area_unit property %></span>
+              </li>
+              <% if property.has_garage %>
+                <li class="flex items-center" aria-label="<%= t('pwb.accessibility.garages_count', count: property.count_garages, default: '%{count} garage spaces') %>">
+                  <%= icon(:directions_car, size: :sm, class: "mr-2 text-luxury-gold", aria_hidden: true) %>
+                  <span><%= property.count_garages %></span>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</section>

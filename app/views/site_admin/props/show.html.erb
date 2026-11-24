@@ -1,0 +1,249 @@
+<div class="max-w-4xl mx-auto">
+  <div class="mb-6">
+    <%= link_to '&larr; Back to Properties'.html_safe, site_admin_props_path, class: 'text-blue-600 hover:text-blue-800' %>
+  </div>
+
+  <div class="bg-white rounded-lg shadow overflow-hidden">
+    <!-- Hero Thumbnail Section -->
+    <% primary_photo = @prop.prop_photos.first %>
+    <% if primary_photo && photo_has_image?(primary_photo) %>
+      <div class="relative h-64 bg-gray-100">
+        <%= photo_image_tag primary_photo, variant_options: { resize_to_limit: [800, 400] }, class: "w-full h-full object-cover" %>
+        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
+          <div class="flex items-end justify-between">
+            <div>
+              <h1 class="text-2xl font-bold text-white drop-shadow-lg">
+                <%= @prop.title.presence || @prop.reference || 'Property Details' %>
+              </h1>
+              <% if @prop.reference.present? %>
+                <p class="text-sm text-white/80">Ref: <%= @prop.reference %></p>
+              <% end %>
+            </div>
+            <% if @prop.prop_photos.count > 1 %>
+              <%= link_to edit_photos_site_admin_prop_path(@prop), class: 'inline-flex items-center px-3 py-1.5 bg-white/90 backdrop-blur-sm text-gray-800 text-sm font-medium rounded-lg hover:bg-white transition-colors' do %>
+                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                <%= @prop.prop_photos.count %> photos
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% else %>
+      <!-- No Photo Placeholder -->
+      <div class="relative h-48 bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
+        <div class="text-center">
+          <svg class="w-16 h-16 mx-auto text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+          </svg>
+          <p class="mt-2 text-sm text-gray-500">No photos yet</p>
+          <%= link_to 'Add Photos', edit_photos_site_admin_prop_path(@prop), class: 'mt-2 inline-flex items-center px-3 py-1.5 bg-white text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 shadow-sm' %>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+      <div>
+        <% unless primary_photo && photo_has_image?(primary_photo) %>
+          <h1 class="text-2xl font-bold text-gray-900">
+            <%= @prop.title.presence || @prop.reference || 'Property Details' %>
+          </h1>
+          <% if @prop.reference.present? %>
+            <p class="text-sm text-gray-500">Ref: <%= @prop.reference %></p>
+          <% end %>
+        <% end %>
+        <!-- View on Main Site Links -->
+        <% if @prop.visible && (@prop.for_sale || @prop.for_rent) %>
+          <div class="<%= 'mt-2' unless primary_photo && photo_has_image?(primary_photo) %> flex flex-wrap items-center gap-2 text-sm">
+            <span class="text-gray-500">View on site:</span>
+            <% if @prop.for_sale %>
+              <%= link_to @prop.contextual_show_path('for_sale'), target: '_blank', class: 'inline-flex items-center text-blue-600 hover:text-blue-800 hover:underline' do %>
+                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                </svg>
+                For Sale
+              <% end %>
+            <% end %>
+            <% if @prop.for_rent %>
+              <%= link_to @prop.contextual_show_path('for_rent'), target: '_blank', class: 'inline-flex items-center text-blue-600 hover:text-blue-800 hover:underline' do %>
+                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                </svg>
+                For Rent
+              <% end %>
+            <% end %>
+          </div>
+        <% elsif !@prop.visible %>
+          <p class="<%= 'mt-2' unless primary_photo && photo_has_image?(primary_photo) %> text-sm text-gray-500 italic">
+            Property is hidden - make it visible to view on the main site
+          </p>
+        <% end %>
+      </div>
+      <%= link_to 'Edit Property', edit_site_admin_prop_path(@prop), class: 'px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700' %>
+    </div>
+
+    <div class="p-6">
+      <!-- Listing Status Badges -->
+      <div class="mb-6 flex flex-wrap gap-2">
+        <% if @prop.for_sale %>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+            For Sale
+            <% if @prop.price_sale_current_cents.to_i > 0 %>
+              - <%= number_to_currency(@prop.price_sale_current_cents / 100.0, unit: @prop.price_sale_current_currency || 'EUR') %>
+            <% end %>
+          </span>
+        <% end %>
+        <% if @prop.for_rent %>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
+            For Rent
+            <% if @prop.price_rental_monthly_current_cents.to_i > 0 %>
+              - <%= number_to_currency(@prop.price_rental_monthly_current_cents / 100.0, unit: @prop.price_rental_monthly_current_currency || 'EUR') %>/month
+            <% end %>
+          </span>
+        <% end %>
+        <% if @prop.visible %>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+            Visible
+          </span>
+        <% else %>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-600">
+            Hidden
+          </span>
+        <% end %>
+      </div>
+
+      <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+        <!-- Property Type & State -->
+        <% if @prop.prop_type_key.present? %>
+          <%
+            type_field_key = @field_keys_by_key[@prop.prop_type_key]
+            type_label = type_field_key&.display_label || @prop.prop_type_key.to_s.split('.').last&.humanize&.titleize || @prop.prop_type_key
+          %>
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Property Type</dt>
+            <dd class="mt-1 text-sm text-gray-900"><%= type_label %></dd>
+          </div>
+        <% end %>
+
+        <% if @prop.prop_state_key.present? %>
+          <%
+            state_field_key = @field_keys_by_key[@prop.prop_state_key]
+            state_label = state_field_key&.display_label || @prop.prop_state_key.to_s.split('.').last&.humanize&.titleize || @prop.prop_state_key
+          %>
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Property State</dt>
+            <dd class="mt-1 text-sm text-gray-900"><%= state_label %></dd>
+          </div>
+        <% end %>
+
+        <!-- Room Counts -->
+        <% if @prop.count_bedrooms.to_i > 0 %>
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Bedrooms</dt>
+            <dd class="mt-1 text-sm text-gray-900"><%= @prop.count_bedrooms %></dd>
+          </div>
+        <% end %>
+
+        <% if @prop.count_bathrooms.to_f > 0 %>
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Bathrooms</dt>
+            <dd class="mt-1 text-sm text-gray-900"><%= @prop.count_bathrooms %></dd>
+          </div>
+        <% end %>
+
+        <!-- Areas -->
+        <% if @prop.constructed_area.to_f > 0 %>
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Constructed Area</dt>
+            <dd class="mt-1 text-sm text-gray-900"><%= number_with_delimiter(@prop.constructed_area) %> m<sup>2</sup></dd>
+          </div>
+        <% end %>
+
+        <% if @prop.plot_area.to_f > 0 %>
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Plot Area</dt>
+            <dd class="mt-1 text-sm text-gray-900"><%= number_with_delimiter(@prop.plot_area) %> m<sup>2</sup></dd>
+          </div>
+        <% end %>
+
+        <!-- Location -->
+        <% if @prop.location.present? %>
+          <div class="sm:col-span-2">
+            <dt class="text-sm font-medium text-gray-500">Location</dt>
+            <dd class="mt-1 text-sm text-gray-900"><%= @prop.location %></dd>
+          </div>
+        <% end %>
+
+        <!-- Timestamps -->
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Created</dt>
+          <dd class="mt-1 text-sm text-gray-900"><%= format_date(@prop.created_at) %></dd>
+        </div>
+
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Updated</dt>
+          <dd class="mt-1 text-sm text-gray-900"><%= format_date(@prop.updated_at) %></dd>
+        </div>
+
+        <!-- Description -->
+        <% if @prop.description.present? %>
+          <div class="sm:col-span-2">
+            <dt class="text-sm font-medium text-gray-500">Description</dt>
+            <dd class="mt-1 text-sm text-gray-900 whitespace-pre-wrap"><%= @prop.description %></dd>
+          </div>
+        <% end %>
+      </dl>
+
+      <!-- Labels/Features -->
+      <% if @prop.features.any? %>
+        <div class="mt-8 pt-6 border-t border-gray-200">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-medium text-gray-900">Labels</h3>
+            <%= link_to 'Edit Labels', edit_labels_site_admin_prop_path(@prop), class: 'text-sm text-blue-600 hover:text-blue-800' %>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <% @prop.features.each do |feature| %>
+              <%
+                next if feature.feature_key.blank?
+                # Look up FieldKey from pre-loaded hash to avoid N+1 queries
+                field_key = @field_keys_by_key[feature.feature_key]
+                label = field_key&.display_label || feature.feature_key.to_s.split('.').last&.humanize&.titleize || feature.feature_key
+              %>
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-700">
+                <%= label %>
+              </span>
+            <% end %>
+          </div>
+        </div>
+      <% else %>
+        <div class="mt-8 pt-6 border-t border-gray-200">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-medium text-gray-900">Labels</h3>
+            <%= link_to 'Add Labels', edit_labels_site_admin_prop_path(@prop), class: 'text-sm text-blue-600 hover:text-blue-800' %>
+          </div>
+          <p class="text-sm text-gray-500">No labels assigned to this property.</p>
+        </div>
+      <% end %>
+
+      <!-- Photos Preview -->
+      <% if @prop.prop_photos.any? %>
+        <div class="mt-8 pt-6 border-t border-gray-200">
+          <h3 class="text-lg font-medium text-gray-900 mb-4">Photos (<%= @prop.prop_photos.count %>)</h3>
+          <div class="grid grid-cols-4 gap-4">
+            <% @prop.prop_photos.limit(4).each do |photo| %>
+              <% if photo_has_image?(photo) %>
+                <%= photo_image_tag photo, variant_options: { resize_to_limit: [150, 150] }, class: "w-full h-24 object-cover rounded-lg" %>
+              <% end %>
+            <% end %>
+          </div>
+          <% if @prop.prop_photos.count > 4 %>
+            <p class="mt-2 text-sm text-gray-500">
+              <%= link_to "View all #{@prop.prop_photos.count} photos", edit_photos_site_admin_prop_path(@prop), class: 'text-blue-600 hover:text-blue-800' %>
+            </p>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

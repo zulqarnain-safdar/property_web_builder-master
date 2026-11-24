@@ -1,0 +1,28 @@
+{
+  "name": "pwb-listing-video",
+  "version": "1.0.0",
+  "description": "Remotion-based listing video generator for PropertyWebBuilder",
+  "scripts": {
+    "dev": "remotion studio",
+    "build": "remotion bundle",
+    "render": "remotion render ListingVideo out/video.mp4",
+    "render:still": "remotion still ListingVideo out/thumbnail.png",
+    "upgrade": "remotion upgrade"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.489",
+    "@remotion/media": "4.0.489",
+    "@remotion/transitions": "4.0.489",
+    "@remotion/zod-types": "4.0.489",
+    "express": "^5.2.1",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "remotion": "4.0.489",
+    "zod": "4.3.6"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "^5.9.3"
+  }
+}

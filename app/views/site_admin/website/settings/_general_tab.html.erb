@@ -1,0 +1,266 @@
+<div class="p-6">
+  <h2 class="text-xl font-semibold text-gray-900 mb-6">General Settings</h2>
+
+  <%= form_with model: @website, url: site_admin_website_settings_path, method: :patch, local: true, class: "space-y-6" do |f| %>
+    <input type="hidden" name="tab" value="general">
+
+    <!-- Default Locale -->
+    <div>
+      <label for="default_client_locale" class="block text-sm font-medium text-gray-700 mb-1">
+        Default Language
+      </label>
+      <%= f.select :default_client_locale,
+          options_for_select(
+            Pwb::Config.locale_options_for_select,
+            @website.default_client_locale
+          ),
+          {},
+          id: "default_locale_select",
+          class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+      <p class="mt-1 text-sm text-gray-500">The default language for visitors (must be one of the supported languages)</p>
+    </div>
+
+    <!-- Supported Languages -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">
+        Supported Languages
+      </label>
+      <p class="text-sm text-gray-500 mb-3">Select additional languages your website will support. Visitors can switch between these languages.</p>
+
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+        <%
+          # Uses Pwb::Config for centralized locale configuration
+          current_locales = @website.supported_locales || []
+        %>
+        <% Pwb::Config::SUPPORTED_LOCALES.each do |locale_code, label| %>
+          <% locale_str = locale_code.to_s %>
+          <label class="flex items-center p-2 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+            <input type="checkbox"
+                   name="pwb_website[supported_locales][]"
+                   value="<%= locale_str %>"
+                   data-locale="<%= locale_str %>"
+                   <%= 'checked' if current_locales.include?(locale_str) || current_locales.include?(locale_code) %>
+                   class="supported-locale-checkbox h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+            <span class="ml-2 text-sm text-gray-700"><%= label %></span>
+          </label>
+        <% end %>
+      </div>
+
+      <!-- Hidden field to ensure empty array is submitted when no checkboxes selected -->
+      <input type="hidden" name="pwb_website[supported_locales][]" value="">
+
+      <p class="mt-2 text-sm text-gray-500">
+        <strong>Currently supported:</strong>
+        <%= current_locales.any? ? current_locales.join(', ') : 'None selected' %>
+      </p>
+    </div>
+
+    <!-- Default Currency - PERMANENT SETTING (locked after initial setup) -->
+    <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+      <div class="flex items-start">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
+        </div>
+        <div class="ml-3 flex-1">
+          <label class="block text-sm font-medium text-gray-700">
+            Primary Currency
+            <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-200 text-gray-600">
+              Locked
+            </span>
+          </label>
+          <div class="mt-2 flex items-center">
+            <span class="text-lg font-semibold text-gray-900">
+              <%= Pwb::Config::CURRENCIES[@website.default_currency]&.dig(:symbol) || @website.default_currency %>
+            </span>
+            <span class="ml-2 text-gray-600">
+              <%= Pwb::Config::CURRENCIES[@website.default_currency]&.dig(:label) || @website.default_currency %>
+              (<%= @website.default_currency %>)
+            </span>
+          </div>
+          <p class="mt-2 text-sm text-gray-500">
+            <svg class="inline h-4 w-4 text-amber-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+            </svg>
+            This setting was chosen during initial setup and cannot be changed.
+            All property prices are stored in this currency.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Available Currencies for Display -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">
+        Additional Display Currencies
+      </label>
+      <p class="text-sm text-gray-500 mb-3">
+        Select additional currencies visitors can view prices in. When selected, prices will show
+        conversion alongside the original price (e.g., "€250,000 (~$270,000 USD)").
+      </p>
+
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+        <%
+          current_currencies = @website.available_currencies || []
+          default_currency = @website.default_currency || 'EUR'
+        %>
+        <% Pwb::Config::COMMON_CURRENCIES.each do |currency_code, label| %>
+          <% currency_str = currency_code.to_s %>
+          <% is_default = currency_str == default_currency %>
+          <label class="flex items-center p-2 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer <%= 'opacity-50' if is_default %>">
+            <input type="checkbox"
+                   name="pwb_website[available_currencies][]"
+                   value="<%= currency_str %>"
+                   <%= 'checked disabled' if is_default %>
+                   <%= 'checked' if current_currencies.include?(currency_str) && !is_default %>
+                   class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+            <span class="ml-2 text-sm text-gray-700">
+              <%= label %>
+              <% if is_default %>
+                <span class="text-xs text-gray-400">(default)</span>
+              <% end %>
+            </span>
+          </label>
+        <% end %>
+      </div>
+
+      <!-- Hidden field to ensure empty array is submitted when no checkboxes selected -->
+      <input type="hidden" name="pwb_website[available_currencies][]" value="">
+
+      <p class="mt-2 text-sm text-gray-500">
+        <strong>Currency conversion:</strong>
+        Exchange rates are updated daily from the European Central Bank.
+        Conversions are approximate and for display purposes only.
+      </p>
+    </div>
+
+    <!-- Default Area Unit -->
+    <div>
+      <label for="default_area_unit" class="block text-sm font-medium text-gray-700 mb-1">
+        Default Area Unit
+      </label>
+      <%= f.select :default_area_unit,
+          options_for_select(
+            Pwb::Config.area_unit_options_for_select,
+            @website.default_area_unit
+          ),
+          {},
+          class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+      <p class="mt-1 text-sm text-gray-500">Unit of measurement for property areas</p>
+    </div>
+
+    <%# Analytics ID - temporarily disabled %>
+    <%#= f.text_field :analytics_id,
+          class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+          placeholder: "G-XXXXXXXXXX or UA-XXXXXXXX-X" %>
+
+    <%# Analytics Type - temporarily disabled %>
+    <%#= f.select :analytics_id_type,
+          options_for_select([
+            ['Google Analytics 4', 'ga4'],
+            ['Universal Analytics (legacy)', 'ua']
+          ], @website.analytics_id_type),
+          { include_blank: 'Select type...' },
+          class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+
+    <!-- External Image Mode -->
+    <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
+      <div class="flex items-start">
+        <div class="flex items-center h-5">
+          <%= f.check_box :external_image_mode,
+              class: "h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500",
+              id: "external_image_mode" %>
+        </div>
+        <div class="ml-3">
+          <label for="external_image_mode" class="text-sm font-medium text-gray-700">
+            External Image Mode
+          </label>
+          <p class="text-sm text-gray-500 mt-1">
+            When enabled, images can be added as external URLs instead of being uploaded.
+            This is useful when you have images hosted elsewhere (e.g., on a CDN or existing media server).
+          </p>
+          <% if @website.external_image_mode %>
+            <p class="text-sm text-blue-600 mt-2">
+              <svg class="inline w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+              </svg>
+              External image mode is currently active. Property photos can be added via URLs.
+            </p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="pt-4 border-t border-gray-200">
+      <%= f.submit "Save General Settings",
+          class: "px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer" %>
+    </div>
+  <% end %>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const defaultLocaleSelect = document.getElementById('default_locale_select');
+  const supportedLocaleCheckboxes = document.querySelectorAll('.supported-locale-checkbox');
+  const warningContainer = document.createElement('p');
+  warningContainer.id = 'locale-warning';
+  warningContainer.className = 'mt-2 text-sm text-red-600 hidden';
+  warningContainer.innerHTML = '<svg class="inline w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg> <span class="warning-text"></span>';
+
+  // Insert warning after the default locale select's help text
+  const defaultLocaleHelp = defaultLocaleSelect.parentElement.querySelector('p.text-gray-500');
+  if (defaultLocaleHelp) {
+    defaultLocaleHelp.parentNode.insertBefore(warningContainer, defaultLocaleHelp.nextSibling);
+  }
+
+  function updateDefaultLocaleOptions() {
+    // Get all checked locale values
+    const checkedLocales = Array.from(supportedLocaleCheckboxes)
+      .filter(cb => cb.checked)
+      .map(cb => cb.dataset.locale);
+
+    const currentDefault = defaultLocaleSelect.value;
+    let hasValidSelection = false;
+
+    // Update each option in the default locale dropdown
+    Array.from(defaultLocaleSelect.options).forEach(option => {
+      const optionLocale = option.value;
+      // An option is enabled if:
+      // 1. No supported locales are selected (allow any as default)
+      // 2. The option's locale is in the supported locales list
+      const isSupported = checkedLocales.length === 0 || checkedLocales.includes(optionLocale);
+
+      option.disabled = !isSupported;
+      option.style.color = isSupported ? '' : '#9ca3af';
+
+      if (optionLocale === currentDefault && isSupported) {
+        hasValidSelection = true;
+      }
+    });
+
+    // Show warning if current selection is not in supported locales
+    const warningText = warningContainer.querySelector('.warning-text');
+    if (!hasValidSelection && checkedLocales.length > 0) {
+      warningText.textContent = 'The selected default language is not in the supported languages list. Please select a supported language.';
+      warningContainer.classList.remove('hidden');
+      defaultLocaleSelect.classList.add('border-red-500');
+    } else {
+      warningContainer.classList.add('hidden');
+      defaultLocaleSelect.classList.remove('border-red-500');
+    }
+  }
+
+  // Add change listeners to all supported locale checkboxes
+  supportedLocaleCheckboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', updateDefaultLocaleOptions);
+  });
+
+  // Also update when default locale changes
+  defaultLocaleSelect.addEventListener('change', updateDefaultLocaleOptions);
+
+  // Initialize on page load
+  updateDefaultLocaleOptions();
+});
+</script>

@@ -1,0 +1,53 @@
+/*
+ * Default Theme Styles
+ *
+ * This theme uses Tailwind CSS for layout and components.
+ * These SCSS files provide legacy/custom styles that supplement Tailwind.
+ *
+ * REMOVED: Bootstrap CSS (December 2024) - fully migrated to Tailwind
+ */
+
+/* Custom color variables used by legacy styles */
+$base-bg-color: #fcfcfc;
+$base-border-color: #e0eded;
+
+/*
+ * Legacy component styles - these provide additional styling
+ * that supplements the Tailwind classes used in templates.
+ * TODO: Gradually migrate these to Tailwind utilities
+ */
+@import "default/header_footer";
+@import "default/landing_general";
+@import "default/landing_content_areas";
+@import "default/contact_us";
+@import "default/prop";
+@import "default/devise";
+@import "default/shame";
+@import "default/carousel";
+
+/* Shared styles used across themes */
+@import "shared/header_footer";
+@import "shared/social";
+@import "shared/gmap";
+@import "shared/search_box";
+@import "shared/liquid_templates";
+@import "shared/shame";
+
+/* Base HTML styles */
+html {
+  color: #222;
+  font-size: 1em;
+  line-height: 1.4;
+}
+
+::selection {
+  background: #b3d4fc;
+  text-shadow: none;
+}
+
+/* Legacy utility classes - TODO: migrate to Tailwind */
+.fondo_secundario {
+  background: #ea802d;
+  color: #fff;
+}
+

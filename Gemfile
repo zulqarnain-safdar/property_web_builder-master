@@ -1,0 +1,265 @@
+source "https://rubygems.org"
+
+# Declare your gem's dependencies in pwb.gemspec.
+# Bundler will treat runtime dependencies like base dependencies, and
+# development dependencies will be added by default to the :development group.
+# gemspec
+
+gem "rails", "~> 8.1"
+# Declare any dependencies that are still in development here instead of in
+# your gemspec. These might include edge Rails or gems from your path or
+# Git. Remember to move these dependencies to your gemspec before releasing
+# your gem to rubygems.org.
+
+gem "image_processing", "~> 1.2"
+
+ruby "~> 3.4.0"
+
+# gem 'globalize', git: 'https://github.com/globalize/globalize'
+# gem 'globalize', github: 'globalize/globalize'
+# below needed by above - (in gemspec)
+# gem 'activemodel-serializers-xml'
+# gem 'globalize-accessors'
+# gem 'carrierwave', '>= 1.0.0.rc', '< 2.0'
+
+# To use a debugger
+# gem 'byebug', group: [:development, :test]
+group :development, :test do
+  gem "vcr"
+  gem "webmock"
+  # gem 'jasmine-rails',        github: 'searls/jasmine-rails'
+  # gem 'jasmine-jquery-rails', github: 'travisjeffery/jasmine-jquery-rails'
+  # if ENV['TRAVIS']
+  #   gem "codeclimate-test-reporter", require: false
+  # else
+  #   gem 'simplecov',                 require: false
+  # end
+  gem "simplecov", require: false
+  # gem 'launchy'
+  # gem 'annotate'
+  gem 'annotaterb'
+  # gem 'bumpy'
+  # gem 'yard'
+  # gem 'redcarpet'
+  # gem 'spring'
+  # gem 'spring-commands-rspec'
+
+  gem "launchy"
+  # launchy allows me to use save_and_open_page
+  # in feature specs to see current page being tested
+  gem "rubocop", require: false
+  gem "rubocop-rails", require: false
+  gem "rubocop-performance", require: false
+  gem "pry-byebug"
+  gem "capybara"
+  gem "database_cleaner"
+  # , '~> 1.3'
+  gem "rails-controller-testing"
+  gem "factory_bot_rails"
+  # gem 'rspec-activemodel-mocks', '~> 1.0'
+  gem "rspec-rails"
+  gem "rspec_junit_formatter"
+  gem "shoulda-matchers"
+  gem "font-awesome-rails"
+  gem "zeus"
+  gem "json_spec"
+
+  gem "rails-perftest"
+  gem "ruby-prof"
+
+  gem "rswag-specs"
+end
+
+gem "rswag-api"
+gem "rswag-ui"
+
+group :development do
+  # below 2 for precompiling assets
+  gem "closure-compiler"
+  gem "yui-compressor"
+
+  gem "better_errors"
+  gem "binding_of_caller"
+  gem "bullet"
+  gem "brakeman"
+  gem "rack-mini-profiler"
+
+  # Preview emails in browser instead of sending
+  gem "letter_opener"
+
+  # Component preview and documentation
+  gem "lookbook", ">= 2.0"
+  gem "view_component"
+end
+
+group :development, :test, :e2e do
+  gem "dotenv-rails"
+  gem "faker"
+end
+
+gem "oj"
+
+# /Users/me/.rbenv/versions/2.3.3/lib/ruby/gems/2.3.0/gems/localeapp-2.1.1/lib/localeapp/default_value_handler.rb
+# below overwrites I18n::Backend::Base above which causes seeder to break in specs
+# gem 'localeapp'
+
+# gem 'bourbon'
+# gem 'property_web_scraper', github: 'RealEstateWebTools/property_web_scraper'
+
+
+# capybary now requires puma as webserver by default
+gem "puma"
+
+gem "pg" #, "~> 0.21.0"
+
+# gem "carrierwave", "~> 2.2", ">= 2.2.3"
+
+# REMOVED: cloudinary - using ActiveStorage with optional CDN instead
+# gem "cloudinary", "~> 1.23"
+
+gem "devise", "~> 5.0"
+
+gem "omniauth", "~> 2.1"
+
+gem "geocoder", "~> 1.8"
+
+gem "i18n", "~> 1.10"
+
+gem "i18n-active_record", "~> 1.1"
+
+# REMOVED: globalize - migrated to Mobility gem for translations
+# gem 'globalize', git: 'https://github.com/globalize/globalize'
+# gem "globalize", "~> 6.2"
+# gem "globalize-accessors", "~> 0.3.0"
+
+gem "money-rails", "~> 3.0"
+gem "eu_central_bank", "~> 2.0"  # Free ECB exchange rates for currency conversion
+
+gem "simple_form", "~> 5.1"
+
+gem "active_hash", "~> 4.0"
+
+gem "flag_shih_tzu", "~> 0.3.23"
+
+# gem "bootstrap-sass", "~> 3.4"
+gem "dartsass-rails"
+gem "sprockets-rails"
+
+# REMOVED: jquery-rails - migrated to @rails/ujs via importmap (December 2024)
+# gem "jquery-rails", "~> 4.5"
+
+gem "liquid", "~> 5.3"
+
+# https://stackoverflow.com/questions/71191685/visit-psych-nodes-alias-unknown-alias-default-psychbadalias
+# As per above, need to fix psych gem below v4
+# gem "psych", "< 4"
+
+# gem "vite_rails", "~> 3.0"  # Removed - was only used for Vue apps
+
+gem "graphql", "~> 2.0"
+gem "graphiql-rails", group: :development
+
+gem "faraday", "~> 2.3"
+
+# HTTP client for reverse proxy (client-rendered websites)
+gem "http", "~> 5.0"
+
+# JWT for proxy authentication tokens
+gem "jwt", "~> 3.1"
+
+# RETS gem removed - MLS/RETS integration deprecated (Dec 2024)
+# See docs/claude_thoughts/DEPRECATED_FEATURES.md for details
+
+gem "rack-cors", "~> 3.0"
+
+gem "redis", "~> 5.0"
+# redis gem needs to be before logster
+gem "logster", "~> 2.11"
+
+# REMOVED: ruby_odata - OData MLS imports no longer supported
+# gem "ruby_odata", "~> 0.1.0"
+
+gem "firebase"
+gem "omniauth-facebook"
+
+gem "tailwindcss-rails", "~> 4.4"
+
+# Modern Rails JavaScript (no bundler required)
+gem "importmap-rails", "~> 2.0"
+
+# Stimulus.js for JavaScript interactions in server-rendered pages
+gem "stimulus-rails", "~> 1.3"
+
+# REMOVED: firebase_id_token - replaced with custom Pwb::FirebaseTokenVerifier
+# This allows redis 5.x and removes httparty/redis-namespace dependencies
+gem "active_storage_dashboard"
+
+# Pinned below 4.0: that release dropped the Ruby API (PgHero.slow_queries,
+# .index_hit_rate, .cache_hit_rate, .relation_sizes, .connections,
+# .database_size), which Pwb::ShardHealthCheck calls directly.
+gem "pghero", "~> 3.8"
+
+# AWS SDK for S3-compatible storage (Cloudflare R2)
+gem "aws-sdk-s3", require: false
+
+# AWS SES v2 for email delivery with advanced features (bounce handling, statistics)
+gem "aws-sdk-sesv2", require: false
+
+gem 'mobility'
+
+# Scenic for database views (materialized views for denormalized property queries)
+gem 'scenic'
+
+# Multi-tenancy - automatic tenant scoping for models
+gem 'acts_as_tenant', '~> 1.0'
+
+# Pagination
+gem 'pagy', '~> 43.0'
+
+# State machines for workflow management
+gem 'aasm', '~> 5.5'
+
+# Profanity filter for subdomain validation
+gem 'obscenity', '~> 1.0'
+
+# Security - Rate limiting for brute force protection
+gem 'rack-attack', '~> 6.7'
+
+# Error tracking and performance monitoring
+gem 'sentry-ruby'
+gem 'sentry-rails'
+
+# Structured logging
+gem 'lograge'
+gem 'logstash-event'
+
+# Background job processing (Rails 8 native)
+# Used for async email delivery and other background tasks
+gem 'solid_queue', '~> 1.0'
+gem 'mission_control-jobs', '~> 1.0'
+
+# Performance monitoring dashboard (self-hosted, free alternative to New Relic)
+# Data stored in Redis, never sent externally
+gem 'rails_performance'
+
+# Optional: System resource monitoring for rails_performance dashboard
+gem 'sys-cpu'
+gem 'sys-filesystem'
+gem 'get_process_mem'
+
+# Tenant Analytics - track visitor behavior and property engagement
+gem 'ahoy_matey', '~> 5.0'    # Visit and event tracking
+gem 'chartkick', '~> 5.0'     # Beautiful charts for dashboards
+gem 'groupdate', '~> 6.0'     # Time-based grouping for analytics
+
+# JavaScript minification for production assets
+gem 'terser'
+
+gem "mini_magick", "~> 5.3"
+
+# AI-powered content generation (listing descriptions, etc.)
+gem 'ruby_llm', '~> 1.0'
+
+# PDF generation for CMA reports
+gem 'prawn', '~> 2.5'
+gem 'prawn-table', '~> 0.2'

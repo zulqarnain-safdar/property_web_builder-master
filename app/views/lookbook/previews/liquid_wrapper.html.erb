@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page Part Preview</title>
+
+  <!-- Tailwind Play CDN with custom config for PWB theme colors -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            // These map to CSS custom properties set by the preview wrapper
+            'pwb-primary': {
+              DEFAULT: 'var(--pwb-primary)',
+              50: 'color-mix(in srgb, var(--pwb-primary) 5%, white)',
+              100: 'color-mix(in srgb, var(--pwb-primary) 10%, white)',
+              200: 'color-mix(in srgb, var(--pwb-primary) 20%, white)',
+              300: 'color-mix(in srgb, var(--pwb-primary) 30%, white)',
+              400: 'color-mix(in srgb, var(--pwb-primary) 50%, white)',
+              500: 'var(--pwb-primary)',
+              600: 'color-mix(in srgb, var(--pwb-primary) 85%, black)',
+              700: 'color-mix(in srgb, var(--pwb-primary) 70%, black)',
+              800: 'color-mix(in srgb, var(--pwb-primary) 55%, black)',
+              900: 'color-mix(in srgb, var(--pwb-primary) 40%, black)',
+            },
+            'pwb-secondary': {
+              DEFAULT: 'var(--pwb-secondary)',
+              50: 'color-mix(in srgb, var(--pwb-secondary) 5%, white)',
+              100: 'color-mix(in srgb, var(--pwb-secondary) 10%, white)',
+              200: 'color-mix(in srgb, var(--pwb-secondary) 20%, white)',
+              300: 'color-mix(in srgb, var(--pwb-secondary) 30%, white)',
+              400: 'color-mix(in srgb, var(--pwb-secondary) 50%, white)',
+              500: 'var(--pwb-secondary)',
+              600: 'color-mix(in srgb, var(--pwb-secondary) 85%, black)',
+              700: 'color-mix(in srgb, var(--pwb-secondary) 70%, black)',
+              800: 'color-mix(in srgb, var(--pwb-secondary) 55%, black)',
+              900: 'color-mix(in srgb, var(--pwb-secondary) 40%, black)',
+            },
+            'pwb-accent': {
+              DEFAULT: 'var(--pwb-accent)',
+              700: 'color-mix(in srgb, var(--pwb-accent) 70%, black)',
+            },
+          },
+          fontFamily: {
+            serif: ['Cormorant Garamond', 'Georgia', 'serif'],
+            sans: ['Montserrat', 'Helvetica Neue', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+
+  <!-- Self-hosted fonts via jsDelivr CDN -->
+  <style>
+    @font-face {
+      font-family: 'Cormorant Garamond';
+      font-style: normal;
+      font-weight: 400 600;
+      font-display: swap;
+      src: url('https://cdn.jsdelivr.net/npm/@fontsource/cormorant-garamond@5.2.11/files/cormorant-garamond-latin-400-normal.woff2') format('woff2');
+    }
+    @font-face {
+      font-family: 'Montserrat';
+      font-style: normal;
+      font-weight: 100 900;
+      font-display: swap;
+      src: url('https://cdn.jsdelivr.net/npm/@fontsource-variable/montserrat@5.2.8/files/montserrat-latin-wght-normal.woff2') format('woff2-variations');
+    }
+  </style>
+
+  <style>
+    /* Reset */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      line-height: 1.5;
+      color: var(--pwb-text, #333);
+      background: var(--pwb-background, #fff);
+    }
+
+    /* Default CSS custom properties - will be overridden by inline styles */
+    :root {
+      --pwb-primary: #e91b23;
+      --pwb-secondary: #2c3e50;
+      --pwb-accent: #3498db;
+      --pwb-background: #ffffff;
+      --pwb-text: #333333;
+      --pwb-primary-color: var(--pwb-primary);
+      --pwb-secondary-color: var(--pwb-secondary);
+      --pwb-accent-color: var(--pwb-accent);
+    }
+
+    /* Container utility */
+    .pwb-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    /* Button base styles */
+    .pwb-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      border-radius: 0.5rem;
+      border: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .pwb-btn--primary {
+      background: var(--pwb-primary);
+      color: white;
+    }
+
+    .pwb-btn--primary:hover {
+      opacity: 0.9;
+    }
+
+    .pwb-btn--outline {
+      background: transparent;
+      border: 2px solid currentColor;
+    }
+
+    .pwb-btn--outline:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Hero section fallback styles */
+    .pwb-hero,
+    .hero-section {
+      position: relative;
+      min-height: 500px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* Section styles */
+    .pwb-section {
+      position: relative;
+    }
+
+    /* Feature card hover effect */
+    .pwb-feature-card,
+    .service-card {
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .pwb-feature-card:hover,
+    .service-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Error display */
+    .error {
+      padding: 2rem;
+      background: #fee;
+      color: #c00;
+      border: 1px solid #fcc;
+      border-radius: 0.5rem;
+      text-align: center;
+      margin: 2rem;
+    }
+
+    /* Icon placeholder styling */
+    .icon-missing,
+    [data-icon-name] {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.5em;
+      height: 1.5em;
+    }
+  </style>
+</head>
+<body>
+  <%= html %>
+</body>
+</html>

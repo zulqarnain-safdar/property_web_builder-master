@@ -1,0 +1,255 @@
+# awaiting translation
+---
+nl:
+  website:
+    footer_content_html:
+      main_content:
+        <p>We are proud to be registered with the national association of realtors.</p>
+        <p>Registration number 12121212</p>
+      
+  legal:
+    content_html:
+      main_content:
+        <b> DISCLAIMER</b> </br>
+        The Example RE Internet team strives to provide you with useful, accurate, and timely information on this website. Accordingly, Example RE has attempted to provide accurate information and materials on this website on this website but assumes no responsibility for the accuracy and completeness of that information and materials on this website but assumes no responsibility for the accuracy and completeness of that information or materials. Example RE may change the content of any information or materials available at this webite, or to the products described in them, at any time without notice. However, Example RE makes no commitment to update the information or materials on this website which, as a result, may be out of date. Information and opinions expressed in bulletion boards or other forums are not necessarily those of Example RE. Neither Example RE, nor its officer, directors, employees, agents, distributors, or affiliates are responsible or liable for any loss damage (including, but not limited to, actual, consequential, or punitive), liability, claim, or other injury or cause related to or resulting from any information posted on Example RE’s website. Example RE reserves the right to revise these terms and/or legal restriction at any time. You are responsible for reviewing this page from time to time to ensure compliance with the then-current terms and legal restrictions because they will be binding on you. Certain provisions of these terms and legal restrictions may be superseded by expressly designated legal notices or terms located on particular pages of this website.
+
+
+  privacy:
+    content_html:
+      main_content:
+        <P> <b> Privacy Policy </b> </p> <p>
+        We are committed to the security of your users' data. Therefore, our Privacy Policy sets forth the terms in which Example RE uses and protects information that is provided by its customers. </p> <p>
+        <b>
+        Use Collected Information </b> </p> <p>
+        Our website may collect personal information such as your email address and demographic information. Also, when necessary, specific information may be required to process an order or make a delivery or billing.
+        Example RE will not sell, cede or distribute personal information that is collected without your consent, unless required by a court with a court order.
+        </p> 
+        <p><b>Links to Third Parties </b> </p> <p>
+        This website may contain links to other sites that may be of interest to you. Once you click on these links and leave our page, we no longer have control over the site to which you are redirected and therefore we are not responsible for the terms or privacy or protection of your data on those other third sites. These sites are subject to their own privacy policies so it is recommended that you consult them to confirm that you agree with them.
+        </p> 
+
+
+  sell:
+    content_html:
+      main_content:
+        <h2>Sell Your Property with Us</h2>
+        Our commitment to you is to uphold the highest standards of professionalism while helping you make your best real estate decisions. You want to sell your property with full confidence. In doing so, you deserve our very best. Our goal at Example Real Estate is to provide you with exceptional service while meeting your needs at each step of the selling process. 
+        <h2>Regional Expertise
+        </h2>
+        Our clients and our business affiliates will tell you, no listings in our market region of Birmingham receive more exposure to buyers than those listed with Example Real Estate. Our Internet-based marketing, print advertising, and collateral marketing efforts allow our listings unequaled exposure to buyers who are looking for real estate in Birmingham. The strength of our online marketing, print advertising, and direct broker contacts drive significant traffic to our website, which provides detailed information on all of our property listings.
+        <h2>Ready to Help You
+        </h2>
+        Our Qualified Brokerage Professionals and Staff at Example Real Estate have the experience, the knowledge and the discretion to represent your property throughout Birmingham. Our team of dedicated and professional brokers and staff are committed to providing extraordinary service. You may be assured that Example RE provides the tools and assists your broker in marketing your property efficiently and expertly to local, regional and national markets. It takes more than a sign on your home or property to attract buyers. We create a complete marketing plan to meet your needs.
+
+  home:
+    landing_hero:
+      landing_title_a:
+        The best realtor in Springfield
+      landing_content_a: >
+        <ul class="list-carousel">
+          <li><span class="hero-check-icon" aria-hidden="true"></span> Professional staff</li>
+          <li><span class="hero-check-icon" aria-hidden="true"></span> We will find you the best property on the market</li>
+        </ul>
+      landing_img:
+        db/example_images/carousel_villa_with_pool.jpg
+
+    content_html:
+      main_content: <p><b>Important notice:</b>&nbsp; We are offering free property evaluations this month only.  Call us now to take advantage of this special offer.</p>
+
+    about_us_services:
+      title_a: Vind je woning
+      content_a: <p>Vertel ons precies wat je zoekt en wij doen ons best om die ideale woning te vinden die aan je wensen voldoet.</p>
+      title_b: Professionele makelaars
+      content_b: <p>Wij zijn professionele makelaars. We helpen je met alle papierwerk en besparen je geld tijdens het proces.</p>
+      title_c: Verkoop je woning
+      content_c: <p>Als je je woning moet verkopen, neem dan contact met ons op. Met onze ervaring in de branche en de regio doen we het op de snelste en eenvoudigste manier.</p>
+
+    heroes/hero_centered:
+      pretitle: Welkom bij Example Real Estate
+      title: Vind Je Droomhuis
+      subtitle: >
+        Wij zijn toegewijd om je te helpen de perfecte woning te vinden.
+        Of je nu koopt, verkoopt of huurt, ons deskundige team staat klaar om je bij elke stap te begeleiden.
+      cta_text: Bekijk Woningen
+      cta_link: /buy
+      cta_secondary_text: Neem Contact Op
+      cta_secondary_link: /contact-us
+      background_image: db/example_images/carousel_villa_with_pool.jpg
+
+    features/feature_grid_3col:
+      section_pretitle: Onze Diensten
+      section_title: Wat Wij Bieden
+      section_subtitle: Uitgebreide vastgoeddiensten op maat van jouw behoeften
+      feature_1_icon: home
+      feature_1_title: Vind Je Woning
+      feature_1_description: >
+        Vertel ons precies wat je zoekt en wij vinden die ideale woning
+        die aan al je wensen en budget voldoet.
+      feature_1_link: /buy
+      feature_2_icon: person
+      feature_2_title: Professionele Makelaars
+      feature_2_description: >
+        Onze ervaren makelaars regelen alle papierwerk en onderhandelingen,
+        waardoor je tijd en geld bespaart tijdens het hele proces.
+      feature_2_link: /about-us
+      feature_3_icon: attach_money
+      feature_3_title: Verkoop Je Woning
+      feature_3_description: >
+        Krijg de beste prijs voor je woning met onze bewezen marketingstrategieën
+        en ons uitgebreide netwerk van gekwalificeerde kopers.
+      feature_3_link: /contact-us
+
+    cta/cta_banner:
+      title: Klaar om Je Perfecte Woning te Vinden?
+      subtitle: Neem vandaag contact met ons op voor een gratis consult en laat ons je helpen om met vertrouwen de vastgoedmarkt te navigeren.
+      button_text: Aan de Slag
+      button_link: /contact-us
+      button_style: primary
+      secondary_button_text: Bekijk Woningen
+      secondary_button_link: /buy
+      style: primary
+
+    stats/stats_counter:
+      section_title: Ons Trackrecord
+      section_subtitle: Cijfers die voor zich spreken
+      stat_1_value: 500
+      stat_1_label: Woningen Verkocht
+      stat_1_prefix: ""
+      stat_1_suffix: +
+      stat_2_value: 98
+      stat_2_label: Klanttevredenheid
+      stat_2_suffix: "%"
+      stat_3_value: 15
+      stat_3_label: Jaar Ervaring
+      stat_4_value: 50
+      stat_4_label: Deskundige Makelaars
+      style: light
+
+    testimonials/testimonial_carousel:
+      section_title: Wat Onze Klanten Zeggen
+      section_subtitle: Vertrouw niet alleen op ons woord
+      testimonial_1_text: >
+        Example Real Estate maakte onze huisaankoop soepel en stressvrij.
+        Hun team was professioneel, deskundig en altijd beschikbaar om onze vragen te beantwoorden.
+        Sterk aanbevolen!
+      testimonial_1_name: Jan de Vries
+      testimonial_1_role: Huizenkoper
+      testimonial_1_image: "https://ui-avatars.com/api/?name=Jan+de+Vries&background=4f46e5&color=fff&size=128"
+      testimonial_2_text: >
+        We hebben onze woning in slechts 3 weken verkocht dankzij hun uitstekende marketing en
+        onderhandelingsvaardigheden. Ze kregen een prijs boven onze vraagprijs!
+      testimonial_2_name: Maria Jansen
+      testimonial_2_role: Woningverkoper
+      testimonial_2_image: "https://ui-avatars.com/api/?name=Maria+Jansen&background=059669&color=fff&size=128"
+      testimonial_3_text: >
+        Als starters waren we zenuwachtig over het proces. Het team van Example RE
+        begeleidde ons bij elke stap en vond ons droomhuis binnen ons budget.
+      testimonial_3_name: Peter en Anna Bakker
+      testimonial_3_role: Starters
+      testimonial_3_image: "https://ui-avatars.com/api/?name=Peter+Anna&background=dc2626&color=fff&size=128"
+
+  about-us:
+    content_html:
+      main_content: <p><b>Belangrijke mededeling:</b>&nbsp; Deze maand bieden wij gratis woningtaxaties aan. Bel ons nu om van dit speciale aanbod te profiteren.</p>
+    our_agency:
+      title_a:
+        Over Ons
+      content_a:
+        <p>Wij zijn professionele makelaars met jarenlange ervaring in het leveren van uitstekende service
+        aan onze klanten.</p>
+        <p>Ons team van toegewijde professionals brengt tientallen jaren gecombineerde ervaring op de vastgoedmarkt samen. Wij zijn trots op het leveren van persoonlijke service, transparante communicatie en deskundige begeleiding tijdens uw hele vastgoedreis. Of u nu uw eerste woning koopt, een woning verkoopt of wilt investeren, wij zijn er om u te helpen uw doelen met vertrouwen te bereiken.</p>
+      our_agency_img:
+        db/example_images/carousel_grass.jpg
+
+    teams/team_grid:
+      section_title: Ontmoet Ons Team
+      section_subtitle: Toegewijde professionals die zich inzetten voor jouw succes
+      member_1_name: Jan de Vries
+      member_1_role: Senior Makelaar
+      member_1_image: "db/seeds/packs/netherlands_urban/images/team_director.jpg"
+      member_1_bio: >
+        Jan heeft meer dan 15 jaar ervaring in vastgoed en heeft honderden
+        gezinnen geholpen hun perfecte woning te vinden.
+      member_1_email: jan@example.com
+      member_1_linkedin: ""
+      member_2_name: Emma Bakker
+      member_2_role: Woningconsultant
+      member_2_image: "db/seeds/packs/netherlands_urban/images/team_agent_female.jpg"
+      member_2_bio: >
+        Emma is gespecialiseerd in luxe woningen en brengt een scherp oog voor detail
+        naar elke transactie.
+      member_3_name: Pieter Jansen
+      member_3_role: Verkoopdirecteur
+      member_3_image: "db/seeds/packs/netherlands_urban/images/team_agent_male.jpg"
+      member_3_bio: >
+        Pieter leidt ons verkoopteam met expertise in commercieel en residentieel vastgoed.
+      member_4_name: Lisa van den Berg
+      member_4_role: Klantrelaties
+      member_4_image: "db/seeds/packs/netherlands_urban/images/team_assistant.jpg"
+      member_4_bio: >
+        Lisa zorgt ervoor dat elke klant uitzonderlijke service en ondersteuning ontvangt tijdens hun reis.
+
+  contact-us:
+    content_html:
+      main_content: <p><b>We horen graag van je!</b> Neem contact op met ons team voor vragen over kopen, verkopen of huren van woningen.</p>
+
+    cta/cta_split_image:
+      pretitle: Neem Contact Op
+      title: Begin Je Vastgoedreis
+      description: >
+        Of je nu je eerste woning wilt kopen, een woning wilt verkopen of wilt investeren in vastgoed,
+        ons ervaren team staat klaar om je te helpen. Neem vandaag contact met ons op voor een gratis, vrijblijvend consult.
+      features: >
+        <ul>
+          <li>Gratis woningtaxaties</li>
+          <li>Deskundig marktadvies</li>
+          <li>Persoonlijke service</li>
+          <li>7 dagen per week beschikbaar</li>
+        </ul>
+      image: db/example_images/carousel_grass.jpg
+      bg_style: light
+
+  sell:
+    content_html:
+      main_content:
+        <h2>Verkoop Je Woning Met Ons</h2>
+        Onze toewijding aan jou is het handhaven van de hoogste normen van professionaliteit terwijl we je helpen de beste vastgoedbeslissingen te nemen. Je wilt je woning met vol vertrouwen verkopen. Daarbij verdien je het beste. Ons doel bij Example Real Estate is je uitzonderlijke service te bieden terwijl we aan je behoeften voldoen bij elke stap van het verkoopproces.
+        <h2>Regionale Expertise
+        </h2>
+        Onze klanten en zakenpartners zullen je vertellen dat geen enkel aanbod in onze marktregio meer exposure krijgt bij kopers dan die bij Example Real Estate. Onze internetgebaseerde marketing, gedrukte advertenties en marketinginspanningen geven ons aanbod een ongeëvenaarde exposure aan kopers die op zoek zijn naar vastgoed.
+        <h2>Klaar om Je te Helpen
+        </h2>
+        Onze gekwalificeerde makelaars en medewerkers bij Example Real Estate hebben de ervaring, kennis en discretie om je woning te vertegenwoordigen. Ons team van toegewijde en professionele makelaars en medewerkers is toegewijd aan het leveren van buitengewone service.
+
+    faqs/faq_accordion:
+      section_title: Veelgestelde Vragen
+      section_subtitle: Alles wat je moet weten over het verkopen van je woning
+      faq_1_question: Hoe lang duurt het om een woning te verkopen?
+      faq_1_answer: >
+        <p>De tijd om een woning te verkopen varieert afhankelijk van marktomstandigheden, locatie en prijs.
+        Gemiddeld worden woningen in onze regio binnen 30-90 dagen verkocht. We geven je een realistische tijdlijn
+        gebaseerd op jouw specifieke woning.</p>
+      faq_2_question: Welke kosten zijn er bij verkoop?
+      faq_2_answer: >
+        <p>Onze commissie is marktconform. We bespreken alle kosten vooraf, inclusief
+        makelaarscommissie, juridische kosten en eventuele belastingen. Er zijn geen verborgen kosten.</p>
+      faq_3_question: Moet ik reparaties uitvoeren voor de verkoop?
+      faq_3_answer: >
+        <p>Niet per se. We beoordelen je woning en adviseren welke reparaties, indien nodig,
+        een goed rendement op investering zouden opleveren. Soms kunnen kleine cosmetische aanpassingen
+        de verkoopprijs aanzienlijk verhogen.</p>
+      faq_4_question: Hoe bepalen jullie de vraagprijs?
+      faq_4_answer: >
+        <p>We voeren een uitgebreide marktanalyse uit, waarbij we je woning vergelijken met vergelijkbare recent verkochte
+        woningen in de buurt. We houden rekening met locatie, staat, grootte en huidige markttrends
+        om een optimale vraagprijs aan te bevelen.</p>
+      faq_5_question: Kan ik verkopen terwijl ik nog in de woning woon?
+      faq_5_answer: >
+        <p>Absoluut! Veel van onze klanten blijven in hun woning wonen tijdens het verkoopproces.
+        We coördineren bezichtigingen op geschikte tijden en geven tips om je woning
+        klaar te houden voor bezichtigingen.</p>
+      faq_6_question: Wat gebeurt er nadat ik een bod accepteer?
+      faq_6_answer: >
+        <p>Zodra je een bod accepteert, regelen wij het papierwerk en coördineren met notarissen,
+        taxateurs en de makelaar van de koper. We houden je bij elke stap op de hoogte tot de overdracht.</p>
+

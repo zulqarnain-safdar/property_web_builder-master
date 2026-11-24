@@ -1,0 +1,172 @@
+<%= form_with model: @website, scope: :website, url: (@website.new_record? ? tenant_admin_websites_path : tenant_admin_website_path(@website)), local: true, class: "space-y-6" do |f| %>
+  <% if @website.errors.any? %>
+    <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50" role="alert">
+      <div class="font-medium mb-2"><%= pluralize(@website.errors.count, "error") %> prohibited this website from being saved:</div>
+      <ul class="list-disc list-inside">
+        <% @website.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <!-- Basic Information -->
+  <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+    <h3 class="mb-4 text-lg font-semibold text-gray-900">Basic Information</h3>
+    <div class="grid grid-cols-6 gap-6">
+      <div class="col-span-6 sm:col-span-3">
+        <%= f.label :subdomain, "Subdomain *", class: "block mb-2 text-sm font-medium text-gray-900" %>
+        <%= f.text_field :subdomain, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5", placeholder: "mycompany", required: true %>
+        <p class="mt-1 text-xs text-gray-500">Alphanumeric and hyphens only, 2-63 characters</p>
+      </div>
+
+      <div class="col-span-6 sm:col-span-3">
+        <%= f.label :company_display_name, "Company Display Name", class: "block mb-2 text-sm font-medium text-gray-900" %>
+        <%= f.text_field :company_display_name, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5", placeholder: "My Real Estate Agency" %>
+      </div>
+
+      <div class="col-span-6 sm:col-span-3">
+        <%= f.label :default_currency, "Default Currency", class: "block mb-2 text-sm font-medium text-gray-900" %>
+        <%= f.text_field :default_currency, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5", placeholder: "EUR" %>
+      </div>
+
+      <div class="col-span-6 sm:col-span-3">
+        <%= f.label :default_client_locale, "Default Locale", class: "block mb-2 text-sm font-medium text-gray-900" %>
+        <%= f.text_field :default_client_locale, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5", placeholder: "en-US" %>
+      </div>
+
+      <div class="col-span-6">
+        <%= f.label :supported_locales, "Supported Locales", class: "block mb-2 text-sm font-medium text-gray-900" %>
+        <%= hidden_field_tag "website[supported_locales][]", "" %>
+        <div class="grid grid-cols-2 gap-4 sm:grid-cols-4 bg-gray-50 p-4 rounded-lg border border-gray-300">
+          <% ['en-UK', 'en-US', 'es-ES', 'fr-FR', 'de-DE', 'it-IT', 'pt-PT', 'ru-RU'].each do |locale| %>
+            <div class="flex items-center">
+              <%= check_box_tag "website[supported_locales][]", locale, @website.supported_locales&.include?(locale), id: "website_supported_locales_#{locale}", class: "w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-primary-500 focus:ring-2" %>
+              <%= label_tag "website_supported_locales_#{locale}", locale, class: "ml-2 text-sm font-medium text-gray-900" %>
+            </div>
+          <% end %>
+        </div>
+        <p class="mt-1 text-xs text-gray-500">Select at least one.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+    <h3 class="mb-4 text-lg font-semibold text-gray-900">Analytics Settings</h3>
+    <div class="grid grid-cols-6 gap-6">
+      <div class="col-span-6 sm:col-span-3">
+        <%= f.label :analytics_id, "Analytics ID", class: "block mb-2 text-sm font-medium text-gray-900" %>
+        <%= f.text_field :analytics_id, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5", placeholder: "G-XXXXXXXXXX" %>
+      </div>
+
+      <div class="col-span-6 sm:col-span-3">
+        <%= f.label :analytics_id_type, "Analytics Type", class: "block mb-2 text-sm font-medium text-gray-900" %>
+        <%= f.select :analytics_id_type,
+          options_for_select([['Google Analytics 4', 'ga4'], ['Google Analytics (Universal)', 'ua']], @website.analytics_id_type),
+          { include_blank: 'Select type' },
+          class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+      </div>
+    </div>
+  </div>
+
+  <% if @website.new_record? %>
+  <!-- Seeding Options -->
+  <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+    <h3 class="mb-4 text-lg font-semibold text-gray-900">Seeding Options</h3>
+    <div class="space-y-4">
+      <div class="flex items-start">
+        <div class="flex items-center h-5">
+          <%= f.check_box :seed_data, { checked: true, class: "w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300" }, "1", "0" %>
+        </div>
+        <div class="ml-3 text-sm">
+          <%= f.label :seed_data, "Seed with default data", class: "font-medium text-gray-900" %>
+          <p class="text-gray-500">Creates initial pages, content, and settings for the selected theme.</p>
+        </div>
+      </div>
+
+      <div class="flex items-start">
+        <div class="flex items-center h-5">
+          <%= f.check_box :skip_property_seeding, { class: "w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300" }, "1", "0" %>
+        </div>
+        <div class="ml-3 text-sm">
+          <%= f.label :skip_property_seeding, "Skip sample properties", class: "font-medium text-gray-900" %>
+          <p class="text-gray-500">Check this if you want to start with an empty property database.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <% end %>
+
+  <!-- Feature Flags -->
+  <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+    <h3 class="mb-4 text-lg font-semibold text-gray-900">Feature Flags</h3>
+    <div class="space-y-4">
+      <div class="flex items-center">
+        <%= f.check_box :landing_hide_for_rent, class: "w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" %>
+        <%= f.label :landing_hide_for_rent, "Hide 'For Rent' on Landing Page", class: "ml-2 text-sm font-medium text-gray-900" %>
+      </div>
+      <div class="flex items-center">
+        <%= f.check_box :landing_hide_for_sale, class: "w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" %>
+        <%= f.label :landing_hide_for_sale, "Hide 'For Sale' on Landing Page", class: "ml-2 text-sm font-medium text-gray-900" %>
+      </div>
+      <div class="flex items-center">
+        <%= f.check_box :landing_hide_search_bar, class: "w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" %>
+        <%= f.label :landing_hide_search_bar, "Hide Search Bar on Landing Page", class: "ml-2 text-sm font-medium text-gray-900" %>
+      </div>
+    </div>
+  </div>
+
+  <% unless @website.new_record? %>
+  <!-- Theme Availability Override -->
+  <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+    <h3 class="mb-4 text-lg font-semibold text-gray-900">Theme Availability</h3>
+    <p class="text-sm text-gray-600 mb-4">
+      <% if @website.custom_theme_availability? %>
+        <span class="text-blue-600">Custom themes configured</span> - This website has specific themes enabled.
+      <% else %>
+        <span class="text-gray-500">Using tenant defaults</span> - This website uses the tenant-wide default themes.
+      <% end %>
+    </p>
+
+    <div class="mb-4">
+      <label class="flex items-center">
+        <input type="checkbox" id="use_custom_themes" <%= 'checked' if @website.custom_theme_availability? %>
+               class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+               onchange="document.getElementById('custom_themes_section').classList.toggle('hidden')">
+        <span class="ml-2 text-sm font-medium text-gray-900">Use custom theme availability for this website</span>
+      </label>
+    </div>
+
+    <div id="custom_themes_section" class="<%= 'hidden' unless @website.custom_theme_availability? %>">
+      <p class="text-sm text-gray-600 mb-3">Select which themes this website can use:</p>
+      <!-- Hidden field to clear array when no checkboxes selected -->
+      <%= hidden_field_tag "website[available_themes][]", "" %>
+      <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+        <% @all_themes.each do |theme| %>
+          <div class="flex items-center p-2 border rounded <%= theme.name == 'default' ? 'bg-blue-50 border-blue-200' : 'bg-white border-gray-200' %>">
+            <% if theme.name == 'default' %>
+              <input type="hidden" name="website[available_themes][]" value="default">
+              <input type="checkbox" checked disabled
+                     class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded opacity-50 cursor-not-allowed">
+            <% else %>
+              <input type="checkbox"
+                     name="website[available_themes][]"
+                     value="<%= theme.name %>"
+                     <%= 'checked' if @website.available_themes&.include?(theme.name) %>
+                     class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
+            <% end %>
+            <span class="ml-2 text-sm text-gray-900"><%= theme.friendly_name || theme.name.titleize %></span>
+          </div>
+        <% end %>
+      </div>
+      <p class="mt-2 text-xs text-gray-500">The default theme is always available.</p>
+    </div>
+  </div>
+  <% end %>
+
+  <!-- Form Actions -->
+  <div class="flex items-center space-x-4">
+    <%= f.submit "Save Website", class: "text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center cursor-pointer" %>
+    <%= link_to "Cancel", @website.persisted? ? tenant_admin_website_path(@website) : tenant_admin_websites_path, class: "text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10" %>
+  </div>
+<% end %>

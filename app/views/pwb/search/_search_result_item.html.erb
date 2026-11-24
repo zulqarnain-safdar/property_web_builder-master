@@ -1,0 +1,77 @@
+<%# Fragment cache for property card - invalidates when property or photos update %>
+<% cache [property_card_cache_key(property, @operation_type), "v2"] do %>
+<article class="property-item bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
+         data-price="<%= property.contextual_price @operation_type %>">
+
+  <%# Highlighted badge %>
+  <% if property.highlighted %>
+    <div class="highlighted-badge bg-blue-600 text-white text-xs font-semibold px-3 py-1">
+      <%= t "property.highlightedProperty" %>
+    </div>
+  <% end %>
+
+  <%# Card content - layout controlled by parent .results-list or .results-grid class via CSS %>
+  <div class="property-card-inner flex">
+    <%# Property Image - height controlled by CSS based on view mode %>
+    <div class="property-image flex-shrink-0">
+      <%= link_to property.contextual_show_path(@operation_type), class: "block h-full", "aria-label": t("property.view_details_for", title: property.title.presence || property.reference, default: "View details for %{title}") do %>
+        <%= opt_image_tag((property.ordered_photo 1), quality: "auto",
+            height: 240, crop: "scale",
+            class: "w-full object-cover",
+            loading: "lazy",
+            use_picture: true,
+            alt: property.title.presence || "Property listing") %>
+      <% end %>
+    </div>
+
+    <%# Property Details %>
+    <div class="property-details p-4 flex flex-col flex-grow">
+      <%# Title %>
+      <h3 class="text-lg font-semibold text-gray-900 mb-1">
+        <%= link_to property.title, property.contextual_show_path(@operation_type),
+            class: "hover:text-blue-600 transition-colors" %>
+      </h3>
+
+      <%# Reference %>
+      <p class="text-sm text-gray-500 mb-3"><%= property.reference %></p>
+
+      <%# Spacer for list view %>
+      <div class="flex-grow"></div>
+
+      <%# Property Features %>
+      <div class="property-features flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-4">
+        <span class="flex items-center" title="<%= t('property.bedrooms', count: property.count_bedrooms) rescue 'Bedrooms' %>">
+          <%= icon(:bed, size: :sm, class: "mr-1.5 text-blue-500") %>
+          <%= property.count_bedrooms %>
+        </span>
+        <span class="flex items-center" title="<%= t('property.bathrooms', count: property.count_bathrooms) rescue 'Bathrooms' %>">
+          <%= icon(:shower, size: :sm, class: "mr-1.5 text-blue-500") %>
+          <%= property.count_bathrooms %>
+        </span>
+        <span class="flex items-center" title="<%= t('property.area', default: 'Area') %>">
+          <%= icon(:fullscreen, size: :sm, class: "mr-1.5 text-blue-500") %>
+          <%= property.constructed_area %><%= area_unit property %>
+        </span>
+        <% if property.count_garages && property.count_garages > 0 %>
+          <span class="flex items-center" title="<%= t('property.garages', default: 'Garages') %>">
+            <%= icon(:directions_car, size: :sm, class: "mr-1.5 text-blue-500") %>
+            <%= property.count_garages %>
+          </span>
+        <% end %>
+      </div>
+
+      <%# Price and Action %>
+      <div class="property-footer flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-gray-100">
+        <span class="text-xl font-bold text-blue-600">
+          <%= property_price(property, @operation_type) %>
+        </span>
+        <%= link_to property.contextual_show_path(@operation_type),
+            class: "inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors" do %>
+          <%= t "property.goToProperty" %>
+          <%= icon(:chevron_right, size: :sm, class: "ml-2") %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</article>
+<% end %>

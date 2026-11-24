@@ -1,0 +1,51 @@
+- page_slug: about-us
+  page_part_key: our_agency
+  block_contents: {}
+  order_in_editor: 2,
+  show_in_editor: true,
+  editor_setup: {
+      "tabTitleKey": "pageSections.ourAgency.title",
+      "tabInfoKey": "pageSections.ourAgency.info",
+      "default_sort_order": 2,
+      "default_visible_on_page": true,
+      "editorBlocks": [
+        [
+        {
+          "label": "title_a",
+          "isSingleLineText": "true"
+        },
+        {
+          "label": "content_a",
+          "isMultipleLineText": "true"
+        }],
+        [
+        {
+          "label": "our_agency_img",
+          "isImage": "true"
+        }]
+      ]
+    }
+  template: >
+    <section class="pwb-section pwb-section--agency our-agency-section">
+      <div class="pwb-container agency-container">
+        <div class="pwb-section__grid agency-content-wrapper">
+          <div class="pwb-section__col agency-text-column">
+            <div class="pwb-section__header agency-title-wrapper">
+              <h3 class="pwb-section__title agency-title">
+                <span>
+                  {{ page_part["title_a"]["content"] }}
+                </span>
+              </h3>
+            </div>
+            <div class="pwb-section__text agency-description">
+              <p>
+                {{  page_part["content_a"]["content"] }}
+              </p>
+            </div>
+          </div>
+          <div class="pwb-section__col agency-image-column">
+            <img alt="{{ page_part["title_a"]["content"] | default: '' }}" src="{{ page_part["our_agency_img"]["content"] }}" class="pwb-section__img agency-image">
+          </div>
+        </div>
+      </div>
+    </section>

@@ -1,0 +1,38 @@
+<div class="max-w-7xl mx-auto">
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-900">Property Field Keys</h1>
+    <p class="mt-2 text-gray-600">
+      Manage property labels and categories for <%= current_website.subdomain %>
+    </p>
+  </div>
+
+  <!-- Tab Navigation -->
+  <%= render 'tab_navigation', current_category: nil %>
+
+  <!-- Category Cards Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+    <% @categories.each do |category| %>
+      <%= link_to site_admin_properties_settings_category_path(category),
+          class: "block p-6 bg-white rounded-lg border border-gray-200 hover:border-blue-500 hover:shadow-md transition-all" do %>
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">
+          <%= @category_labels[category] %>
+        </h3>
+        <p class="text-sm text-gray-600">
+          <%= @category_descriptions[category] %>
+        </p>
+        <div class="mt-4 text-blue-600 text-sm font-medium">
+          Manage &rarr;
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+
+  <!-- Help text -->
+  <div class="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-200">
+    <h4 class="text-sm font-medium text-blue-800 mb-2">About Field Keys</h4>
+    <p class="text-sm text-blue-700">
+      Field keys are labels that can be applied to properties for categorization and search filtering.
+      Each key has translations for multiple languages and can be shown/hidden in the public interface.
+    </p>
+  </div>
+</div>

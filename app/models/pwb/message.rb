@@ -1,0 +1,102 @@
+# frozen_string_literal: true
+
+module Pwb
+  # Message represents messages/inquiries from website visitors.
+  #
+  # Note: This model is NOT tenant-scoped. Use PwbTenant::Message for
+  # tenant-scoped queries in web requests. This version is useful for
+  # console work and cross-tenant operations.
+# == Schema Information
+#
+# Table name: pwb_messages
+# Database name: primary
+#
+#  id               :integer          not null, primary key
+#  content          :text
+#  delivered_at     :datetime
+#  delivery_email   :string
+#  delivery_error   :text
+#  delivery_success :boolean          default(FALSE)
+#  host             :string
+#  latitude         :float
+#  locale           :string
+#  longitude        :float
+#  origin_email     :string
+#  origin_ip        :string
+#  read             :boolean          default(FALSE), not null
+#  title            :string
+#  url              :string
+#  user_agent       :string
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  client_id        :integer
+#  contact_id       :integer
+#  realty_asset_id  :uuid
+#  website_id       :bigint
+#
+# Indexes
+#
+#  index_pwb_messages_on_realty_asset_id  (realty_asset_id)
+#  index_pwb_messages_on_website_id       (website_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (website_id => pwb_websites.id)
+#
+  class Message < ApplicationRecord
+    self.table_name = 'pwb_messages'
+
+    belongs_to :website, class_name: 'Pwb::Website', optional: true
+    belongs_to :contact, optional: true, class_name: 'Pwb::Contact', inverse_of: :messages
+    belongs_to :realty_asset, optional: true, class_name: 'Pwb::RealtyAsset'
+
+    # Scopes
+    scope :unread, -> { where(read: false) }
+    scope :read, -> { where(read: true) }
+    scope :recent, -> { order(created_at: :desc) }
+
+    # Maintain cached unread count on contact after_commit to avoid
+    # double-counting under transaction rollback.
+    after_commit :increment_contact_unread_count, on: :create
+    after_commit :sync_contact_unread_count_on_update, on: :update
+    after_commit :decrement_contact_unread_count, on: :destroy
+
+    # Get sender email - prefer contact email, fall back to origin_email
+    def sender_email
+      contact&.primary_email || origin_email
+    end
+
+    # Get sender name - from contact or extract from email
+    def sender_name
+      contact&.display_name || origin_email&.split('@')&.first || 'Unknown'
+    end
+
+    private
+
+    def increment_contact_unread_count
+      contact.increment!(:unread_messages_count) if unread_message_for_contact_tenant?
+    end
+
+    def sync_contact_unread_count_on_update
+      return unless saved_change_to_read? && same_tenant_contact?
+
+      if read?
+        contact.decrement!(:unread_messages_count)
+      else
+        contact.increment!(:unread_messages_count)
+      end
+    end
+
+    def decrement_contact_unread_count
+      contact.decrement!(:unread_messages_count) if unread_message_for_contact_tenant?
+    end
+
+    def unread_message_for_contact_tenant?
+      !read? && same_tenant_contact?
+    end
+
+    def same_tenant_contact?
+      contact.present? && contact.website_id == website_id
+    end
+  end
+end

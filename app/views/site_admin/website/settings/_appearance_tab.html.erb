@@ -1,0 +1,302 @@
+<%
+  # Build palettes data for all themes (for dynamic switching)
+  all_theme_palettes = @themes.each_with_object({}) do |theme, hash|
+    hash[theme.name] = theme.palettes.transform_values do |p|
+      {
+        name: p['name'],
+        description: p['description'],
+        preview_colors: p['preview_colors'],
+        colors: p['colors'],
+        is_default: p['is_default']
+      }
+    end
+  end
+%>
+
+<div class="p-6" data-controller="theme-palette"
+     data-theme-palette-palettes-value="<%= all_theme_palettes.to_json %>"
+     data-theme-palette-current-theme-value="<%= @website.theme_name %>">
+  <h2 class="text-xl font-semibold text-gray-900 mb-6">Appearance Settings</h2>
+
+  <%= form_with model: @website, url: site_admin_website_settings_path, method: :patch, local: true, class: "space-y-6" do |f| %>
+    <input type="hidden" name="tab" value="appearance">
+
+    <!-- Theme Selection -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-3">
+        Theme
+      </label>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <% @themes.each do |theme| %>
+          <label class="relative cursor-pointer">
+            <input type="radio" name="website[theme_name]" value="<%= theme.name %>"
+                   <%= 'checked' if @website.theme_name == theme.name %>
+                   class="sr-only peer"
+                   data-theme-palette-target="themeRadio"
+                   data-action="change->theme-palette#selectTheme">
+            <div class="border-2 rounded-lg p-4 peer-checked:border-blue-500 peer-checked:bg-blue-50 hover:border-gray-400 transition-colors">
+              <div class="h-24 bg-gray-100 rounded mb-3 flex items-center justify-center">
+                <span class="text-gray-400 text-sm"><%= theme.friendly_name %></span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="font-medium text-gray-900"><%= theme.friendly_name %></span>
+                <span class="hidden peer-checked:inline-block text-blue-600">
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                  </svg>
+                </span>
+              </div>
+            </div>
+          </label>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Color Palette Selection -->
+    <div class="border-t border-gray-200 pt-6">
+      <h3 class="text-lg font-medium text-gray-900 mb-4">Color Palette</h3>
+      <p class="text-sm text-gray-600 mb-4">Choose a curated color palette for your theme. This will set harmonious colors for your entire site.</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" data-theme-palette-target="paletteContainer">
+        <% if @website.current_theme&.palettes&.any? %>
+          <% @website.current_theme.palettes.each do |palette_id, palette| %>
+            <label class="relative cursor-pointer group h-full">
+              <input type="radio" name="website[selected_palette]" value="<%= palette_id %>"
+                     <%= 'checked' if @website.effective_palette_id == palette_id %>
+                     class="sr-only peer"
+                     data-palette-colors="<%= palette['colors'].to_json %>">
+              <div class="border-2 rounded-lg p-4 peer-checked:border-blue-500 peer-checked:bg-blue-50 hover:border-gray-400 transition-all h-full flex flex-col">
+                <!-- Color Preview Swatches -->
+                <div class="flex h-12 rounded-lg overflow-hidden mb-3 shadow-sm">
+                  <% palette['preview_colors'].each_with_index do |color, i| %>
+                    <div class="flex-1 <%= 'rounded-l-lg' if i == 0 %> <%= 'rounded-r-lg' if i == palette['preview_colors'].length - 1 %>"
+                         style="background-color: <%= color %>"></div>
+                  <% end %>
+                </div>
+                <div class="flex items-center justify-between flex-grow">
+                  <div class="flex flex-col justify-center">
+                    <span class="font-medium text-gray-900 block"><%= palette['name'] %></span>
+                    <span class="text-xs text-gray-500 line-clamp-2"><%= palette['description'] %></span>
+                  </div>
+                  <span class="hidden peer-checked:inline-block text-blue-600">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                  </span>
+                </div>
+              </div>
+            </label>
+          <% end %>
+        <% else %>
+          <p class="text-gray-500 col-span-full">No palettes available for this theme.</p>
+        <% end %>
+      </div>
+    </div>
+
+    <%#
+      ==========================================================================
+      HIDDEN: Dark Mode Setting
+      ==========================================================================
+      This section is temporarily hidden. It may be enabled in a future release
+      once dark mode functionality is fully tested and ready for production use.
+      The backend support (dark_mode_setting field, palette dark colors) exists
+      but the UI is disabled until the feature is complete.
+
+      To re-enable: Change "if false" to "if true" below
+      ==========================================================================
+    %>
+    <% if false # HIDDEN: Dark Mode Setting - change to 'true' to re-enable %>
+    <div class="border-t border-gray-200 pt-6">
+      <h3 class="text-lg font-medium text-gray-900 mb-4">Dark Mode</h3>
+      <p class="text-sm text-gray-600 mb-4">Control how your website appears in dark mode. Dark mode colors are automatically generated from your selected palette.</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <% [
+          ['light_only', 'Light Only', 'sun', 'Only show light mode colors. Visitors will always see the light theme.'],
+          ['auto', 'Auto (System)', 'desktop-computer', 'Respect visitor\'s system preference. Shows dark mode if their device is set to dark.'],
+          ['dark', 'Always Dark', 'moon', 'Force dark mode for all visitors regardless of their system preference.']
+        ].each do |value, label, icon, description| %>
+          <label class="relative cursor-pointer group">
+            <input type="radio" name="website[dark_mode_setting]" value="<%= value %>"
+                   <%= 'checked' if @website.dark_mode_setting == value %>
+                   class="sr-only peer">
+            <div class="border-2 rounded-lg p-4 peer-checked:border-blue-500 peer-checked:bg-blue-50 hover:border-gray-400 transition-colors h-full">
+              <div class="flex items-center space-x-3 mb-2">
+                <% if icon == 'sun' %>
+                  <svg class="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                  </svg>
+                <% elsif icon == 'desktop-computer' %>
+                  <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                  </svg>
+                <% elsif icon == 'moon' %>
+                  <svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                  </svg>
+                <% end %>
+                <span class="font-medium text-gray-900"><%= label %></span>
+                <span class="hidden peer-checked:inline-block text-blue-600 ml-auto">
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                  </svg>
+                </span>
+              </div>
+              <p class="text-xs text-gray-500"><%= description %></p>
+            </div>
+          </label>
+        <% end %>
+      </div>
+
+      <% if @website.palette_has_explicit_dark_mode? %>
+        <div class="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+          <div class="flex items-center">
+            <svg class="w-5 h-5 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            <span class="text-sm text-green-800">This palette has custom-designed dark mode colors.</span>
+          </div>
+        </div>
+      <% elsif @website.dark_mode_enabled? %>
+        <div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <div class="flex items-center">
+            <svg class="w-5 h-5 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+            </svg>
+            <span class="text-sm text-blue-800">Dark mode colors will be automatically generated from your palette.</span>
+          </div>
+        </div>
+      <% end %>
+    </div>
+    <% end # END HIDDEN: Dark Mode Setting %>
+
+    <%#
+      ==========================================================================
+      HIDDEN: Advanced Color Settings
+      ==========================================================================
+      This section is temporarily hidden to simplify the UI. The palette system
+      provides sufficient color customization for most users. Advanced color
+      overrides may be re-enabled in a future release for power users.
+
+      To re-enable: Change "if false" to "if true" below
+      ==========================================================================
+    %>
+    <% if false # HIDDEN: Advanced Color Settings - change to 'true' to re-enable %>
+    <div class="border-t border-gray-200 pt-6">
+      <details class="group">
+        <summary class="flex items-center justify-between cursor-pointer list-none">
+          <h3 class="text-lg font-medium text-gray-900">Advanced Color Settings</h3>
+          <span class="text-gray-500 group-open:rotate-180 transition-transform">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </span>
+        </summary>
+        <p class="text-sm text-gray-600 mt-2 mb-4">Override individual colors. Note: These settings override the selected palette.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
+        <!-- Primary Color -->
+        <div>
+          <label for="primary_color" class="block text-sm font-medium text-gray-700 mb-1">
+            Primary Color
+          </label>
+          <div class="flex items-center space-x-3">
+            <input type="color" name="website[style_variables][primary_color]"
+                   value="<%= @style_variables['primary_color'] || '#e91b23' %>"
+                   class="h-10 w-16 rounded border border-gray-300 cursor-pointer">
+            <input type="text" name="website[style_variables][primary_color]"
+                   value="<%= @style_variables['primary_color'] || '#e91b23' %>"
+                   class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                   pattern="^#[0-9A-Fa-f]{6}$"
+                   placeholder="#e91b23">
+          </div>
+          <p class="mt-1 text-sm text-gray-500">Main brand color</p>
+        </div>
+
+        <!-- Secondary Color -->
+        <div>
+          <label for="secondary_color" class="block text-sm font-medium text-gray-700 mb-1">
+            Secondary Color
+          </label>
+          <div class="flex items-center space-x-3">
+            <input type="color" name="website[style_variables][secondary_color]"
+                   value="<%= @style_variables['secondary_color'] || '#3498db' %>"
+                   class="h-10 w-16 rounded border border-gray-300 cursor-pointer">
+            <input type="text" name="website[style_variables][secondary_color]"
+                   value="<%= @style_variables['secondary_color'] || '#3498db' %>"
+                   class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                   pattern="^#[0-9A-Fa-f]{6}$"
+                   placeholder="#3498db">
+          </div>
+          <p class="mt-1 text-sm text-gray-500">Accent color for highlights</p>
+        </div>
+
+        <!-- Action Color -->
+        <div>
+          <label for="action_color" class="block text-sm font-medium text-gray-700 mb-1">
+            Action Color
+          </label>
+          <div class="flex items-center space-x-3">
+            <input type="color" name="website[style_variables][action_color]"
+                   value="<%= @style_variables['action_color']&.start_with?('#') ? @style_variables['action_color'] : '#22c55e' %>"
+                   class="h-10 w-16 rounded border border-gray-300 cursor-pointer">
+            <input type="text" name="website[style_variables][action_color]"
+                   value="<%= @style_variables['action_color'] || 'green' %>"
+                   class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                   placeholder="green or #22c55e">
+          </div>
+          <p class="mt-1 text-sm text-gray-500">Color for buttons and CTAs</p>
+        </div>
+      </div>
+      </details>
+    </div>
+    <% end # END HIDDEN: Advanced Color Settings %>
+
+    <!-- Custom CSS -->
+    <div class="border-t border-gray-200 pt-6">
+      <label for="raw_css" class="block text-sm font-medium text-gray-700 mb-1">
+        Custom CSS
+      </label>
+      <%= f.text_area :raw_css,
+          rows: 10,
+          class: "w-full px-4 py-2 border border-gray-300 rounded-lg font-mono text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+          placeholder: "/* Add your custom CSS here */\n.my-class {\n  color: #333;\n}" %>
+      <p class="mt-1 text-sm text-gray-500">Add custom CSS to override theme styles. Changes apply site-wide.</p>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="pt-4 border-t border-gray-200">
+      <%= f.submit "Save Appearance Settings",
+          class: "px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer" %>
+    </div>
+  <% end %>
+</div>
+
+<%#
+  ==========================================================================
+  HIDDEN: Color Picker Sync Script
+  ==========================================================================
+  This script is for the Advanced Color Settings section which is currently
+  hidden. Re-enable this when Advanced Color Settings is re-enabled.
+
+  To re-enable: Change "if false" to "if true" below
+  ==========================================================================
+%>
+<% if false # HIDDEN: Color Picker Script - change to 'true' to re-enable %>
+<script>
+  // Sync color picker with text input
+  document.querySelectorAll('input[type="color"]').forEach(colorInput => {
+    const textInput = colorInput.nextElementSibling;
+
+    colorInput.addEventListener('input', function() {
+      textInput.value = this.value;
+    });
+
+    textInput.addEventListener('input', function() {
+      if (/^#[0-9A-Fa-f]{6}$/.test(this.value)) {
+        colorInput.value = this.value;
+      }
+    });
+  });
+</script>
+<% end # END HIDDEN: Color Picker Script %>

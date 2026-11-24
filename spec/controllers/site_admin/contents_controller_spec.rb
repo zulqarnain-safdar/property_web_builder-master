@@ -1,0 +1,145 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+RSpec.describe SiteAdmin::ContentsController, type: :controller do
+  let(:website) { create(:pwb_website, subdomain: 'test-site') }
+  let(:other_website) { create(:pwb_website, subdomain: 'other-site') }
+  let(:user) { create(:pwb_user, :admin, website: website) }
+
+  before do
+    Pwb::Current.reset
+    @request.env['devise.mapping'] = Devise.mappings[:user]
+    sign_in user, scope: :user
+    allow(Pwb::Current).to receive(:website).and_return(website)
+    allow(controller).to receive(:current_website).and_return(website)
+  end
+
+  describe 'GET #index' do
+    let!(:content_own) do
+      ActsAsTenant.with_tenant(website) do
+        Pwb::Content.create!(
+          key: 'own_content',
+          tag: 'appearance',
+          website_id: website.id
+        )
+      end
+    end
+
+    let!(:content_other) do
+      ActsAsTenant.with_tenant(other_website) do
+        Pwb::Content.create!(
+          key: 'other_content',
+          tag: 'appearance',
+          website_id: other_website.id
+        )
+      end
+    end
+
+    it 'returns success' do
+      get :index
+      expect(response).to have_http_status(:success)
+    end
+
+    it 'only includes contents from the current website' do
+      get :index
+
+      contents = assigns(:contents)
+      expect(contents).to include(content_own)
+      expect(contents).not_to include(content_other)
+    end
+
+    it 'all returned contents belong to current website' do
+      3.times do |i|
+        ActsAsTenant.with_tenant(website) do
+          Pwb::Content.create!(key: "own_#{i}", tag: 'test', website_id: website.id)
+        end
+        ActsAsTenant.with_tenant(other_website) do
+          Pwb::Content.create!(key: "other_#{i}", tag: 'test', website_id: other_website.id)
+        end
+      end
+
+      get :index
+
+      contents = assigns(:contents)
+      expect(contents.pluck(:website_id).uniq).to eq([website.id])
+    end
+
+    describe 'search functionality' do
+      let!(:searchable_content) do
+        ActsAsTenant.with_tenant(website) do
+          Pwb::Content.create!(
+            key: 'searchable_content',
+            tag: 'searchable',
+            website_id: website.id
+          )
+        end
+      end
+
+      let!(:other_searchable_content) do
+        ActsAsTenant.with_tenant(other_website) do
+          Pwb::Content.create!(
+            key: 'searchable_content',
+            tag: 'searchable',
+            website_id: other_website.id
+          )
+        end
+      end
+
+      it 'searches only within current website contents' do
+        get :index, params: { search: 'searchable' }
+
+        contents = assigns(:contents)
+        expect(contents).to include(searchable_content)
+        expect(contents).not_to include(other_searchable_content)
+      end
+    end
+  end
+
+  describe 'GET #show' do
+    let!(:content_own) do
+      ActsAsTenant.with_tenant(website) do
+        Pwb::Content.create!(key: 'own_content', tag: 'test', website_id: website.id)
+      end
+    end
+
+    let!(:content_other) do
+      ActsAsTenant.with_tenant(other_website) do
+        Pwb::Content.create!(key: 'other_content', tag: 'test', website_id: other_website.id)
+      end
+    end
+
+    it 'allows viewing own website content' do
+      get :show, params: { id: content_own.id }
+
+      expect(response).to have_http_status(:success)
+      expect(assigns(:content)).to eq(content_own)
+    end
+
+    it 'returns 404 for other website content' do
+      get :show, params: { id: content_other.id }
+
+      expect(response).to have_http_status(:not_found)
+      expect(response).to render_template('site_admin/shared/record_not_found')
+    end
+
+    it 'returns 404 for non-existent content' do
+      get :show, params: { id: SecureRandom.uuid }
+
+      expect(response).to have_http_status(:not_found)
+      expect(response).to render_template('site_admin/shared/record_not_found')
+    end
+  end
+
+  describe 'authentication' do
+    context 'when user is not signed in' do
+      before { sign_out :user }
+
+      it 'denies access' do
+        get :index
+        # May redirect to sign in or return 403 forbidden depending on auth configuration
+        expect(response.status).to eq(302).or eq(403)
+      end
+    end
+  end
+end

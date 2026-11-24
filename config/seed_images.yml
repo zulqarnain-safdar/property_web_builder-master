@@ -1,0 +1,116 @@
+# Seed Images Configuration
+#
+# This file maps image keys to R2 paths with prefix naming convention.
+# Using external URLs for seed images avoids:
+# - Cluttering storage with disposable seed data
+# - Orphaned blobs when users delete seeded content
+# - Unnecessary storage costs
+#
+# Prefix convention (to avoid filename clashes):
+#   db/seeds/images/           -> seeds/filename.jpg
+#   db/example_images/         -> example/filename.jpg
+#   db/seeds/packs/NAME/images/ -> packs/NAME/filename.jpg
+#
+# Configuration options:
+#   Option 1: Set R2_SEED_IMAGES_BUCKET - Uses custom domain or auto-calculated URL
+#   Option 2: Set SEED_IMAGES_BASE_URL - Use a custom base URL directly
+#   Option 3: Neither set - Falls back to local files in db/seeds/images/
+#
+# Default public URL: https://seed-assets.propertywebbuilder.com
+# (Custom domain for the pwb-seed-assets R2 bucket)
+
+<%
+  r2_seed_images_bucket = Rails.application.credentials.dig(:r2, :seed_images_bucket) || ENV['R2_SEED_IMAGES_BUCKET']
+  r2_account_id = Rails.application.credentials.dig(:r2, :account_id) || ENV['R2_ACCOUNT_ID']
+
+  # Calculate base_url from R2 bucket if specified, otherwise use direct URL
+  if ENV['SEED_IMAGES_BASE_URL'].present?
+    seed_images_base_url = ENV['SEED_IMAGES_BASE_URL']
+  elsif r2_seed_images_bucket.present?
+    # Use custom domain for pwb-seed-assets bucket, otherwise auto-calculate
+    if r2_seed_images_bucket == 'pwb-seed-assets'
+      seed_images_base_url = 'https://seed-assets.propertywebbuilder.com'
+    elsif r2_account_id.present?
+      seed_images_base_url = "https://pub-#{r2_account_id}.r2.dev/#{r2_seed_images_bucket}"
+    else
+      seed_images_base_url = nil
+    end
+  else
+    seed_images_base_url = nil
+  end
+%>
+
+default: &default
+  # Base URL for seed images (calculated from R2_SEED_IMAGES_BUCKET or SEED_IMAGES_BASE_URL)
+  base_url: <%= seed_images_base_url %>
+
+  # R2 bucket configuration (for upload tasks)
+  r2_bucket: <%= r2_seed_images_bucket %>
+  r2_account_id: <%= r2_account_id %>
+
+  # Property images from db/seeds/images/ -> seeds/
+  properties:
+    apartment_downtown: seeds/apartment_downtown.jpg
+    apartment_luxury: seeds/apartment_luxury.jpg
+    house_family: seeds/house_family.jpg
+    house_suburban: seeds/house_suburban.jpg
+    penthouse_luxury: seeds/penthouse_luxury.jpg
+    studio_modern: seeds/studio_modern.jpg
+    townhouse_historic: seeds/townhouse_historic.jpg
+    villa_ocean: seeds/villa_ocean.jpg
+    # Netherlands pack images from db/seeds/packs/netherlands_urban/images/ -> packs/netherlands_urban/
+    amsterdam_canal_house: packs/netherlands_urban/amsterdam_canal_house.jpg
+    amsterdam_loft: packs/netherlands_urban/amsterdam_loft.jpg
+    amsterdam_jordaan_rental: packs/netherlands_urban/amsterdam_jordaan_rental.jpg
+    utrecht_townhouse: packs/netherlands_urban/utrecht_townhouse.jpg
+    rotterdam_penthouse: packs/netherlands_urban/rotterdam_penthouse.jpg
+    denhaag_apartment: packs/netherlands_urban/denhaag_apartment.jpg
+    haarlem_corner_house: packs/netherlands_urban/haarlem_corner_house.jpg
+    eindhoven_newbuild: packs/netherlands_urban/eindhoven_newbuild.jpg
+
+  # Content/hero images
+  # From db/example_images/ -> example/
+  # From db/seeds/packs/*/images/ -> packs/*/
+  content:
+    hero_amsterdam_canal: packs/netherlands_urban/hero_amsterdam_canal.jpg
+    carousel_villa_with_pool: example/carousel_villa_with_pool.jpg
+    carousel_grass: example/carousel_grass.jpg
+    carousel_deck_chair: example/carousel_deck_chair.jpg
+    carousel_windows: example/carousel_windows.jpg
+    office_interior: packs/netherlands_urban/office_interior.jpg
+    office_exterior: packs/netherlands_urban/office_exterior.jpg
+    # Example images for general use
+    new_villa: example/new_villa.jpg
+    mansion_front: example/mansion_front.jpg
+    mansion_bedroom: example/mansion_bedroom.jpg
+    kitchen_modern: example/kitchen_modern.jpg
+    kitchen_classic: example/kitchen_classic.jpg
+    lounge_cosy: example/lounge_cosy.jpg
+    hall_opulent: example/hall_opulent.jpg
+    dutch_doorway: example/dutch_doorway.jpg
+    flat_luxury_living_area: example/flat_luxury_living_area.jpg
+    flat_luxury_dining_area: example/flat_luxury_dining_area.jpg
+    flat_balcony: example/flat_balcony.jpg
+    flat_window: example/flat_window.jpg
+
+  # Team member images from db/seeds/packs/netherlands_urban/images/ -> packs/netherlands_urban/
+  team:
+    team_director: packs/netherlands_urban/team_director.jpg
+    team_agent_female: packs/netherlands_urban/team_agent_female.jpg
+    team_agent_male: packs/netherlands_urban/team_agent_male.jpg
+    team_assistant: packs/netherlands_urban/team_assistant.jpg
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+e2e:
+  <<: *default
+
+staging:
+  <<: *default
+
+production:
+  <<: *default

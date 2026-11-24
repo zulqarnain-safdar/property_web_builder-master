@@ -1,0 +1,33 @@
+<section class="pwb-section pwb-faq">
+  <div class="pwb-container pwb-container--narrow">
+    {% if page_part.section_title.content %}
+      <div class="pwb-section__header">
+        <h2 class="pwb-section__title">{{ page_part.section_title.content }}</h2>
+        {% if page_part.section_subtitle.content %}
+          <p class="pwb-section__subtitle">{{ page_part.section_subtitle.content }}</p>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% assign faq_items = page_part.faq_items.content | parse_json %}
+    {% if faq_items and faq_items.size > 0 %}
+      <div class="pwb-accordion" data-pwb-accordion>
+        {% for item in faq_items %}
+          {% if item.question %}
+            <div class="pwb-accordion__item">
+              <button class="pwb-accordion__header" aria-expanded="false">
+                <span>{{ item.question }}</span>
+                {{ "expand_more" | material_icon: "sm" }}
+              </button>
+              <div class="pwb-accordion__content">
+                <div class="pwb-accordion__body">
+                  {{ item.answer }}
+                </div>
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</section>

@@ -1,0 +1,519 @@
+# frozen_string_literal: true
+
+# == Schema Information
+#
+# Table name: pwb_props
+# Database name: primary
+#
+#  id                                            :integer          not null, primary key
+#  active_from                                   :datetime
+#  archived                                      :boolean          default(FALSE)
+#  area_unit                                     :integer          default("sqmt")
+#  available_to_rent_from                        :datetime
+#  available_to_rent_till                        :datetime
+#  city                                          :string
+#  commission_cents                              :integer          default(0), not null
+#  commission_currency                           :string           default("EUR"), not null
+#  constructed_area                              :float            default(0.0), not null
+#  count_bathrooms                               :float            default(0.0), not null
+#  count_bedrooms                                :integer          default(0), not null
+#  count_garages                                 :integer          default(0), not null
+#  count_toilets                                 :integer          default(0), not null
+#  country                                       :string
+#  currency                                      :string
+#  deleted_at                                    :datetime
+#  energy_performance                            :float
+#  energy_rating                                 :integer
+#  flags                                         :integer          default(0), not null
+#  for_rent_long_term                            :boolean          default(FALSE)
+#  for_rent_short_term                           :boolean          default(FALSE)
+#  for_sale                                      :boolean          default(FALSE)
+#  furnished                                     :boolean          default(FALSE)
+#  hide_map                                      :boolean          default(FALSE)
+#  highlighted                                   :boolean          default(FALSE)
+#  latitude                                      :float
+#  longitude                                     :float
+#  meta_description                              :text
+#  obscure_map                                   :boolean          default(FALSE)
+#  plot_area                                     :float            default(0.0), not null
+#  portals_enabled                               :boolean          default(FALSE)
+#  postal_code                                   :string
+#  price_rental_monthly_current_cents            :integer          default(0), not null
+#  price_rental_monthly_current_currency         :string           default("EUR"), not null
+#  price_rental_monthly_for_search_cents         :integer          default(0), not null
+#  price_rental_monthly_for_search_currency      :string           default("EUR"), not null
+#  price_rental_monthly_high_season_cents        :integer          default(0), not null
+#  price_rental_monthly_high_season_currency     :string           default("EUR"), not null
+#  price_rental_monthly_low_season_cents         :integer          default(0), not null
+#  price_rental_monthly_low_season_currency      :string           default("EUR"), not null
+#  price_rental_monthly_original_cents           :integer          default(0), not null
+#  price_rental_monthly_original_currency        :string           default("EUR"), not null
+#  price_rental_monthly_standard_season_cents    :integer          default(0), not null
+#  price_rental_monthly_standard_season_currency :string           default("EUR"), not null
+#  price_sale_current_cents                      :bigint           default(0), not null
+#  price_sale_current_currency                   :string           default("EUR"), not null
+#  price_sale_original_cents                     :bigint           default(0), not null
+#  price_sale_original_currency                  :string           default("EUR"), not null
+#  prop_origin_key                               :string           default(""), not null
+#  prop_state_key                                :string           default(""), not null
+#  prop_type_key                                 :string           default(""), not null
+#  province                                      :string
+#  reference                                     :string
+#  region                                        :string
+#  reserved                                      :boolean          default(FALSE)
+#  seo_title                                     :string
+#  service_charge_yearly_cents                   :integer          default(0), not null
+#  service_charge_yearly_currency                :string           default("EUR"), not null
+#  sold                                          :boolean          default(FALSE)
+#  street_address                                :string
+#  street_name                                   :string
+#  street_number                                 :string
+#  translations                                  :jsonb            not null
+#  visible                                       :boolean          default(FALSE)
+#  year_construction                             :integer          default(0), not null
+#  created_at                                    :datetime         not null
+#  updated_at                                    :datetime         not null
+#  website_id                                    :integer
+#
+# Indexes
+#
+#  index_pwb_props_on_archived                            (archived)
+#  index_pwb_props_on_flags                               (flags)
+#  index_pwb_props_on_for_rent_long_term                  (for_rent_long_term)
+#  index_pwb_props_on_for_rent_short_term                 (for_rent_short_term)
+#  index_pwb_props_on_for_sale                            (for_sale)
+#  index_pwb_props_on_highlighted                         (highlighted)
+#  index_pwb_props_on_latitude_and_longitude              (latitude,longitude)
+#  index_pwb_props_on_price_rental_monthly_current_cents  (price_rental_monthly_current_cents)
+#  index_pwb_props_on_price_sale_current_cents            (price_sale_current_cents)
+#  index_pwb_props_on_reference                           (reference)
+#  index_pwb_props_on_translations                        (translations) USING gin
+#  index_pwb_props_on_visible                             (visible)
+#  index_pwb_props_on_website_id                          (website_id)
+#
+require 'rails_helper'
+
+module Pwb
+  RSpec.describe Prop, type: :model do
+    let(:website) { create(:pwb_website, subdomain: 'prop-test', default_currency: 'USD') }
+
+    before(:each) do
+      Pwb::Current.reset
+    end
+
+    describe 'factory' do
+      it 'creates a valid prop' do
+        ActsAsTenant.with_tenant(website) do
+          prop = build(:pwb_prop, website: website)
+          expect(prop).to be_valid
+        end
+      end
+
+      it 'creates a sale property with trait' do
+        ActsAsTenant.with_tenant(website) do
+          prop = create(:pwb_prop, :sale, website: website)
+          expect(prop.for_sale).to be_truthy
+        end
+      end
+
+      it 'creates a rental property with trait' do
+        ActsAsTenant.with_tenant(website) do
+          prop = create(:pwb_prop, :long_term_rent, website: website)
+          expect(prop.for_rent_long_term).to be_truthy
+        end
+      end
+    end
+
+    describe 'associations' do
+      it 'belongs to website' do
+        ActsAsTenant.with_tenant(website) do
+          prop = create(:pwb_prop, website: website)
+          expect(prop.website).to eq(website)
+        end
+      end
+
+      it 'has many prop_photos' do
+        ActsAsTenant.with_tenant(website) do
+          prop = create(:pwb_prop, website: website)
+          expect(prop).to respond_to(:prop_photos)
+        end
+      end
+
+      it 'has many features' do
+        ActsAsTenant.with_tenant(website) do
+          prop = create(:pwb_prop, website: website)
+          expect(prop).to respond_to(:features)
+        end
+      end
+    end
+
+    describe 'defaulting behavior' do
+      let(:website) { create(:pwb_website, subdomain: 'prop-test', default_currency: 'USD', default_area_unit: 'sqft') }
+
+      it 'uses the associated website defaults when present' do
+        prop = described_class.create!(website: website, currency: nil, area_unit: nil, title_en: 'Associated website prop')
+
+        expect(prop.reload.currency).to eq('USD')
+        expect(prop.reload.area_unit).to eq('sqft')
+      end
+
+      it 'uses Pwb::Current.website defaults when no website is associated' do
+        Pwb::Current.website = website
+
+        prop = described_class.create!(website: nil, currency: nil, area_unit: nil, title_en: 'Current website prop')
+
+        expect(prop.reload.currency).to eq('USD')
+        expect(prop.reload.area_unit).to eq('sqft')
+      end
+
+      it 'does not fall back to the first website when no website context exists' do
+        fallback_website = create(:pwb_website, default_currency: 'GBP', default_area_unit: 'sqft')
+        Pwb::Current.reset
+
+        prop = described_class.create!(website: nil, currency: nil, area_unit: nil, title_en: 'No website prop')
+
+        expect(prop.reload.currency).not_to eq(fallback_website.default_currency)
+        expect(prop.reload.area_unit).not_to eq(fallback_website.default_area_unit)
+      end
+    end
+
+    describe 'scopes' do
+      let!(:sale_prop) do
+        ActsAsTenant.with_tenant(website) do
+          create(:pwb_prop, :sale, website: website, visible: true)
+        end
+      end
+      let!(:rental_prop) do
+        ActsAsTenant.with_tenant(website) do
+          create(:pwb_prop, :long_term_rent, website: website, visible: true)
+        end
+      end
+      let!(:hidden_prop) do
+        ActsAsTenant.with_tenant(website) do
+          create(:pwb_prop, :sale, website: website, visible: false)
+        end
+      end
+
+      describe '.for_sale' do
+        it 'returns properties for sale' do
+          expect(Prop.for_sale).to include(sale_prop)
+          expect(Prop.for_sale).not_to include(rental_prop)
+        end
+      end
+
+      describe '.for_rent' do
+        it 'returns rental properties' do
+          expect(Prop.for_rent).to include(rental_prop)
+          expect(Prop.for_rent).not_to include(sale_prop)
+        end
+      end
+
+      describe '.visible' do
+        it 'returns only visible properties' do
+          expect(Prop.visible).to include(sale_prop)
+          expect(Prop.visible).to include(rental_prop)
+          expect(Prop.visible).not_to include(hidden_prop)
+        end
+      end
+    end
+
+    describe 'price scopes' do
+      let!(:cheap_prop) do
+        ActsAsTenant.with_tenant(website) do
+          create(:pwb_prop, :sale, website: website, visible: true, price_sale_current_cents: 100_000_00)
+        end
+      end
+      let!(:expensive_prop) do
+        ActsAsTenant.with_tenant(website) do
+          create(:pwb_prop, :sale, website: website, visible: true, price_sale_current_cents: 500_000_00)
+        end
+      end
+
+      describe '.for_sale_price_from' do
+        it 'filters by minimum price' do
+          results = Prop.for_sale_price_from(200_000_00)
+          expect(results).to include(expensive_prop)
+          expect(results).not_to include(cheap_prop)
+        end
+      end
+
+      describe '.for_sale_price_till' do
+        it 'filters by maximum price' do
+          results = Prop.for_sale_price_till(200_000_00)
+          expect(results).to include(cheap_prop)
+          expect(results).not_to include(expensive_prop)
+        end
+      end
+    end
+
+    describe 'bedroom/bathroom scopes' do
+      let!(:small_prop) do
+        ActsAsTenant.with_tenant(website) do
+          create(:pwb_prop, website: website, count_bedrooms: 1, count_bathrooms: 1)
+        end
+      end
+      let!(:large_prop) do
+        ActsAsTenant.with_tenant(website) do
+          create(:pwb_prop, website: website, count_bedrooms: 4, count_bathrooms: 3)
+        end
+      end
+
+      describe '.bedrooms_from' do
+        it 'filters by minimum bedrooms' do
+          results = Prop.bedrooms_from(3)
+          expect(results).to include(large_prop)
+          expect(results).not_to include(small_prop)
+        end
+      end
+
+      describe '.bathrooms_from' do
+        it 'filters by minimum bathrooms' do
+          results = Prop.bathrooms_from(2)
+          expect(results).to include(large_prop)
+          expect(results).not_to include(small_prop)
+        end
+      end
+    end
+
+    describe '#for_rent' do
+      it 'returns true for short term rental' do
+        ActsAsTenant.with_tenant(website) do
+          prop = build(:pwb_prop, website: website, for_rent_short_term: true, for_rent_long_term: false)
+          expect(prop.for_rent).to be_truthy
+        end
+      end
+
+      it 'returns true for long term rental' do
+        ActsAsTenant.with_tenant(website) do
+          prop = build(:pwb_prop, website: website, for_rent_short_term: false, for_rent_long_term: true)
+          expect(prop.for_rent).to be_truthy
+        end
+      end
+
+      it 'returns false when not for rent' do
+        ActsAsTenant.with_tenant(website) do
+          prop = build(:pwb_prop, website: website, for_rent_short_term: false, for_rent_long_term: false)
+          expect(prop.for_rent).to be_falsey
+        end
+      end
+    end
+
+    describe '#has_garage' do
+      it 'returns true when count_garages is positive' do
+        ActsAsTenant.with_tenant(website) do
+          prop = build(:pwb_prop, website: website, count_garages: 2)
+          expect(prop.has_garage).to be_truthy
+        end
+      end
+
+      it 'returns false when count_garages is zero' do
+        ActsAsTenant.with_tenant(website) do
+          prop = build(:pwb_prop, website: website, count_garages: 0)
+          expect(prop.has_garage).to be_falsey
+        end
+      end
+
+      it 'returns false when count_garages is nil' do
+        ActsAsTenant.with_tenant(website) do
+          prop = build(:pwb_prop, website: website, count_garages: nil)
+          expect(prop.has_garage).to be_falsey
+        end
+      end
+    end
+
+    describe '#show_map' do
+      it 'returns true when coordinates exist and map not hidden' do
+        ActsAsTenant.with_tenant(website) do
+          prop = build(:pwb_prop, website: website, latitude: 40.0, longitude: -3.0, hide_map: false)
+          expect(prop.show_map).to be_truthy
+        end
+      end
+
+      it 'returns false when hide_map is true' do
+        ActsAsTenant.with_tenant(website) do
+          prop = build(:pwb_prop, website: website, latitude: 40.0, longitude: -3.0, hide_map: true)
+          expect(prop.show_map).to be_falsey
+        end
+      end
+
+      it 'returns false when latitude is missing' do
+        ActsAsTenant.with_tenant(website) do
+          prop = build(:pwb_prop, website: website, latitude: nil, longitude: -3.0, hide_map: false)
+          expect(prop.show_map).to be_falsey
+        end
+      end
+
+      it 'returns false when longitude is missing' do
+        ActsAsTenant.with_tenant(website) do
+          prop = build(:pwb_prop, website: website, latitude: 40.0, longitude: nil, hide_map: false)
+          expect(prop.show_map).to be_falsey
+        end
+      end
+    end
+
+    describe '#geocodeable_address' do
+      it 'combines address components' do
+        ActsAsTenant.with_tenant(website) do
+          prop = build(:pwb_prop, website: website,
+                                  street_address: '123 Main St',
+                                  city: 'Madrid',
+                                  province: 'Madrid',
+                                  postal_code: '28001')
+          expect(prop.geocodeable_address).to eq('123 Main St , Madrid , Madrid , 28001')
+        end
+      end
+    end
+
+    describe '#needs_geocoding?' do
+      it 'returns true when address exists but no coordinates' do
+        ActsAsTenant.with_tenant(website) do
+          prop = build(:pwb_prop, website: website,
+                                  street_address: '123 Main St',
+                                  city: 'Madrid',
+                                  latitude: nil,
+                                  longitude: nil)
+          expect(prop.needs_geocoding?).to be_truthy
+        end
+      end
+
+      it 'returns false when coordinates exist' do
+        ActsAsTenant.with_tenant(website) do
+          prop = build(:pwb_prop, website: website,
+                                  street_address: '123 Main St',
+                                  city: 'Madrid',
+                                  latitude: 40.0,
+                                  longitude: -3.0)
+          expect(prop.needs_geocoding?).to be_falsey
+        end
+      end
+    end
+
+    describe '#url_friendly_title' do
+      it 'parameterizes the title' do
+        ActsAsTenant.with_tenant(website) do
+          prop = build(:pwb_prop, website: website, title_en: 'Beautiful Beach House')
+          expect(prop.url_friendly_title).to eq('beautiful-beach-house')
+        end
+      end
+
+      it 'returns show for short or nil titles' do
+        ActsAsTenant.with_tenant(website) do
+          prop = build(:pwb_prop, website: website, title_en: 'AB')
+          expect(prop.url_friendly_title).to eq('show')
+        end
+      end
+    end
+
+    describe 'features management' do
+      let(:prop) do
+        ActsAsTenant.with_tenant(website) do
+          create(:pwb_prop, website: website)
+        end
+      end
+
+      describe '#set_features=' do
+        it 'creates features when set to true' do
+          prop.set_features = { 'pool' => true, 'garage' => true }
+
+          expect(prop.features.pluck(:feature_key)).to include('pool', 'garage')
+        end
+
+        it 'removes features when set to false' do
+          prop.set_features = { 'pool' => true }
+          expect(prop.features.pluck(:feature_key)).to include('pool')
+
+          prop.set_features = { 'pool' => false }
+          expect(prop.features.pluck(:feature_key)).not_to include('pool')
+        end
+      end
+
+      describe '#get_features' do
+        it 'returns hash of feature keys' do
+          prop.features.create!(feature_key: 'pool')
+          prop.features.create!(feature_key: 'garden')
+
+          features = prop.get_features
+          expect(features).to include('pool' => true, 'garden' => true)
+        end
+      end
+    end
+
+    describe '#contextual_price' do
+      let(:prop) do
+        ActsAsTenant.with_tenant(website) do
+          create(:pwb_prop, website: website,
+                            for_sale: true,
+                            for_rent_long_term: true,
+                            price_sale_current_cents: 500_000_00,
+                            price_rental_monthly_current_cents: 1_500_00)
+        end
+      end
+
+      it 'returns sale price when for_sale context' do
+        price = prop.contextual_price('for_sale')
+        expect(price.cents).to eq(500_000_00)
+      end
+
+      it 'returns rental price when for_rent context' do
+        price = prop.contextual_price('for_rent')
+        expect(price.cents).to eq(1_500_00)
+      end
+    end
+
+    describe '.properties_search' do
+      let!(:sale_visible) do
+        ActsAsTenant.with_tenant(website) do
+          create(:pwb_prop, :sale, website: website, visible: true, price_sale_current_cents: 200_000_00)
+        end
+      end
+      let!(:sale_hidden) do
+        ActsAsTenant.with_tenant(website) do
+          create(:pwb_prop, :sale, website: website, visible: false, price_sale_current_cents: 200_000_00)
+        end
+      end
+      let!(:rental_visible) do
+        ActsAsTenant.with_tenant(website) do
+          create(:pwb_prop, :long_term_rent, website: website, visible: true)
+        end
+      end
+
+      it 'returns visible sale properties for sale search' do
+        results = Prop.properties_search(sale_or_rental: 'sale')
+        expect(results).to include(sale_visible)
+        expect(results).not_to include(sale_hidden)
+        expect(results).not_to include(rental_visible)
+      end
+
+      it 'returns visible rental properties for rental search' do
+        results = Prop.properties_search(sale_or_rental: 'rental')
+        expect(results).to include(rental_visible)
+        expect(results).not_to include(sale_visible)
+      end
+    end
+
+    describe 'translations' do
+      let(:prop) do
+        ActsAsTenant.with_tenant(website) do
+          create(:pwb_prop, website: website, title_en: 'English Title')
+        end
+      end
+
+      it 'supports multiple locales for title' do
+        prop.title_es = 'Spanish Title'
+        prop.save!
+
+        I18n.with_locale(:en) { expect(prop.title).to eq('English Title') }
+        I18n.with_locale(:es) { expect(prop.title).to eq('Spanish Title') }
+      end
+
+      it 'supports multiple locales for description' do
+        prop.description_en = 'English Description'
+        prop.description_es = 'Spanish Description'
+        prop.save!
+
+        I18n.with_locale(:en) { expect(prop.description).to eq('English Description') }
+        I18n.with_locale(:es) { expect(prop.description).to eq('Spanish Description') }
+      end
+    end
+  end
+end

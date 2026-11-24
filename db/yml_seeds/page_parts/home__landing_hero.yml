@@ -1,0 +1,51 @@
+- page_slug: home
+  page_part_key: landing_hero
+  block_contents: {}
+  order_in_editor: 1,
+  show_in_editor: true,
+  editor_setup: {
+      "tabTitleKey": "pageSections.landingHero.title",
+      "tabInfoKey": "pageSections.landingHero.info",
+      "default_sort_order": 1,
+      "default_visible_on_page": false,
+      "editorBlocks": [
+        [
+        {
+          "label": "landing_title_a",
+          "isSingleLineText": "true"
+        },
+        {
+          "label": "landing_content_a",
+          "isHtml": "true"
+        }],
+        [
+        {
+          "label": "landing_img",
+          "isImage": "true"
+        }
+        ]
+      ]
+    }
+  template: >
+    <div class="pwb-hero hero-section">
+      <div class="pwb-hero__bg-wrapper hero-bg-wrapper">
+        {% if page_part["landing_img"]["content"] %}
+          {% assign hero_img_url = page_part["landing_img"]["content"] %}
+          {% assign webp_url = hero_img_url | replace: '.jpg', '.webp' | replace: '.jpeg', '.webp' %}
+          <picture>
+            <source srcset="{{ webp_url }}" type="image/webp">
+            <img src="{{ hero_img_url }}" alt="{{ page_part["landing_title_a"]["content"] | default: '' }}" class="hero-bg-img" fetchpriority="high">
+          </picture>
+        {% else %}
+          <div class="hero-bg-placeholder"></div>
+        {% endif %}
+      </div>
+      <div class="pwb-hero__content hero-content-wrapper">
+        <h1 class="pwb-hero__title hero-title">
+          {{ page_part["landing_title_a"]["content"] }}
+        </h1>
+        <div class="pwb-hero__subtitle hero-subtitle">
+          {{ page_part["landing_content_a"]["content"] }}
+        </div>
+      </div>
+    </div>

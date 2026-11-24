@@ -1,0 +1,87 @@
+# frozen_string_literal: true
+
+# == Schema Information
+#
+# Table name: pwb_page_parts
+# Database name: primary
+#
+#  id              :bigint           not null, primary key
+#  block_contents  :json
+#  editor_setup    :json
+#  flags           :integer          default(0), not null
+#  is_rails_part   :boolean          default(FALSE)
+#  locale          :string
+#  order_in_editor :integer
+#  page_part_key   :string
+#  page_slug       :string
+#  show_in_editor  :boolean          default(TRUE)
+#  template        :text
+#  theme_name      :string
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  website_id      :integer
+#
+# Indexes
+#
+#  index_page_parts_unique_per_website    (page_part_key,page_slug,website_id) UNIQUE
+#  index_pwb_page_parts_on_page_part_key  (page_part_key)
+#  index_pwb_page_parts_on_page_slug      (page_slug)
+#  index_pwb_page_parts_on_website_id     (website_id)
+#
+FactoryBot.define do
+  # Use Pwb::PagePart (not PwbTenant::PagePart) for flexibility in tests
+  # The tenant-scoped version has stricter validation that can cause issues
+  factory :pwb_page_part, class: 'Pwb::PagePart' do
+    website { Pwb::Website.first || association(:pwb_website) }
+    # factory :form_and_map_rails_part do
+    #   page_part_key "form_and_map"
+    #   is_rails_part true
+    #   after(:create) do |page_part, evaluator|
+    #     create(:pwb_content, :main_content, pages: [page_part.page])
+    #   end
+    # end
+
+    # trait :form_and_map do
+    #   page_part_key "form_and_map"
+    #   is_rails_part true
+    # end
+
+    trait :content_html do
+      page_part_key { "content_html" }
+      template { "<p>{{ page_part['main_content']['content'] %> }}</p>" }
+      # extra {} needed for json object below
+      editor_setup do
+        {
+          tabTitleKey: "pageSections.rawHtml.title",
+          editorBlocks: [
+            [
+              {
+                label: "main_content",
+                isHtml: "true"
+              }
+            ]
+          ]
+        }
+      end
+    end
+    trait :footer_content_html_for_website do
+      page_part_key { "footer_content_html" }
+      template { "<p>{{ page_part['main_content']['content'] %> }}</p>" }
+      page_slug { "website" }
+      # extra {} needed for json object below
+      editor_setup do
+        {
+          tabTitleKey: "pageSections.rawHtml.title",
+          editorBlocks: [
+            [
+              {
+                label: "main_content",
+                isHtml: "true"
+              }
+            ]
+          ]
+        }
+      end
+    end
+  end
+end

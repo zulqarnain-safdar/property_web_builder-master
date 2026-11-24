@@ -1,0 +1,43 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+RSpec.describe "Pwb Model Associations", type: :model do
+  it "has valid associations for all Pwb models" do
+    # Eager load to ensure all models are defined
+    Rails.application.eager_load!
+
+    # Find all classes inside Pwb module that inherit from ApplicationRecord
+    # We filter by those that actually have a table or are abstract, to avoid issues with modules/helpers
+    pwb_models = Pwb.constants.map { |c| Pwb.const_get(c) }
+                    .select { |c| c.is_a?(Class) && c < ActiveRecord::Base && !c.abstract_class? }
+
+    pwb_tenant_models = []
+    if defined?(PwbTenant)
+      pwb_tenant_models = PwbTenant.constants.map { |c| PwbTenant.const_get(c) }
+                                   .select { |c| c.is_a?(Class) && c < ActiveRecord::Base && !c.abstract_class? }
+    end
+
+    models = pwb_models + pwb_tenant_models
+
+    failures = []
+
+    models.each do |model|
+      model.reflect_on_all_associations.each do |assoc|
+        # Skip polymorphic associations as they don't have a fixed klass
+        next if assoc.polymorphic?
+
+        begin
+          # This triggers the class lookup
+          assoc.klass
+        rescue NameError => e
+          failures << "Model #{model.name} has invalid association '#{assoc.name}': #{e.message}"
+        rescue StandardError => e
+          failures << "Model #{model.name} failed on association '#{assoc.name}': #{e.message}"
+        end
+      end
+    end
+
+    raise "Association errors found:\n#{failures.join("\n")}" if failures.any?
+  end
+end

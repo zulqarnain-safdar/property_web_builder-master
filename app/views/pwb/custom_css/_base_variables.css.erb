@@ -1,0 +1,281 @@
+<%# Base CSS Custom Properties - Used by all themes %>
+<%# This file generates CSS custom properties from website.style_variables %>
+
+<%
+  # Get style variables with defaults
+  vars = @current_website&.style_variables || {}
+
+  # Color defaults
+  primary_color = vars["primary_color"] || "#e91b23"
+  secondary_color = vars["secondary_color"] || "#3498db"
+  accent_color = vars["accent_color"] || vars["action_color"] || "#27ae60"
+
+  # Derived colors (lighter/darker variants)
+  # These use CSS color-mix for modern browsers
+
+  # Background colors
+  bg_light = vars["bg_light"] || "#f8f9fa"
+  bg_dark = vars["bg_dark"] || "#1a1a2e"
+
+  # Text colors
+  text_primary = vars["text_primary"] || "#212529"
+  text_secondary = vars["text_secondary"] || "#6c757d"
+  text_light = vars["text_light"] || "#ffffff"
+
+  # Footer colors
+  footer_bg = vars["footer_bg_color"] || "#2c3e50"
+  footer_text = vars["footer_main_text_color"] || "#ffffff"
+  footer_link = vars["footer_link_color"] || "#3498db"
+
+  # Typography
+  font_primary = vars["font_primary"] || "Inter, system-ui, sans-serif"
+  font_secondary = vars["font_secondary"] || "Georgia, serif"
+  font_size_base = vars["font_size_base"] || "16px"
+  line_height_base = vars["line_height_base"] || "1.6"
+
+  # Spacing
+  spacing_unit = vars["spacing_unit"] || "1rem"
+  container_padding = vars["container_padding"] || "1rem"
+  container_max_width = vars["container_max_width"] || "1200px"
+
+  # Border radius
+  border_radius_sm = vars["border_radius_sm"] || "0.25rem"
+  border_radius = vars["border_radius"] || "0.5rem"
+  border_radius_lg = vars["border_radius_lg"] || "1rem"
+  border_radius_full = vars["border_radius_full"] || "9999px"
+
+  # Shadows
+  shadow_sm = vars["shadow_sm"] || "0 1px 2px rgba(0,0,0,0.05)"
+  shadow = vars["shadow"] || "0 4px 6px rgba(0,0,0,0.1)"
+  shadow_lg = vars["shadow_lg"] || "0 10px 25px rgba(0,0,0,0.15)"
+
+  # Transitions
+  transition_fast = vars["transition_fast"] || "150ms"
+  transition_normal = vars["transition_normal"] || "300ms"
+  transition_slow = vars["transition_slow"] || "500ms"
+%>
+
+:root {
+  /* ===== Color System - Mapped to PWB Standard Variables ===== */
+  --pwb-primary: var(--pwb-primary-color);
+  --pwb-primary-light: var(--pwb-primary-100);
+  --pwb-primary-dark: var(--pwb-primary-700);
+  /* RGB fallback for legacy support */
+  --pwb-primary-rgb: <%= primary_color.gsub('#', '').scan(/../).map { |c| c.to_i(16) }.join(', ') rescue '233, 27, 35' %>;
+
+  --pwb-secondary: var(--pwb-secondary-color);
+  --pwb-secondary-light: var(--pwb-secondary-100);
+  --pwb-secondary-dark: var(--pwb-secondary-700);
+
+  --pwb-accent: var(--pwb-accent-color);
+  --pwb-accent-light: var(--pwb-accent-100);
+  --pwb-accent-dark: var(--pwb-accent-700);
+
+  /* Status colors */
+  --pwb-success: var(--pwb-success-color, #28a745);
+  --pwb-warning: var(--pwb-warning-color, #ffc107);
+  --pwb-danger: var(--pwb-error-color, #dc3545);
+  --pwb-info: #17a2b8;
+
+  /* Background colors */
+  --pwb-bg-light: var(--pwb-surface-alt-color, <%= bg_light %>);
+  --pwb-bg-dark: <%= bg_dark %>;
+  --pwb-bg-body: var(--pwb-background-color, #ffffff);
+  --pwb-bg-surface: var(--pwb-surface-color, #ffffff);
+  --pwb-bg-muted: var(--pwb-surface-alt-color, #f1f3f4);
+
+  /* Text colors */
+  --pwb-text-primary: var(--pwb-text-color, <%= text_primary %>);
+  --pwb-text-secondary: var(--pwb-muted-text-color, <%= text_secondary %>);
+  --pwb-text-muted: var(--pwb-muted-text-color, #9ca3af);
+  --pwb-text-light: <%= text_light %>;
+  --pwb-text-on-primary: #ffffff;
+  --pwb-text-on-secondary: #ffffff;
+
+  /* Border colors */
+  --pwb-border-color: var(--pwb-border-color, #e5e7eb);
+  --pwb-border-color-dark: #d1d5db;
+
+  /* Footer */
+  --pwb-footer-bg: var(--pwb-footer-background-color, <%= footer_bg %>);
+  --pwb-footer-text: var(--pwb-footer-text-color, <%= footer_text %>);
+  --pwb-footer-link: <%= footer_link %>;
+
+  /* ===== Typography ===== */
+  --pwb-font-primary: <%= font_primary %>;
+  --pwb-font-secondary: <%= font_secondary %>;
+  --pwb-font-mono: ui-monospace, monospace;
+
+  --pwb-font-size-xs: 0.75rem;
+  --pwb-font-size-sm: 0.875rem;
+  --pwb-font-size-base: <%= font_size_base %>;
+  --pwb-font-size-lg: 1.125rem;
+  --pwb-font-size-xl: 1.25rem;
+  --pwb-font-size-2xl: 1.5rem;
+  --pwb-font-size-3xl: 1.875rem;
+  --pwb-font-size-4xl: 2.25rem;
+  --pwb-font-size-5xl: 3rem;
+
+  --pwb-line-height-tight: 1.25;
+  --pwb-line-height-base: <%= line_height_base %>;
+  --pwb-line-height-relaxed: 1.75;
+
+  --pwb-font-weight-normal: 400;
+  --pwb-font-weight-medium: 500;
+  --pwb-font-weight-semibold: 600;
+  --pwb-font-weight-bold: 700;
+
+  /* ===== Spacing ===== */
+  --pwb-spacing-unit: <%= spacing_unit %>;
+  --pwb-spacing-xs: calc(var(--pwb-spacing-unit) * 0.25);
+  --pwb-spacing-sm: calc(var(--pwb-spacing-unit) * 0.5);
+  --pwb-spacing-md: var(--pwb-spacing-unit);
+  --pwb-spacing-lg: calc(var(--pwb-spacing-unit) * 1.5);
+  --pwb-spacing-xl: calc(var(--pwb-spacing-unit) * 2);
+  --pwb-spacing-2xl: calc(var(--pwb-spacing-unit) * 3);
+  --pwb-spacing-3xl: calc(var(--pwb-spacing-unit) * 4);
+
+  /* ===== Layout ===== */
+  --pwb-container-padding: <%= container_padding %>;
+  --pwb-container-max-width: <%= container_max_width %>;
+  --pwb-container-narrow: 800px;
+  --pwb-container-wide: 1400px;
+
+  /* ===== Border Radius ===== */
+  --pwb-radius-sm: <%= border_radius_sm %>;
+  --pwb-radius: <%= border_radius %>;
+  --pwb-radius-lg: <%= border_radius_lg %>;
+  --pwb-radius-full: <%= border_radius_full %>;
+
+  /* ===== Shadows ===== */
+  --pwb-shadow-sm: <%= shadow_sm %>;
+  --pwb-shadow: <%= shadow %>;
+  --pwb-shadow-lg: <%= shadow_lg %>;
+  --pwb-shadow-inner: inset 0 2px 4px rgba(0,0,0,0.06);
+
+  /* ===== Transitions ===== */
+  --pwb-transition-fast: <%= transition_fast %>;
+  --pwb-transition-normal: <%= transition_normal %>;
+  --pwb-transition-slow: <%= transition_slow %>;
+  --pwb-transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ===== Z-Index Scale ===== */
+  --pwb-z-dropdown: 1000;
+  --pwb-z-sticky: 1020;
+  --pwb-z-fixed: 1030;
+  --pwb-z-modal-backdrop: 1040;
+  --pwb-z-modal: 1050;
+  --pwb-z-popover: 1060;
+  --pwb-z-tooltip: 1070;
+}
+
+<%
+  # Get dark mode colors from palette (if dark mode is enabled)
+  dark_colors = @current_website&.dark_mode_enabled? ? (@current_website.dark_mode_colors || {}) : {}
+
+  # Dark mode color mappings (with fallbacks)
+  dark_primary = dark_colors["primary_color"] || "#f3111a"
+  dark_secondary = dark_colors["secondary_color"] || "#688cb1"
+  dark_accent = dark_colors["accent_color"] || "#2c9ae3"
+  dark_bg = dark_colors["background_color"] || "#121212"
+  dark_text = dark_colors["text_color"] || "#e8e8e8"
+  dark_header_bg = dark_colors["header_background_color"] || "#1a1a1a"
+  dark_header_text = dark_colors["header_text_color"] || "#e8e8e8"
+  dark_footer_bg = dark_colors["footer_background_color"] || "#0d0d0d"
+  dark_footer_text = dark_colors["footer_text_color"] || "#e8e8e8"
+%>
+
+<% if @current_website&.dark_mode_enabled? %>
+/* Dark mode support - auto mode (respects system preference) */
+@media (prefers-color-scheme: dark) {
+  :root.pwb-auto-dark {
+    /* Base colors from palette */
+    --pwb-primary: <%= dark_primary %>;
+    --pwb-primary-light: color-mix(in srgb, <%= dark_primary %> 70%, white);
+    --pwb-primary-dark: color-mix(in srgb, <%= dark_primary %> 70%, black);
+    --pwb-primary-rgb: <%= dark_primary.gsub('#', '').scan(/../).map { |c| c.to_i(16) }.join(', ') rescue '243, 17, 26' %>;
+
+    --pwb-secondary: <%= dark_secondary %>;
+    --pwb-secondary-light: color-mix(in srgb, <%= dark_secondary %> 70%, white);
+    --pwb-secondary-dark: color-mix(in srgb, <%= dark_secondary %> 70%, black);
+
+    --pwb-accent: <%= dark_accent %>;
+    --pwb-accent-light: color-mix(in srgb, <%= dark_accent %> 70%, white);
+    --pwb-accent-dark: color-mix(in srgb, <%= dark_accent %> 70%, black);
+
+    /* Background colors */
+    --pwb-bg-body: <%= dark_bg %>;
+    --pwb-bg-surface: color-mix(in srgb, <%= dark_bg %> 90%, white);
+    --pwb-bg-muted: color-mix(in srgb, <%= dark_bg %> 80%, white);
+    --pwb-bg-light: color-mix(in srgb, <%= dark_bg %> 95%, white);
+    --pwb-bg-dark: <%= dark_bg %>;
+
+    /* Text colors */
+    --pwb-text-primary: <%= dark_text %>;
+    --pwb-text-secondary: color-mix(in srgb, <%= dark_text %> 70%, black);
+    --pwb-text-muted: color-mix(in srgb, <%= dark_text %> 50%, black);
+    --pwb-text-light: #ffffff;
+    --pwb-text-on-primary: #ffffff;
+    --pwb-text-on-secondary: #ffffff;
+
+    /* Border colors */
+    --pwb-border-color: color-mix(in srgb, <%= dark_bg %> 60%, white);
+    --pwb-border-color-dark: color-mix(in srgb, <%= dark_bg %> 50%, white);
+
+    /* Header */
+    --pwb-header-bg: <%= dark_header_bg %>;
+    --pwb-header-text: <%= dark_header_text %>;
+
+    /* Footer */
+    --pwb-footer-bg: <%= dark_footer_bg %>;
+    --pwb-footer-text: <%= dark_footer_text %>;
+    --pwb-footer-link: <%= dark_accent %>;
+  }
+}
+
+/* Manual dark mode class - forced dark mode */
+.pwb-dark,
+html.pwb-dark {
+  /* Base colors from palette */
+  --pwb-primary: <%= dark_primary %>;
+  --pwb-primary-light: color-mix(in srgb, <%= dark_primary %> 70%, white);
+  --pwb-primary-dark: color-mix(in srgb, <%= dark_primary %> 70%, black);
+  --pwb-primary-rgb: <%= dark_primary.gsub('#', '').scan(/../).map { |c| c.to_i(16) }.join(', ') rescue '243, 17, 26' %>;
+
+  --pwb-secondary: <%= dark_secondary %>;
+  --pwb-secondary-light: color-mix(in srgb, <%= dark_secondary %> 70%, white);
+  --pwb-secondary-dark: color-mix(in srgb, <%= dark_secondary %> 70%, black);
+
+  --pwb-accent: <%= dark_accent %>;
+  --pwb-accent-light: color-mix(in srgb, <%= dark_accent %> 70%, white);
+  --pwb-accent-dark: color-mix(in srgb, <%= dark_accent %> 70%, black);
+
+  /* Background colors */
+  --pwb-bg-body: <%= dark_bg %>;
+  --pwb-bg-surface: color-mix(in srgb, <%= dark_bg %> 90%, white);
+  --pwb-bg-muted: color-mix(in srgb, <%= dark_bg %> 80%, white);
+  --pwb-bg-light: color-mix(in srgb, <%= dark_bg %> 95%, white);
+  --pwb-bg-dark: <%= dark_bg %>;
+
+  /* Text colors */
+  --pwb-text-primary: <%= dark_text %>;
+  --pwb-text-secondary: color-mix(in srgb, <%= dark_text %> 70%, black);
+  --pwb-text-muted: color-mix(in srgb, <%= dark_text %> 50%, black);
+  --pwb-text-light: #ffffff;
+  --pwb-text-on-primary: #ffffff;
+  --pwb-text-on-secondary: #ffffff;
+
+  /* Border colors */
+  --pwb-border-color: color-mix(in srgb, <%= dark_bg %> 60%, white);
+  --pwb-border-color-dark: color-mix(in srgb, <%= dark_bg %> 50%, white);
+
+  /* Header */
+  --pwb-header-bg: <%= dark_header_bg %>;
+  --pwb-header-text: <%= dark_header_text %>;
+
+  /* Footer */
+  --pwb-footer-bg: <%= dark_footer_bg %>;
+  --pwb-footer-text: <%= dark_footer_text %>;
+  --pwb-footer-link: <%= dark_accent %>;
+}
+<% end %>

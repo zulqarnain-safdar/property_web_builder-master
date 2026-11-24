@@ -1,0 +1,132 @@
+# frozen_string_literal: true
+
+namespace :playwright do
+  desc "Reset and seed the E2E test database"
+  task reset: :environment do
+    unless Rails.env.e2e?
+      puts "❌ This task can only be run in the e2e environment"
+      puts "   Usage: RAILS_ENV=e2e bin/rails playwright:reset"
+      exit 1
+    end
+
+    puts "🔄 Resetting E2E test database..."
+
+    # Check seed image availability before proceeding
+    require_relative '../pwb/seed_images'
+    Pwb::SeedImages.check_availability!(context: "E2E test seeding")
+
+    Rake::Task["db:drop"].invoke
+    Rake::Task["db:create"].invoke
+    Rake::Task["db:migrate"].invoke
+
+    # Load the E2E seeds
+    load Rails.root.join('db', 'seeds', 'e2e_seeds.rb')
+
+    puts "✅ E2E database reset complete!"
+  end
+
+  desc "Start Rails server for E2E testing (port 3001)"
+  task server: :environment do
+    unless Rails.env.e2e?
+      puts "❌ This task must be run in the e2e environment"
+      puts "   Usage: RAILS_ENV=e2e bin/rails playwright:server"
+      exit 1
+    end
+
+    e2e_users = YAML.load_file(Rails.root.join('db', 'yml_seeds', 'e2e_users.yml'))
+
+    puts "🚀 Starting Rails server for E2E testing on port 3001..."
+    puts "   Tenant A: http://tenant-a.e2e.localhost:3001"
+    if e2e_users['tenant_a']
+      admin = e2e_users['tenant_a']['admin']
+      regular = e2e_users['tenant_a']['regular']
+      puts "     Admin: #{admin['email']} / #{admin['password']}" if admin
+      puts "     User:  #{regular['email']} / #{regular['password']}" if regular
+    end
+
+    puts "   Tenant B: http://tenant-b.e2e.localhost:3001"
+    if e2e_users['tenant_b']
+      admin = e2e_users['tenant_b']['admin']
+      regular = e2e_users['tenant_b']['regular']
+      puts "     Admin: #{admin['email']} / #{admin['password']}" if admin
+      puts "     User:  #{regular['email']} / #{regular['password']}" if regular
+    end
+    puts ""
+
+    exec "bin/rails server -p 3001"
+  end
+
+  desc "Start Rails server with admin auth bypass for integration testing"
+  task server_bypass_auth: :environment do
+    unless Rails.env.e2e?
+      puts "❌ This task must be run in the e2e environment"
+      puts "   Usage: RAILS_ENV=e2e bin/rails playwright:server_bypass_auth"
+      exit 1
+    end
+
+    puts "🚀 Starting Rails server for E2E testing on port 3001..."
+    puts "⚠️  BYPASS_ADMIN_AUTH=true - Admin authentication is DISABLED"
+    puts ""
+    puts "   Tenant A: http://tenant-a.e2e.localhost:3001"
+    puts "   Tenant B: http://tenant-b.e2e.localhost:3001"
+    puts ""
+    puts "   Admin pages accessible without login:"
+    puts "     - /site_admin"
+    puts "     - /site_admin/website/settings"
+    puts "     - /site_admin/pages"
+    puts "     - /site_admin/props"
+    puts ""
+
+    ENV['BYPASS_ADMIN_AUTH'] = 'true'
+    exec "bin/rails server -p 3001"
+  end
+
+  desc "Seed E2E test data without resetting database"
+  task seed: :environment do
+    unless Rails.env.e2e?
+      puts "❌ This task can only be run in the e2e environment"
+      puts "   Usage: RAILS_ENV=e2e bin/rails playwright:seed"
+      exit 1
+    end
+
+    # Check seed image availability before proceeding
+    require_relative '../pwb/seed_images'
+    Pwb::SeedImages.check_availability!(context: "E2E test seeding")
+
+    load Rails.root.join('db', 'seeds', 'e2e_seeds.rb')
+  end
+
+  desc "Run Playwright E2E tests (sets up env, starts server, runs tests)"
+  task :test, [:args] => :environment do |_t, task_args|
+    script_path = Rails.root.join('scripts', 'run-e2e-tests.sh')
+
+    unless File.exist?(script_path)
+      puts "❌ E2E test runner script not found at #{script_path}"
+      exit 1
+    end
+
+    # Pass any additional arguments to the script
+    args = task_args[:args] || ''
+    puts "🎭 Running Playwright E2E tests..."
+    puts ""
+
+    # Execute the wrapper script
+    exec "#{script_path} #{args}"
+  end
+
+  desc "Run Playwright E2E tests with UI mode"
+  task ui: :environment do
+    Rake::Task['playwright:test'].invoke('--ui')
+  end
+
+  desc "Run Playwright E2E tests in headed mode (visible browser)"
+  task headed: :environment do
+    Rake::Task['playwright:test'].invoke('--headed')
+  end
+
+  desc "Show Playwright test report"
+  task report: :environment do
+    puts "📊 Opening Playwright report..."
+    exec "npx playwright show-report"
+  end
+end

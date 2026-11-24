@@ -1,0 +1,66 @@
+- page_slug: home
+  page_part_key: heroes/hero_centered
+  block_contents: {}
+  order_in_editor: 1
+  show_in_editor: true
+  editor_setup:
+    tabTitleKey: "pageSections.heroCentered.title"
+    tabInfoKey: "pageSections.heroCentered.info"
+    default_sort_order: 1
+    default_visible_on_page: true
+    editorBlocks:
+      - - label: pretitle
+          isSingleLineText: "true"
+        - label: title
+          isSingleLineText: "true"
+        - label: subtitle
+          isMultipleLineText: "true"
+      - - label: cta_text
+          isSingleLineText: "true"
+        - label: cta_link
+          isSingleLineText: "true"
+        - label: cta_secondary_text
+          isSingleLineText: "true"
+        - label: cta_secondary_link
+          isSingleLineText: "true"
+      - - label: background_image
+          isImage: "true"
+  template: |
+    <section class="pwb-hero hero-section hero-centered relative min-h-[600px] flex items-center justify-center overflow-hidden">
+      {% if page_part["background_image"]["content"] %}
+        <div class="absolute inset-0 z-0">
+          {% assign bg_img_url = page_part["background_image"]["content"] %}
+          {% assign webp_url = bg_img_url | replace: '.jpg', '.webp' | replace: '.jpeg', '.webp' %}
+          <picture>
+            <source srcset="{{ webp_url }}" type="image/webp">
+            <img src="{{ bg_img_url }}" alt="" class="w-full h-full object-cover" fetchpriority="high" loading="eager" decoding="async">
+          </picture>
+          <div class="absolute inset-0 bg-gradient-to-b from-black/60 to-black/40"></div>
+        </div>
+      {% else %}
+        <div class="absolute inset-0 bg-gradient-to-br from-pwb-primary to-pwb-secondary z-0"></div>
+      {% endif %}
+      <div class="pwb-hero__content hero-content-wrapper relative z-[1] text-center px-4 max-w-4xl mx-auto">
+        {% if page_part["pretitle"]["content"] %}
+          <p class="pwb-hero__pretitle text-sm uppercase tracking-widest text-white/80 mb-4">{{ page_part["pretitle"]["content"] }}</p>
+        {% endif %}
+        <h1 class="pwb-hero__title hero-title text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
+          {{ page_part["title"]["content"] }}
+        </h1>
+        {% if page_part["subtitle"]["content"] %}
+          <p class="pwb-hero__subtitle hero-subtitle text-xl text-white/90 mb-8 max-w-2xl mx-auto">{{ page_part["subtitle"]["content"] }}</p>
+        {% endif %}
+        <div class="pwb-hero__cta-wrapper flex flex-wrap justify-center gap-4">
+          {% if page_part["cta_text"]["content"] %}
+            <a href="{{ page_part["cta_link"]["content"] }}" class="pwb-btn pwb-btn--primary pwb-hero__cta-link px-8 py-3 bg-white text-pwb-primary-900 font-semibold rounded-lg hover:bg-pwb-primary-50 transition">
+              {{ page_part["cta_text"]["content"] }}
+            </a>
+          {% endif %}
+          {% if page_part["cta_secondary_text"]["content"] %}
+            <a href="{{ page_part["cta_secondary_link"]["content"] }}" class="pwb-btn pwb-btn--outline pwb-hero__cta-link px-8 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white/10 transition">
+              {{ page_part["cta_secondary_text"]["content"] }}
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </section>

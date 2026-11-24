@@ -1,0 +1,62 @@
+test:
+  service: Disk
+  root: <%= Rails.root.join("tmp/storage") %>
+
+local:
+  service: Disk
+  root: <%= Rails.root.join("storage") %>
+
+# Cloudflare R2 (S3-compatible object storage)
+# Note: Checksum configuration is in config/initializers/ssl_crl_fix.rb
+# Uses custom R2Service to support CDN domain for public URLs
+#
+# Environment Variables:
+#   CDN_IMAGES_URL    - Public CDN URL for uploaded images (preferred)
+#   CDN_IMAGES_BUCKET - R2 bucket for uploaded images (preferred)
+#   R2_PUBLIC_URL     - Legacy alias for CDN_IMAGES_URL
+#   R2_BUCKET         - Legacy alias for CDN_IMAGES_BUCKET
+#
+cloudflare_r2:
+  service: R2
+  access_key_id: <%= Rails.application.credentials.dig(:r2, :access_key_id) || ENV['R2_ACCESS_KEY_ID'] %>
+  secret_access_key: <%= Rails.application.credentials.dig(:r2, :secret_access_key) || ENV['R2_SECRET_ACCESS_KEY'] %>
+  region: auto
+  bucket: <%= ENV['CDN_IMAGES_BUCKET'] || Rails.application.credentials.dig(:r2, :bucket) || ENV['R2_BUCKET'] %>
+  endpoint: <%= begin
+    r2_account_id = Rails.application.credentials.dig(:r2, :account_id) || ENV['R2_ACCOUNT_ID']
+    # This whole file is ERB-parsed eagerly regardless of which service is
+    # actually selected (config.active_storage.service), so only fail fast
+    # here in production, where the r2 service is actually used.
+    raise 'Missing R2 account id (set credentials.r2.account_id or R2_ACCOUNT_ID)' if r2_account_id.blank? && Rails.env.production?
+    r2_account_id.present? ? "https://#{r2_account_id}.r2.cloudflarestorage.com" : nil
+  end %>
+  force_path_style: true
+  public: true
+  public_url: <%= ENV['CDN_IMAGES_URL'] || Rails.application.credentials.dig(:r2, :public_url) || ENV['R2_PUBLIC_URL'] %>
+
+# Use rails credentials:edit to set the AWS secrets (as aws:access_key_id|secret_access_key)
+# amazon:
+#   service: S3
+#   access_key_id: <%= Rails.application.credentials.dig(:aws, :access_key_id) %>
+#   secret_access_key: <%= Rails.application.credentials.dig(:aws, :secret_access_key) %>
+#   region: us-east-1
+#   bucket: your_own_bucket
+
+# Remember not to checkin your GCS keyfile to a repository
+# google:
+#   service: GCS
+#   project: your_project
+#   credentials: <%= Rails.root.join("path/to/gcs.keyfile") %>
+#   bucket: your_own_bucket
+
+# Use rails credentials:edit to set the Azure Storage secret (as azure_storage:storage_access_key)
+# microsoft:
+#   service: AzureStorage
+#   storage_account_name: your_account_name
+#   storage_access_key: <%= Rails.application.credentials.dig(:azure_storage, :storage_access_key) %>
+#   container: your_container_name
+
+# mirror:
+#   service: Mirror
+#   primary: local
+#   mirrors: [ amazon, google, microsoft ]

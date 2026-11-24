@@ -1,0 +1,299 @@
+# frozen_string_literal: true
+
+module Pwb
+  # RealtyAsset represents a physical property (the building/land itself).
+  # This is the "source of truth" for property data in the normalized schema.
+  #
+  # Transaction data is stored in:
+  #   - SaleListing (for properties being sold)
+  #   - RentalListing (for properties being rented)
+  #
+  # For read operations, use Pwb::ListedProperty (materialized view) instead,
+  # which provides a denormalized, query-optimized view of all data.
+  #
+  # Note: This model is NOT tenant-scoped. Use PwbTenant::RealtyAsset for
+  # tenant-scoped queries in web requests. This version is useful for
+  # console work and cross-tenant operations.
+# == Schema Information
+#
+# Table name: pwb_realty_assets
+# Database name: primary
+#
+#  id                 :uuid             not null, primary key
+#  city               :string
+#  constructed_area   :float            default(0.0)
+#  count_bathrooms    :float            default(0.0)
+#  count_bedrooms     :integer          default(0)
+#  count_garages      :integer          default(0)
+#  count_toilets      :integer          default(0)
+#  country            :string
+#  description        :text
+#  energy_performance :float
+#  energy_rating      :integer
+#  latitude           :float
+#  longitude          :float
+#  plot_area          :float            default(0.0)
+#  postal_code        :string
+#  prop_origin_key    :string
+#  prop_photos_count  :integer          default(0), not null
+#  prop_state_key     :string
+#  prop_type_key      :string
+#  reference          :string
+#  region             :string
+#  slug               :string
+#  street_address     :string
+#  street_name        :string
+#  street_number      :string
+#  title              :string
+#  translations       :jsonb            not null
+#  year_construction  :integer          default(0)
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
+#  website_id         :integer
+#
+# Indexes
+#
+#  index_pwb_realty_assets_on_prop_photos_count             (prop_photos_count)
+#  index_pwb_realty_assets_on_prop_state_key                (prop_state_key)
+#  index_pwb_realty_assets_on_prop_type_key                 (prop_type_key)
+#  index_pwb_realty_assets_on_slug                          (slug) UNIQUE
+#  index_pwb_realty_assets_on_translations                  (translations) USING gin
+#  index_pwb_realty_assets_on_website_id                    (website_id)
+#  index_pwb_realty_assets_on_website_id_and_prop_type_key  (website_id,prop_type_key)
+#
+  class RealtyAsset < ApplicationRecord
+    include RefreshesPropertiesView
+
+    self.table_name = 'pwb_realty_assets'
+
+    # Callbacks for slug generation
+    before_validation :generate_slug, on: :create
+    before_validation :ensure_slug_uniqueness
+
+    # Validations
+    validates :slug, presence: true, uniqueness: true
+    validate :within_subscription_property_limit, on: :create
+
+    # Associations
+    has_many :sale_listings, class_name: 'Pwb::SaleListing', foreign_key: 'realty_asset_id', dependent: :destroy
+    has_many :rental_listings, class_name: 'Pwb::RentalListing', foreign_key: 'realty_asset_id', dependent: :destroy
+    has_many :spp_listings, class_name: 'Pwb::SppListing', foreign_key: 'realty_asset_id', dependent: :destroy
+    has_many :prop_photos, -> { order "sort_order asc" }, class_name: 'Pwb::PropPhoto', foreign_key: 'realty_asset_id', dependent: :destroy
+    has_many :features, class_name: 'PwbTenant::Feature', foreign_key: 'realty_asset_id', dependent: :destroy
+    # Note: Translations are now stored in pwb_props.translations JSONB column via Mobility
+    # Access via the associated prop model
+
+    belongs_to :website, class_name: 'Pwb::Website', optional: true, counter_cache: :realty_assets_count
+
+    # Geocoding
+    geocoded_by :geocodeable_address do |obj, results|
+      if geo = results.first
+        obj.longitude = geo.longitude
+        obj.latitude = geo.latitude
+        obj.city = geo.city
+        obj.street_number = geo.street_number
+        obj.street_address = geo.street_address
+        obj.postal_code = geo.postal_code
+        obj.region = geo.state
+        obj.country = geo.country
+      end
+    end
+
+    # NOTE: Materialized view refresh is handled async via RefreshesPropertiesView concern
+    # This provides debounced background refresh (200-400ms faster property updates)
+
+    # ============================================
+    # View Compatibility Helpers
+    # ============================================
+
+    def bedrooms
+      count_bedrooms
+    end
+
+    def bathrooms
+      count_bathrooms
+    end
+
+    def surface_area
+      constructed_area
+    end
+
+    def location
+      [street_address, city, postal_code, country].compact.reject(&:blank?).join(", ")
+    end
+
+    def geocodeable_address
+      [street_address, city, region, postal_code].compact.reject(&:blank?).join(", ")
+    end
+
+    def price
+      if sale_listings.visible.any?
+        sale_listings.visible.first.price_sale_current.format(no_cents: true)
+      elsif rental_listings.visible.any?
+        rental_listings.visible.first.price_rental_monthly_current.format(no_cents: true)
+      end
+    end
+
+    # ============================================
+    # Listing Status
+    # ============================================
+
+    def for_sale?
+      sale_listings.active.exists?
+    end
+
+    def for_rent?
+      rental_listings.active.exists?
+    end
+
+    def visible?
+      for_sale? || for_rent?
+    end
+
+    # Get the active sale listing (only one can be active at a time)
+    def active_sale_listing
+      sale_listings.active_listing.first
+    end
+
+    # Get the active rental listing (only one can be active at a time)
+    def active_rental_listing
+      rental_listings.active_listing.first
+    end
+
+    # ============================================
+    # Title/Description
+    # ============================================
+    # Note: RealtyAsset represents the physical property, not the listing.
+    # Title and description are marketing text that belong to the listing
+    # (SaleListing or RentalListing), not the underlying asset.
+    # These methods return nil; use listing.title/description instead.
+
+    def title
+      nil
+    end
+
+    def description
+      nil
+    end
+
+    # ============================================
+    # Feature Methods
+    # ============================================
+
+    def get_features
+      Hash[features.map { |f| [f.feature_key, true] }]
+    end
+
+    def set_features=(features_json)
+      return unless features_json.is_a?(Hash)
+      features_json.each do |feature_key, value|
+        if value == "true" || value == true
+          features.find_or_create_by(feature_key: feature_key)
+        else
+          features.where(feature_key: feature_key).delete_all
+        end
+      end
+    end
+
+    # ============================================
+    # Photo Methods
+    # ============================================
+
+    def ordered_photo(number)
+      prop_photos[number - 1] if prop_photos.length >= number
+    end
+
+    def primary_image_url
+      if prop_photos.any? && ordered_photo(1)&.image&.attached?
+        Rails.application.routes.url_helpers.rails_blob_path(ordered_photo(1).image, only_path: true)
+      else
+        ""
+      end
+    end
+
+    # ============================================
+    # URL Helper Methods
+    # ============================================
+
+    # Generate a URL-friendly title for use in property URLs
+    def url_friendly_title
+      # RealtyAsset stores title as nil (it's on the listing), use slug instead
+      slug.presence || reference.presence&.parameterize || 'show'
+    end
+
+    # Generate the contextual show path based on listing type
+    # @param rent_or_sale [String] 'for_rent' or 'for_sale'
+    # @return [String] URL path for viewing the property
+    def contextual_show_path(rent_or_sale)
+      rent_or_sale ||= for_rent? ? 'for_rent' : 'for_sale'
+      if rent_or_sale == 'for_rent'
+        Rails.application.routes.url_helpers.prop_show_for_rent_path(
+          locale: I18n.locale, id: id, url_friendly_title: url_friendly_title
+        )
+      else
+        Rails.application.routes.url_helpers.prop_show_for_sale_path(
+          locale: I18n.locale, id: id, url_friendly_title: url_friendly_title
+        )
+      end
+    end
+
+    private
+
+    # Generate a URL-friendly slug based on property attributes
+    def generate_slug
+      return if slug.present?
+
+      base_slug = build_slug_base
+      self.slug = base_slug
+    end
+
+    # Ensure slug is unique by appending a counter if necessary
+    def ensure_slug_uniqueness
+      return if slug.blank?
+
+      base_slug = slug.gsub(/-\d+$/, '') # Remove any existing counter suffix
+      counter = 1
+      original_slug = base_slug
+
+      while self.class.where(slug: slug).where.not(id: id).exists?
+        self.slug = "#{original_slug}-#{counter}"
+        counter += 1
+      end
+    end
+
+    # Build a descriptive slug from property attributes
+    def build_slug_base
+      parts = []
+
+      # Add property type if available
+      if prop_type_key.present?
+        type_name = prop_type_key.split('.').last.to_s.parameterize
+        parts << type_name unless type_name.blank?
+      end
+
+      # Add location info
+      parts << city.parameterize if city.present?
+      parts << region.parameterize if region.present? && city.blank?
+
+      # Add reference as fallback identifier
+      parts << reference.parameterize if reference.present?
+
+      # If we still have nothing, use a UUID fragment
+      if parts.empty?
+        parts << SecureRandom.hex(4)
+      end
+
+      parts.join('-').truncate(100, omission: '')
+    end
+
+    # Validate that creating this property won't exceed subscription limits
+    def within_subscription_property_limit
+      return unless website # Skip if no website association
+
+      unless website.can_add_property?
+        limit = website.property_limit
+        errors.add(:base, "Property limit reached. Your plan allows #{limit} properties. Please upgrade to add more.")
+      end
+    end
+  end
+end

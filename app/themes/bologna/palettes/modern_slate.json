@@ -1,0 +1,33 @@
+{
+  "id": "modern_slate",
+  "name": "Modern Slate",
+  "description": "Contemporary grays with warm terracotta accent",
+  "preview_colors": [
+    "#4a5568",
+    "#718096",
+    "#c45d3e"
+  ],
+  "is_default": false,
+  "colors": {
+    "primary_color": "#4a5568",
+    "secondary_color": "#718096",
+    "accent_color": "#c45d3e",
+    "background_color": "#f7fafc",
+    "text_color": "#2d3748",
+    "header_background_color": "#ffffff",
+    "header_text_color": "#2d3748",
+    "footer_background_color": "#2d3748",
+    "footer_text_color": "#e2e8f0",
+    "link_color": "#4a5568",
+    "card_background_color": "#ffffff",
+    "card_text_color": "#2d3748",
+    "border_color": "#e5e7eb",
+    "surface_color": "#ffffff",
+    "surface_alt_color": "#f9fafb",
+    "success_color": "#10b981",
+    "warning_color": "#f59e0b",
+    "error_color": "#ef4444",
+    "muted_text_color": "#6b7280",
+    "link_hover_color": "#242f42"
+  }
+}

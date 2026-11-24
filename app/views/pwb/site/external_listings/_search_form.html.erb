@@ -1,0 +1,200 @@
+<%# Search Filters Form for External Listings %>
+<%# Form submits to the current listing type URL (buy or rent) %>
+<%= form_with url: external_listings_index_path(@listing_type), method: :get, local: true, id: "external-search-form", class: "bg-white rounded-lg shadow p-4 lg:sticky lg:top-4", data: { buy_url: external_buy_path, rent_url: external_rent_path } do |form| %>
+  <h2 class="text-lg font-semibold text-gray-900 mb-4">
+    <%= t("external_feed.search.filters", default: "Filters") %>
+  </h2>
+
+  <%# Reference Search %>
+  <div class="mb-4">
+    <label for="reference" class="block text-sm font-medium text-gray-700 mb-1">
+      <%= t("external_feed.search.reference", default: "Reference") %>
+    </label>
+    <div class="relative">
+      <input type="text" id="reference" name="reference"
+             value="<%= search_params[:reference] %>"
+             placeholder="<%= t('external_feed.search.search_reference', default: 'Search by reference') %>"
+             class="block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm pl-9">
+      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <%# Listing Type - Now changes form action URL instead of adding query param %>
+  <div class="mb-4">
+    <label class="block text-sm font-medium text-gray-700 mb-2">
+      <%= t("external_feed.search.listing_type", default: "Listing Type") %>
+    </label>
+    <div class="flex gap-2">
+      <a href="<%= external_buy_path %>"
+         class="flex-1 block text-center py-2 px-3 text-sm font-medium rounded-md border transition-colors
+                <%= @listing_type == :sale ? 'bg-blue-600 text-white border-blue-600' : 'border-gray-300 text-gray-700 hover:bg-gray-50' %>">
+        <%= t("external_feed.listing_type.sale", default: "Buy") %>
+      </a>
+      <a href="<%= external_rent_path %>"
+         class="flex-1 block text-center py-2 px-3 text-sm font-medium rounded-md border transition-colors
+                <%= @listing_type == :rental ? 'bg-blue-600 text-white border-blue-600' : 'border-gray-300 text-gray-700 hover:bg-gray-50' %>">
+        <%= t("external_feed.listing_type.rental", default: "Rent") %>
+      </a>
+    </div>
+  </div>
+
+  <%# Location %>
+  <div class="mb-4">
+    <label for="location" class="block text-sm font-medium text-gray-700 mb-1">
+      <%= t("external_feed.search.location", default: "Location") %>
+    </label>
+    <select id="location" name="location"
+            class="block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm">
+      <option value=""><%= t("external_feed.search.any_location", default: "Any Location") %></option>
+      <% filter_options[:locations]&.each do |loc| %>
+        <option value="<%= loc[:value] %>" <%= 'selected' if search_params[:location].to_s == loc[:value].to_s %>>
+          <%= loc[:label] %>
+        </option>
+      <% end %>
+    </select>
+  </div>
+
+  <%# Property Types %>
+  <div class="mb-4">
+    <label class="block text-sm font-medium text-gray-700 mb-2">
+      <%= t("external_feed.search.property_type", default: "Property Type") %>
+    </label>
+    <div class="space-y-2 max-h-40 overflow-y-auto">
+      <% filter_options[:property_types]&.each do |pt| %>
+        <label class="flex items-center">
+          <input type="checkbox" name="property_types[]" value="<%= pt[:value] %>"
+                 <%= 'checked' if search_params[:property_types]&.include?(pt[:value].to_s) %>
+                 class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+          <span class="ml-2 text-sm text-gray-700"><%= pt[:label] %></span>
+        </label>
+      <% end %>
+    </div>
+  </div>
+
+  <%# Price Range - Uses @search_config for presets %>
+  <% if @search_config&.filter_enabled?(:price) %>
+  <div class="mb-4">
+    <label class="block text-sm font-medium text-gray-700 mb-2">
+      <%= t("external_feed.search.price_range", default: "Price Range") %>
+    </label>
+    <div class="grid grid-cols-2 gap-2">
+      <select name="min_price"
+              class="block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm">
+        <% @search_config.price_min_options_for_view.each do |opt| %>
+          <option value="<%= opt[:value] %>" <%= 'selected' if search_params[:min_price].to_s == opt[:value].to_s %>><%= opt[:label] %></option>
+        <% end %>
+      </select>
+      <select name="max_price"
+              class="block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm">
+        <% @search_config.price_max_options_for_view.each do |opt| %>
+          <option value="<%= opt[:value] %>" <%= 'selected' if search_params[:max_price].to_s == opt[:value].to_s %>><%= opt[:label] %></option>
+        <% end %>
+      </select>
+    </div>
+  </div>
+  <% end %>
+
+  <%# Bedrooms - Uses @search_config for options %>
+  <% if @search_config&.filter_enabled?(:bedrooms) %>
+  <div class="mb-4">
+    <label class="block text-sm font-medium text-gray-700 mb-2">
+      <%= t("external_feed.search.bedrooms", default: "Bedrooms") %>
+    </label>
+    <div class="grid grid-cols-2 gap-2">
+      <select name="min_bedrooms"
+              class="block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm">
+        <% @search_config.bedroom_min_options_for_view.each do |opt| %>
+          <option value="<%= opt[:value] %>" <%= 'selected' if search_params[:min_bedrooms].to_s == opt[:value].to_s %>><%= opt[:label] %></option>
+        <% end %>
+      </select>
+      <select name="max_bedrooms"
+              class="block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm">
+        <% @search_config.bedroom_max_options_for_view.each do |opt| %>
+          <option value="<%= opt[:value] %>" <%= 'selected' if search_params[:max_bedrooms].to_s == opt[:value].to_s %>><%= opt[:label] %></option>
+        <% end %>
+      </select>
+    </div>
+  </div>
+  <% end %>
+
+  <%# Bathrooms - Uses @search_config for options %>
+  <% if @search_config&.filter_enabled?(:bathrooms) %>
+  <div class="mb-4">
+    <label class="block text-sm font-medium text-gray-700 mb-2">
+      <%= t("external_feed.search.bathrooms", default: "Bathrooms") %>
+    </label>
+    <div class="grid grid-cols-2 gap-2">
+      <select name="min_bathrooms"
+              class="block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm">
+        <% @search_config.bathroom_min_options_for_view.each do |opt| %>
+          <option value="<%= opt[:value] %>" <%= 'selected' if search_params[:min_bathrooms].to_s == opt[:value].to_s %>><%= opt[:label] %></option>
+        <% end %>
+      </select>
+      <select name="max_bathrooms"
+              class="block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm">
+        <% @search_config.bathroom_max_options_for_view.each do |opt| %>
+          <option value="<%= opt[:value] %>" <%= 'selected' if search_params[:max_bathrooms].to_s == opt[:value].to_s %>><%= opt[:label] %></option>
+        <% end %>
+      </select>
+    </div>
+  </div>
+  <% end %>
+
+  <%# Area Range %>
+  <div class="mb-4">
+    <label class="block text-sm font-medium text-gray-700 mb-2">
+      <%= t("external_feed.search.area", default: "Area (m²)") %>
+    </label>
+    <div class="grid grid-cols-2 gap-2">
+      <div>
+        <label for="min_area" class="sr-only"><%= t("external_feed.search.min_area", default: "Min Area") %></label>
+        <input type="number" id="min_area" name="min_area"
+               value="<%= search_params[:min_area] %>"
+               placeholder="<%= t('external_feed.search.min', default: 'Min') %>"
+               class="block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm">
+      </div>
+      <div>
+        <label for="max_area" class="sr-only"><%= t("external_feed.search.max_area", default: "Max Area") %></label>
+        <input type="number" id="max_area" name="max_area"
+               value="<%= search_params[:max_area] %>"
+               placeholder="<%= t('external_feed.search.max', default: 'Max') %>"
+               class="block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm">
+      </div>
+    </div>
+  </div>
+
+  <%# Features %>
+  <% if filter_options[:features].present? %>
+    <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-700 mb-2">
+        <%= t("external_feed.search.features", default: "Features") %>
+      </label>
+      <div class="space-y-2 max-h-40 overflow-y-auto">
+        <% filter_options[:features].each do |feature| %>
+          <label class="flex items-center">
+            <input type="checkbox" name="features[]" value="<%= feature[:value] %>"
+                   <%= 'checked' if search_params[:features]&.include?(feature[:value].to_s) %>
+                   class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+            <span class="ml-2 text-sm text-gray-700"><%= feature[:label] %></span>
+          </label>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <%# Submit Button %>
+  <div class="pt-4 border-t">
+    <button type="submit"
+            class="w-full bg-blue-600 text-white py-2 px-4 rounded-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+      <%= t("external_feed.search.apply_filters", default: "Apply Filters") %>
+    </button>
+    <a href="<%= external_listings_index_path(@listing_type) %>"
+       class="block w-full text-center mt-2 text-sm text-gray-600 hover:text-gray-900">
+      <%= t("external_feed.search.clear_filters", default: "Clear Filters") %>
+    </a>
+  </div>
+<% end %>

@@ -1,0 +1,234 @@
+require_dependency "pwb/application_controller"
+
+module Pwb
+  class PropsController < ApplicationController
+    include SeoHelper
+    include HttpCacheable
+
+    def show_for_rent
+      @carousel_speed = 3000
+      @operation_type = "for_rent"
+      @operation_type_key = @operation_type.camelize(:lower)
+      @map_markers = []
+
+      # Use Pwb::ListedProperty (materialized view) for read operations
+      # Find by slug first, then fall back to ID for backwards compatibility
+      @property_details = find_property_by_slug_or_id(params[:id])
+
+      if @property_details && @property_details.visible && @property_details.for_rent
+        # HTTP caching - return 304 if content hasn't changed
+        return if fresh_response?(@property_details, max_age: 10.minutes, public: true)
+
+        set_map_marker
+        @show_vacational_rental = @property_details.for_rent_short_term
+
+        @page_title = @property_details.title
+        @page_description = @property_details.description
+
+        # Set SEO data for the property
+        set_property_seo(@property_details, 'for_rent')
+
+        return render "/pwb/props/show"
+      else
+        @page_title = I18n.t("propertyNotFound")
+        hi_content = @current_website.contents.where(tag: "landing-carousel")[0]
+        @header_image = hi_content.present? ? hi_content.default_photo : nil
+        return render "not_found", status: :not_found
+      end
+    end
+
+    def show_for_sale
+      @carousel_speed = 3000
+      @operation_type = "for_sale"
+      @operation_type_key = @operation_type.camelize(:lower)
+      @map_markers = []
+
+      # Use Pwb::ListedProperty (materialized view) for read operations
+      # Find by slug first, then fall back to ID for backwards compatibility
+      @property_details = find_property_by_slug_or_id(params[:id])
+
+      if @property_details && @property_details.visible && @property_details.for_sale
+        # HTTP caching - return 304 if content hasn't changed
+        return if fresh_response?(@property_details, max_age: 10.minutes, public: true)
+
+        set_map_marker
+        @page_title = @property_details.title
+        @page_description = @property_details.description
+
+        # Set SEO data for the property
+        set_property_seo(@property_details, 'for_sale')
+
+        return render "/pwb/props/show"
+      else
+        @page_title = I18n.t("propertyNotFound")
+        hi_content = @current_website.contents.where(tag: "landing-carousel")[0]
+        @header_image = hi_content.present? ? hi_content.default_photo : nil
+        return render "not_found", status: :not_found
+      end
+    end
+
+    def request_property_info_ajax
+      @error_messages = []
+      I18n.locale = params["contact"]["locale"] || I18n.default_locale
+
+      StructuredLogger.info('[PropertyInquiry] Processing submission',
+        website_id: @current_website&.id,
+        property_id: params.dig(:contact, :property_id),
+        email: params.dig(:contact, :email),
+        origin_ip: request.ip
+      )
+
+      # Use Pwb::ListedProperty (materialized view) for read operations
+      @property = Pwb::ListedProperty.where(website_id: @current_website.id).find(params[:contact][:property_id])
+      @contact = @current_website.contacts.find_or_initialize_by(primary_email: params[:contact][:email])
+      @contact.attributes = {
+        primary_phone_number: params[:contact][:tel],
+        first_name: params[:contact][:name],
+      }
+
+      title = I18n.t "mailers.property_enquiry_targeting_agency.title"
+      @enquiry = Message.new({
+        website: @current_website,
+        title: title,
+        content: params[:contact][:message],
+        locale: params[:contact][:locale],
+        url: request.referer,
+        host: request.host,
+        origin_ip: request.ip,
+        origin_email: params[:contact][:email],
+        user_agent: request.user_agent,
+        delivery_email: @current_agency.email_for_property_contact_form,
+      })
+
+      unless @enquiry.save && @contact.save
+        @error_messages += @contact.errors.full_messages
+        @error_messages += @enquiry.errors.full_messages
+        StructuredLogger.warn('[PropertyInquiry] Validation failed',
+          website_id: @current_website&.id,
+          property_id: @property&.id,
+          contact_errors: @contact.errors.full_messages,
+          enquiry_errors: @enquiry.errors.full_messages
+        )
+        return render "pwb/ajax/request_info_errors"
+      end
+
+      unless @current_agency.email_for_property_contact_form.present?
+        @enquiry.delivery_email = "no_delivery_email@propertywebbuilder.com"
+        StructuredLogger.warn('[PropertyInquiry] No delivery email configured',
+          website_id: @current_website&.id,
+          agency_id: @current_agency&.id
+        )
+      end
+
+      @enquiry.contact = @contact
+      @enquiry.save
+
+      # Async email delivery via Solid Queue
+      EnquiryMailer.property_enquiry_targeting_agency(@contact, @enquiry, @property).deliver_later
+
+      StructuredLogger.info('[PropertyInquiry] Submission successful',
+        website_id: @current_website&.id,
+        property_id: @property&.id,
+        contact_id: @contact.id,
+        message_id: @enquiry.id
+      )
+
+      @flash = I18n.t "contact.success"
+      return render "pwb/ajax/request_info_success", layout: false
+    rescue StandardError => e
+      StructuredLogger.exception(e, '[PropertyInquiry] Unexpected error',
+        website_id: @current_website&.id,
+        property_id: params.dig(:contact, :property_id),
+        email: params.dig(:contact, :email),
+        origin_ip: request.ip
+      )
+      @error_messages = [I18n.t("contact.error"), e.message]
+      return render "pwb/ajax/request_info_errors", layout: false
+    end
+
+    private
+
+    # Set SEO metadata for property pages
+    def set_property_seo(property, operation_type)
+      # Check if this property has an SPP page — if so, defer to SPP as canonical
+      spp_listing_type = operation_type == 'for_rent' ? 'rental' : 'sale'
+      spp_url = spp_live_url_for(property, spp_listing_type)
+
+      # Build canonical URL: prefer SPP URL, fall back to PWB URL
+      canonical_url = if spp_url.present?
+                        spp_url
+                      elsif property.slug.present?
+                        "#{request.protocol}#{request.host_with_port}#{property.contextual_show_path(operation_type)}"
+                      else
+                        "#{request.protocol}#{request.host_with_port}#{request.path}"
+                      end
+
+      # Get first image for social sharing
+      image_url = property.primary_image_url
+
+      # Get SEO fields from the appropriate listing model
+      # These are Mobility-translated fields that respect I18n.locale
+      listing = if operation_type == 'for_sale'
+                  property.try(:sale_listing_id) && Pwb::SaleListing.find_by(id: property.sale_listing_id)
+                else
+                  property.try(:rental_listing_id) && Pwb::RentalListing.find_by(id: property.rental_listing_id)
+                end
+
+      # Use listing's SEO fields (locale-aware via Mobility), fallback to title/description
+      seo_title_value = listing&.seo_title
+      meta_desc_value = listing&.meta_description
+
+      # Check if listing should be noindexed (archived, reserved, or explicitly set)
+      should_noindex = listing&.noindex || listing&.archived || listing&.reserved
+
+      set_seo(
+        title: seo_title_value.presence || property.title,
+        description: meta_desc_value.presence || truncate_description(property.description),
+        canonical_url: canonical_url,
+        image: image_url,
+        og_type: 'product', # More appropriate for real estate listings
+        noindex: should_noindex
+      )
+
+      # Store property for JSON-LD generation in the view
+      @seo_property = property
+    end
+
+    # Truncate description for meta tags (recommended ~155-160 chars)
+    def truncate_description(text)
+      return nil if text.blank?
+      ActionController::Base.helpers.strip_tags(text).truncate(160)
+    end
+
+    # Find property by slug first, then fall back to ID for backwards compatibility
+    # Supports both friendly slugs and legacy UUID/integer IDs
+    def find_property_by_slug_or_id(identifier)
+      scope = Pwb::ListedProperty.with_eager_loading.where(website_id: @current_website.id)
+
+      # Try slug first
+      property = scope.find_by(slug: identifier)
+      return property if property
+
+      # Fall back to ID (supports both UUID and integer formats)
+      scope.find_by(id: identifier)
+    end
+
+    def set_map_marker
+      if @property_details.show_map
+        @map_markers.push(
+          {
+            id: @property_details.id,
+            title: @property_details.title,
+            show_url: @property_details.contextual_show_path(@operation_type),
+            image_url: @property_details.primary_image_url,
+            display_price: @property_details.contextual_price_with_currency(@operation_type),
+            position: {
+              lat: @property_details.latitude,
+              lng: @property_details.longitude,
+            },
+          }
+        )
+      end
+    end
+  end
+end

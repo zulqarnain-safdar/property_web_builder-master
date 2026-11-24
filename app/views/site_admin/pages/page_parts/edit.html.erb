@@ -1,0 +1,833 @@
+<%
+  # Determine the public page URL with locale
+  # Use base locale for URL path (en-UK -> en, es -> es)
+  # Don't include locale prefix for default locale (en)
+  locale_prefix = @current_locale_base.present? && @current_locale_base != 'en' ? "/#{@current_locale_base}" : ""
+  page_path = @page.slug == 'home' ? '/' : "/p/#{@page.slug}"
+  public_page_url = "#{request.protocol}#{request.host_with_port}#{locale_prefix}#{page_path}"
+
+  # URL for the specific page part preview
+  page_part_url = "#{request.protocol}#{request.host_with_port}#{locale_prefix}/p/#{@page.slug}/#{@page_part.page_part_key}"
+
+  # Images API URL for the image picker (use site_admin namespace)
+  images_api_url = site_admin_images_path
+%>
+
+<!-- Quill Editor CDN -->
+<link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+
+<div class="max-w-5xl mx-auto">
+  <!-- Breadcrumb and View Links -->
+  <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+    <div class="flex items-center space-x-4">
+      <%= link_to site_admin_pages_path, class: 'text-blue-600 hover:text-blue-800' do %>
+        <span class="flex items-center">
+          <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+          Back to Pages
+        </span>
+      <% end %>
+      <span class="text-gray-300">|</span>
+      <%= link_to site_admin_page_path(@page), class: 'text-blue-600 hover:text-blue-800' do %>
+        <%= @page.slug.titleize %> Page
+      <% end %>
+    </div>
+
+    <!-- View on Site Link -->
+    <div class="flex items-center space-x-3">
+      <%= link_to public_page_url, target: '_blank', class: 'inline-flex items-center px-3 py-1.5 border border-gray-300 text-gray-700 text-sm rounded-lg hover:bg-gray-50' do %>
+        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+        </svg>
+        View Page on Site
+      <% end %>
+      <button type="button"
+              onclick="togglePreview()"
+              class="inline-flex items-center px-3 py-1.5 border border-blue-600 text-blue-600 text-sm rounded-lg hover:bg-blue-50"
+              id="preview-toggle-btn">
+        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+        </svg>
+        <span id="preview-toggle-text">Show Preview</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <div class="mb-6">
+    <% editor_setup = @page_part.editor_setup || {} %>
+    <% tab_title = editor_setup['tabTitleKey'] ? I18n.t(editor_setup['tabTitleKey'], default: @page_part.page_part_key.titleize) : @page_part.page_part_key.titleize %>
+    <h1 class="text-3xl font-bold text-gray-900">Edit: <%= tab_title %></h1>
+    <p class="mt-2 text-gray-600">
+      Page: <span class="font-medium"><%= @page.slug.titleize %></span>
+      &middot;
+      Section: <span class="font-mono text-sm"><%= @page_part.page_part_key %></span>
+      &middot;
+      <a href="<%= public_page_url %>" target="_blank" class="text-blue-600 hover:text-blue-800">
+        View live page
+        <svg class="w-3 h-3 inline ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+        </svg>
+      </a>
+    </p>
+  </div>
+
+  <!-- Locale Tabs -->
+  <% if @locale_details.length > 1 %>
+    <div class="border-b border-gray-200 mb-6">
+      <nav class="-mb-px flex space-x-8">
+        <% @locale_details.each do |locale_detail| %>
+          <% is_current = locale_detail[:full] == @current_locale_full %>
+          <%= link_to edit_site_admin_page_page_part_path(@page, @page_part, locale: locale_detail[:full]),
+                      class: "whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm #{is_current ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}" do %>
+            <%= locale_detail[:label] %>
+          <% end %>
+        <% end %>
+      </nav>
+    </div>
+  <% end %>
+
+  <!-- Edit Form -->
+  <div class="bg-white rounded-lg shadow overflow-hidden">
+    <div class="px-6 py-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+      <div>
+        <h2 class="text-lg font-semibold text-gray-900">Content Blocks</h2>
+        <p class="text-sm text-gray-500">
+          Editing content for locale: <span class="font-medium"><%= @current_locale_detail&.dig(:label) || @current_locale_full.upcase %></span>
+        </p>
+      </div>
+
+      <!-- Visibility Toggle -->
+      <% page_content = @page.page_contents.find_by(page_part_key: @page_part.page_part_key) %>
+      <% is_visible = page_content&.visible_on_page %>
+      <%= button_to toggle_visibility_site_admin_page_page_part_path(@page, @page_part, visible: !is_visible),
+                    method: :patch,
+                    class: "inline-flex items-center px-3 py-1.5 border rounded text-sm #{is_visible ? 'border-green-600 text-green-600 hover:bg-green-50' : 'border-gray-400 text-gray-600 hover:bg-gray-50'}" do %>
+        <% if is_visible %>
+          <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+          </svg>
+          Visible
+        <% else %>
+          <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>
+          </svg>
+          Hidden
+        <% end %>
+      <% end %>
+    </div>
+
+    <%= form_with url: site_admin_page_page_part_path(@page, @page_part),
+                  method: :patch,
+                  local: true,
+                  class: "p-6",
+                  id: "page-part-form" do |f| %>
+      <%= hidden_field_tag :locale, @current_locale_full %>
+
+      <% editor_blocks = editor_setup['editorBlocks'] || [] %>
+      <%# Use base locale (e.g., "en") to access block_contents, not full locale (e.g., "en-UK") %>
+      <% locale_blocks = @block_contents[@current_locale_base]&.dig('blocks') || {} %>
+
+      <% if editor_blocks.any? %>
+        <div class="space-y-6">
+          <% editor_blocks.each_with_index do |column_blocks, col_index| %>
+            <% column_blocks.each do |block_config| %>
+              <% label = block_config['label'] %>
+              <% block_value = locale_blocks.dig(label, 'content') || '' %>
+
+              <div class="border border-gray-200 rounded-lg p-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  <%= label.titleize.gsub('_', ' ') %>
+                  <span class="text-xs text-gray-400 font-normal ml-2">(<%= label %>)</span>
+                </label>
+
+                <% if block_config['isHtml'] == 'true' || block_config['isHtml'] == true %>
+                  <!-- Quill Rich Text Editor -->
+                  <div class="quill-wrapper border border-gray-300 rounded-lg overflow-hidden">
+                    <div id="quill-<%= label.parameterize %>" class="quill-editor" style="min-height: 200px;"><%= raw block_value %></div>
+                    <input type="hidden"
+                           name="block_contents[<%= label %>]"
+                           id="quill-input-<%= label.parameterize %>"
+                           value="<%= block_value %>">
+                  </div>
+                  <p class="mt-1 text-xs text-gray-500">Rich text editor with formatting support</p>
+
+                <% elsif block_config['isImage'] == 'true' || block_config['isImage'] == true %>
+                  <!-- Image Picker -->
+                  <div class="space-y-3">
+                    <div class="image-preview-container" id="preview-container-<%= label.parameterize %>">
+                      <% if block_value.present? %>
+                        <div class="relative inline-block">
+                          <img src="<%= block_value %>" alt="Current image" class="max-h-40 rounded border border-gray-200" id="preview-img-<%= label.parameterize %>">
+                          <button type="button" onclick="clearImage('<%= label.parameterize %>')" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                          </button>
+                        </div>
+                      <% else %>
+                        <div class="text-gray-400 text-sm" id="no-image-<%= label.parameterize %>">No image selected</div>
+                      <% end %>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2">
+                      <button type="button"
+                              onclick="openImagePicker('<%= label.parameterize %>')"
+                              class="inline-flex items-center px-3 py-2 border border-blue-600 text-blue-600 text-sm rounded-lg hover:bg-blue-50">
+                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        Choose from Library
+                      </button>
+                      <label class="inline-flex items-center px-3 py-2 border border-gray-300 text-gray-700 text-sm rounded-lg hover:bg-gray-50 cursor-pointer">
+                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                        </svg>
+                        Upload New
+                        <input type="file"
+                               accept="image/*"
+                               class="hidden"
+                               onchange="uploadImage(this, '<%= label.parameterize %>')">
+                      </label>
+                    </div>
+
+                    <input type="hidden"
+                           name="block_contents[<%= label %>]"
+                           id="image-input-<%= label.parameterize %>"
+                           value="<%= block_value %>">
+                    <p class="text-xs text-gray-500">Select from your image library or upload a new image</p>
+                  </div>
+
+                <% elsif block_config['isSingleLineText'] == 'true' || block_config['isSingleLineText'] == true %>
+                  <!-- Single Line Text -->
+                  <input type="text"
+                         name="block_contents[<%= label %>]"
+                         value="<%= block_value %>"
+                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+
+                <% elsif block_config['isMultipleLineText'] == 'true' || block_config['isMultipleLineText'] == true %>
+                  <!-- Multi Line Text -->
+                  <textarea name="block_contents[<%= label %>]"
+                            rows="4"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"><%= block_value %></textarea>
+
+                <% else %>
+                  <!-- Default to single line text -->
+                  <input type="text"
+                         name="block_contents[<%= label %>]"
+                         value="<%= block_value %>"
+                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <% end %>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="mt-6 pt-6 border-t border-gray-200 flex justify-between items-center">
+          <%= link_to 'Cancel', site_admin_pages_path, class: 'text-gray-600 hover:text-gray-800' %>
+          <%= f.submit "Save Changes",
+                       class: "px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer" %>
+        </div>
+      <% else %>
+        <div class="text-center py-8 text-gray-500">
+          <p>No editor blocks configured for this page part.</p>
+          <p class="text-sm mt-2">The editor_setup configuration may be missing.</p>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+
+  <!-- Page Part Preview (iframe) - Shows only this specific section -->
+  <div id="page-part-preview-section" class="mt-6 bg-white rounded-lg shadow overflow-hidden">
+    <div class="px-6 py-4 bg-blue-50 border-b border-blue-200 flex justify-between items-center">
+      <div>
+        <h2 class="text-lg font-semibold text-gray-900">Section Preview</h2>
+        <p class="text-sm text-gray-600">
+          Live preview of this section only
+          <span class="text-gray-400 mx-1">|</span>
+          Locale: <span class="font-medium"><%= @current_locale_detail&.dig(:label) || @current_locale_full.upcase %></span>
+          <a href="<%= page_part_url %>" target="_blank" class="text-blue-600 hover:text-blue-800 ml-2">
+            Open in new tab
+            <svg class="w-3 h-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+            </svg>
+          </a>
+        </p>
+      </div>
+      <div class="flex items-center space-x-2">
+        <button type="button" onclick="refreshPagePartPreview()" class="inline-flex items-center px-3 py-1.5 border border-blue-300 text-blue-700 text-sm rounded hover:bg-blue-100">
+          <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+          </svg>
+          Refresh
+        </button>
+      </div>
+    </div>
+    <div class="p-4 bg-gray-50">
+      <iframe id="page-part-preview-iframe"
+              src="<%= page_part_url %>"
+              class="w-full border border-gray-200 rounded bg-white"
+              style="min-height: 300px; height: auto;"
+              title="Page Part Preview"
+              onload="resizePagePartIframe()"></iframe>
+    </div>
+  </div>
+
+  <!-- Live Page Preview (iframe) -->
+  <div id="preview-section" class="mt-6 bg-white rounded-lg shadow overflow-hidden hidden">
+    <div class="px-6 py-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+      <div>
+        <h2 class="text-lg font-semibold text-gray-900">Live Page Preview</h2>
+        <p class="text-sm text-gray-500">
+          Current state of the page on your site
+          <a href="<%= public_page_url %>" target="_blank" class="text-blue-600 hover:text-blue-800 ml-2">
+            Open in new tab
+            <svg class="w-3 h-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+            </svg>
+          </a>
+        </p>
+      </div>
+      <div class="flex items-center space-x-2">
+        <button type="button" onclick="refreshPreview()" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-gray-700 text-sm rounded hover:bg-gray-100">
+          <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+          </svg>
+          Refresh
+        </button>
+        <!-- Viewport Size Buttons -->
+        <div class="flex border border-gray-300 rounded overflow-hidden">
+          <button type="button" onclick="setPreviewSize('desktop')" class="px-2 py-1 text-gray-600 hover:bg-gray-100 border-r border-gray-300" title="Desktop">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+            </svg>
+          </button>
+          <button type="button" onclick="setPreviewSize('tablet')" class="px-2 py-1 text-gray-600 hover:bg-gray-100 border-r border-gray-300" title="Tablet">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+            </svg>
+          </button>
+          <button type="button" onclick="setPreviewSize('mobile')" class="px-2 py-1 text-gray-600 hover:bg-gray-100" title="Mobile">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="p-4 bg-gray-100 flex justify-center">
+      <div id="preview-container" class="bg-white shadow-lg transition-all duration-300" style="width: 100%; max-width: 100%;">
+        <iframe id="preview-iframe"
+                src="<%= public_page_url %>"
+                class="w-full border-0"
+                style="height: 600px;"
+                title="Page Preview"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- Template Preview (for developers) -->
+  <% if @page_part.template_content.present? %>
+    <div class="mt-6 bg-white rounded-lg shadow overflow-hidden">
+      <details class="group">
+        <summary class="px-6 py-4 bg-gray-50 border-b border-gray-200 cursor-pointer flex justify-between items-center list-none">
+          <div>
+            <h2 class="text-lg font-semibold text-gray-900">Template Code</h2>
+            <p class="text-sm text-gray-500">Liquid template used to render this section (for developers)</p>
+          </div>
+          <svg class="w-5 h-5 text-gray-500 transform group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </summary>
+        <div class="p-6">
+          <pre class="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm"><code><%= @page_part.template_content %></code></pre>
+        </div>
+      </details>
+    </div>
+  <% end %>
+</div>
+
+<!-- Image Picker Modal -->
+<div id="image-picker-modal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 z-50 flex items-center justify-center p-4">
+  <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col">
+    <!-- Modal Header -->
+    <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+      <h3 class="text-lg font-semibold text-gray-900">Select Image</h3>
+      <button type="button" onclick="closeImagePicker()" class="text-gray-400 hover:text-gray-600">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="flex-1 overflow-y-auto p-6">
+      <!-- Upload Section -->
+      <div class="mb-6 p-4 border-2 border-dashed border-gray-300 rounded-lg text-center hover:border-blue-400 transition-colors"
+           id="upload-drop-zone"
+           ondragover="handleDragOver(event)"
+           ondragleave="handleDragLeave(event)"
+           ondrop="handleDrop(event)">
+        <svg class="mx-auto h-12 w-12 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+        </svg>
+        <p class="text-gray-600 mb-2">Drag and drop an image here, or</p>
+        <label class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+          </svg>
+          Browse Files
+          <input type="file" accept="image/*" class="hidden" onchange="uploadImageFromModal(this)">
+        </label>
+        <p class="text-xs text-gray-400 mt-2">PNG, JPG, GIF up to 10MB</p>
+      </div>
+
+      <!-- Upload Progress -->
+      <div id="upload-progress" class="hidden mb-6">
+        <div class="flex items-center">
+          <div class="flex-1 bg-gray-200 rounded-full h-2">
+            <div id="upload-progress-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+          <span id="upload-progress-text" class="ml-3 text-sm text-gray-600">Uploading...</span>
+        </div>
+      </div>
+
+      <!-- Image Library -->
+      <div>
+        <h4 class="text-sm font-medium text-gray-700 mb-3">Image Library</h4>
+        <div id="image-library-grid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
+          <div class="col-span-full text-center py-8 text-gray-500">
+            <svg class="mx-auto h-8 w-8 text-gray-300 mb-2 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Loading images...
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
+      <button type="button" onclick="closeImagePicker()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Quill editor styling */
+  .quill-wrapper {
+    background: white;
+  }
+  .quill-wrapper .ql-toolbar {
+    border: none;
+    border-bottom: 1px solid #e5e7eb;
+    background: #f9fafb;
+  }
+  .quill-wrapper .ql-container {
+    border: none;
+    font-size: 14px;
+  }
+  .quill-wrapper .ql-editor {
+    min-height: 150px;
+  }
+  .quill-wrapper .ql-editor:focus {
+    outline: none;
+  }
+
+  /* Image picker grid item */
+  .image-grid-item {
+    aspect-ratio: 1;
+    cursor: pointer;
+    border: 2px solid transparent;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    transition: all 0.2s;
+  }
+  .image-grid-item:hover {
+    border-color: #3b82f6;
+    transform: scale(1.02);
+  }
+  .image-grid-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Upload drop zone active state */
+  .drop-zone-active {
+    border-color: #3b82f6 !important;
+    background-color: #eff6ff;
+  }
+</style>
+
+<script>
+  const publicPageUrl = '<%= public_page_url %>';
+  const pagePartUrl = '<%= page_part_url %>';
+  const imagesApiUrl = '<%= images_api_url %>';
+  const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
+
+  let currentImageFieldId = null;
+  let imageLibraryLoaded = false;
+  const quillEditors = {};
+
+  // Initialize Quill editors
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.quill-editor').forEach(function(editorEl) {
+      const editorId = editorEl.id;
+      const fieldId = editorId.replace('quill-', '');
+      const hiddenInput = document.getElementById(`quill-input-${fieldId}`);
+
+      const quill = new Quill(`#${editorId}`, {
+        theme: 'snow',
+        modules: {
+          toolbar: {
+            container: [
+              [{ 'header': [1, 2, 3, false] }],
+              ['bold', 'italic', 'underline', 'strike'],
+              [{ 'color': [] }, { 'background': [] }],
+              [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+              [{ 'align': [] }],
+              ['link', 'image'],
+              ['clean']
+            ],
+            handlers: {
+              'image': function() {
+                openImagePickerForQuill(fieldId);
+              }
+            }
+          }
+        },
+        placeholder: 'Enter content here...'
+      });
+
+      // Store reference for later use
+      quillEditors[fieldId] = quill;
+
+      // Update hidden input on text change
+      quill.on('text-change', function() {
+        hiddenInput.value = quill.root.innerHTML;
+      });
+    });
+  });
+
+  // Quill image picker callback storage
+  let quillImageFieldId = null;
+
+  function openImagePickerForQuill(fieldId) {
+    quillImageFieldId = fieldId;
+    currentImageFieldId = null;
+    openImagePickerModal();
+  }
+
+  function insertImageIntoQuill(fieldId, url) {
+    const quill = quillEditors[fieldId];
+    if (quill) {
+      const range = quill.getSelection(true);
+      quill.insertEmbed(range.index, 'image', url);
+      quill.setSelection(range.index + 1);
+    }
+  }
+
+  // Image Picker Functions
+  function openImagePicker(fieldId) {
+    currentImageFieldId = fieldId;
+    tinymceImageCallback = null;
+    openImagePickerModal();
+  }
+
+  function openImagePickerModal() {
+    document.getElementById('image-picker-modal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+
+    if (!imageLibraryLoaded) {
+      loadImageLibrary();
+    }
+  }
+
+  function closeImagePicker() {
+    document.getElementById('image-picker-modal').classList.add('hidden');
+    document.body.style.overflow = '';
+    currentImageFieldId = null;
+    quillImageFieldId = null;
+  }
+
+  function loadImageLibrary() {
+    const grid = document.getElementById('image-library-grid');
+
+    fetch(imagesApiUrl)
+      .then(response => response.json())
+      .then(data => {
+        imageLibraryLoaded = true;
+        const images = data.images || [];
+
+        if (images.length === 0) {
+          grid.innerHTML = `
+            <div class="col-span-full text-center py-8 text-gray-500">
+              <svg class="mx-auto h-12 w-12 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+              </svg>
+              <p>No images in library yet</p>
+              <p class="text-sm">Upload your first image above</p>
+            </div>
+          `;
+          return;
+        }
+
+        grid.innerHTML = images.map(img => `
+          <div class="image-grid-item" onclick="selectImage('${img.url}')" title="${img.filename || 'Image'}">
+            <img src="${img.thumb_url || img.url}" alt="${img.filename || 'Image'}" loading="lazy">
+          </div>
+        `).join('');
+      })
+      .catch(error => {
+        console.error('Error loading images:', error);
+        grid.innerHTML = `
+          <div class="col-span-full text-center py-8 text-red-500">
+            <p>Error loading images</p>
+            <button onclick="loadImageLibrary()" class="text-blue-600 hover:text-blue-800 text-sm mt-2">Try again</button>
+          </div>
+        `;
+      });
+  }
+
+  function selectImage(url) {
+    if (quillImageFieldId) {
+      // Called from Quill editor
+      insertImageIntoQuill(quillImageFieldId, url);
+      quillImageFieldId = null;
+    } else if (currentImageFieldId) {
+      // Called from image field
+      setImageValue(currentImageFieldId, url);
+    }
+    closeImagePicker();
+  }
+
+  function setImageValue(fieldId, url) {
+    const input = document.getElementById(`image-input-${fieldId}`);
+    const previewContainer = document.getElementById(`preview-container-${fieldId}`);
+    const noImage = document.getElementById(`no-image-${fieldId}`);
+
+    if (input) input.value = url;
+
+    if (previewContainer) {
+      previewContainer.innerHTML = `
+        <div class="relative inline-block">
+          <img src="${url}" alt="Selected image" class="max-h-40 rounded border border-gray-200" id="preview-img-${fieldId}">
+          <button type="button" onclick="clearImage('${fieldId}')" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+      `;
+    }
+  }
+
+  function clearImage(fieldId) {
+    const input = document.getElementById(`image-input-${fieldId}`);
+    const previewContainer = document.getElementById(`preview-container-${fieldId}`);
+
+    if (input) input.value = '';
+
+    if (previewContainer) {
+      previewContainer.innerHTML = `<div class="text-gray-400 text-sm" id="no-image-${fieldId}">No image selected</div>`;
+    }
+  }
+
+  // Upload functions
+  function uploadImage(input, fieldId) {
+    const file = input.files[0];
+    if (!file) return;
+
+    uploadFile(file, function(url) {
+      setImageValue(fieldId, url);
+    });
+
+    input.value = ''; // Reset input
+  }
+
+  function uploadImageFromModal(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    showUploadProgress();
+
+    uploadFile(file, function(url) {
+      hideUploadProgress();
+      selectImage(url);
+      // Reload library to show new image
+      imageLibraryLoaded = false;
+      loadImageLibrary();
+    }, function(error) {
+      hideUploadProgress();
+      alert('Upload failed: ' + error);
+    });
+
+    input.value = '';
+  }
+
+  function uploadFile(file, onSuccess, onError) {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    fetch(imagesApiUrl, {
+      method: 'POST',
+      headers: {
+        'X-CSRF-Token': csrfToken
+      },
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success && data.image) {
+        onSuccess(data.image.url);
+      } else {
+        throw new Error(data.errors?.join(', ') || 'Upload failed');
+      }
+    })
+    .catch(error => {
+      console.error('Upload error:', error);
+      if (onError) onError(error.message);
+    });
+  }
+
+  function showUploadProgress() {
+    document.getElementById('upload-progress').classList.remove('hidden');
+    // Simulate progress
+    let progress = 0;
+    const bar = document.getElementById('upload-progress-bar');
+    const interval = setInterval(() => {
+      progress += 10;
+      if (progress <= 90) {
+        bar.style.width = progress + '%';
+      } else {
+        clearInterval(interval);
+      }
+    }, 200);
+  }
+
+  function hideUploadProgress() {
+    const progressEl = document.getElementById('upload-progress');
+    const bar = document.getElementById('upload-progress-bar');
+    bar.style.width = '100%';
+    setTimeout(() => {
+      progressEl.classList.add('hidden');
+      bar.style.width = '0%';
+    }, 500);
+  }
+
+  // Drag and drop handlers
+  function handleDragOver(e) {
+    e.preventDefault();
+    e.currentTarget.classList.add('drop-zone-active');
+  }
+
+  function handleDragLeave(e) {
+    e.preventDefault();
+    e.currentTarget.classList.remove('drop-zone-active');
+  }
+
+  function handleDrop(e) {
+    e.preventDefault();
+    e.currentTarget.classList.remove('drop-zone-active');
+
+    const files = e.dataTransfer.files;
+    if (files.length > 0 && files[0].type.startsWith('image/')) {
+      showUploadProgress();
+      uploadFile(files[0], function(url) {
+        hideUploadProgress();
+        selectImage(url);
+        imageLibraryLoaded = false;
+        loadImageLibrary();
+      }, function(error) {
+        hideUploadProgress();
+        alert('Upload failed: ' + error);
+      });
+    }
+  }
+
+  // Preview functions
+  function togglePreview() {
+    const section = document.getElementById('preview-section');
+    const toggleText = document.getElementById('preview-toggle-text');
+    const isHidden = section.classList.contains('hidden');
+
+    if (isHidden) {
+      section.classList.remove('hidden');
+      toggleText.textContent = 'Hide Preview';
+      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      section.classList.add('hidden');
+      toggleText.textContent = 'Show Preview';
+    }
+  }
+
+  function refreshPreview() {
+    const iframe = document.getElementById('preview-iframe');
+    const url = new URL(publicPageUrl);
+    url.searchParams.set('_t', Date.now());
+    iframe.src = url.toString();
+  }
+
+  function setPreviewSize(size) {
+    const container = document.getElementById('preview-container');
+    const iframe = document.getElementById('preview-iframe');
+
+    switch(size) {
+      case 'mobile':
+        container.style.maxWidth = '375px';
+        iframe.style.height = '667px';
+        break;
+      case 'tablet':
+        container.style.maxWidth = '768px';
+        iframe.style.height = '600px';
+        break;
+      case 'desktop':
+      default:
+        container.style.maxWidth = '100%';
+        iframe.style.height = '600px';
+        break;
+    }
+  }
+
+  function refreshPagePartPreview() {
+    const iframe = document.getElementById('page-part-preview-iframe');
+    const url = new URL(pagePartUrl);
+    url.searchParams.set('_t', Date.now());
+    iframe.src = url.toString();
+  }
+
+  function resizePagePartIframe() {
+    const iframe = document.getElementById('page-part-preview-iframe');
+    try {
+      const contentHeight = iframe.contentWindow.document.body.scrollHeight;
+      if (contentHeight > 0) {
+        iframe.style.height = Math.max(contentHeight + 40, 300) + 'px';
+      }
+    } catch (e) {
+      iframe.style.height = '400px';
+    }
+  }
+
+  // Close modal on escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeImagePicker();
+    }
+  });
+
+  // Close modal on backdrop click
+  document.getElementById('image-picker-modal')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+      closeImagePicker();
+    }
+  });
+</script>

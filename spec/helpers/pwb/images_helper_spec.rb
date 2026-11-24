@@ -1,0 +1,238 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+RSpec.describe Pwb::ImagesHelper, type: :helper do
+  let(:website) { FactoryBot.create(:pwb_website, subdomain: 'images-helper-test') }
+  let(:realty_asset) do
+    ActsAsTenant.with_tenant(website) do
+      FactoryBot.create(:pwb_realty_asset, website: website)
+    end
+  end
+
+  before do
+    Pwb::Current.reset
+  end
+
+  describe '#photo_alt_text' do
+    let(:photo) { Pwb::PropPhoto.new(realty_asset: realty_asset) }
+
+    context 'with description (alt-text) set' do
+      before { photo.description = 'Beautiful living room with hardwood floors' }
+
+      it 'returns the description' do
+        expect(helper.photo_alt_text(photo)).to eq('Beautiful living room with hardwood floors')
+      end
+    end
+
+    context 'without description but with realty_asset data' do
+      before do
+        realty_asset.update!(prop_type_key: 'apartment', city: 'London')
+      end
+
+      it 'returns a fallback from property data' do
+        expect(helper.photo_alt_text(photo)).to include('Apartment')
+        expect(helper.photo_alt_text(photo)).to include('London')
+        expect(helper.photo_alt_text(photo)).to include('property photo')
+      end
+    end
+
+    context 'without description or realty_asset' do
+      let(:orphan_photo) { Pwb::PropPhoto.new }
+
+      it 'returns the fallback text' do
+        expect(helper.photo_alt_text(orphan_photo)).to eq('Image')
+      end
+
+      it 'returns custom fallback when specified' do
+        expect(helper.photo_alt_text(orphan_photo, fallback: 'Property photo')).to eq('Property photo')
+      end
+    end
+
+    context 'with nil photo' do
+      it 'returns the fallback' do
+        expect(helper.photo_alt_text(nil)).to eq('Image')
+      end
+    end
+  end
+
+  describe '#photo_has_image?' do
+    let(:photo) { Pwb::PropPhoto.new(realty_asset: realty_asset) }
+
+    context 'with external URL' do
+      before { photo.external_url = 'https://example.com/image.jpg' }
+
+      it 'returns true' do
+        expect(helper.photo_has_image?(photo)).to be true
+      end
+    end
+
+    context 'without external URL or attached image' do
+      it 'returns false' do
+        expect(helper.photo_has_image?(photo)).to be false
+      end
+    end
+
+    context 'with nil photo' do
+      it 'returns false' do
+        expect(helper.photo_has_image?(nil)).to be false
+      end
+    end
+  end
+
+  describe '#photo_url (private)' do
+    let(:photo) { Pwb::PropPhoto.new(realty_asset: realty_asset) }
+
+    context 'with external URL' do
+      before { photo.external_url = 'https://cdn.example.com/property.jpg' }
+
+      it 'returns the external URL' do
+        expect(helper.send(:photo_url, photo)).to eq('https://cdn.example.com/property.jpg')
+      end
+    end
+
+    context 'without external URL or attached image' do
+      it 'returns nil' do
+        expect(helper.send(:photo_url, photo)).to be_nil
+      end
+    end
+
+    context 'with nil photo' do
+      it 'returns nil' do
+        expect(helper.send(:photo_url, nil)).to be_nil
+      end
+    end
+  end
+
+  describe '#photo_image_tag' do
+    let(:photo) { Pwb::PropPhoto.new(realty_asset: realty_asset) }
+
+    context 'with external URL' do
+      before { photo.external_url = 'https://cdn.example.com/property.jpg' }
+
+      it 'returns an image tag with the external URL' do
+        result = helper.photo_image_tag(photo, class: 'thumbnail')
+        expect(result).to include('src="https://cdn.example.com/property.jpg"')
+        expect(result).to include('class="thumbnail"')
+      end
+
+      it 'includes lazy loading by default' do
+        result = helper.photo_image_tag(photo)
+        expect(result).to include('loading="lazy"')
+        expect(result).to include('decoding="async"')
+      end
+
+      it 'uses eager loading when specified' do
+        result = helper.photo_image_tag(photo, eager: true)
+        expect(result).to include('loading="eager"')
+        expect(result).to include('fetchpriority="high"')
+        expect(result).not_to include('decoding="async"')
+      end
+
+      it 'disables lazy loading when lazy: false' do
+        result = helper.photo_image_tag(photo, lazy: false)
+        expect(result).not_to include('loading="lazy"')
+        expect(result).not_to include('decoding="async"')
+      end
+    end
+
+    context 'without external URL or attached image' do
+      it 'returns nil' do
+        expect(helper.photo_image_tag(photo)).to be_nil
+      end
+    end
+
+    context 'with nil photo' do
+      it 'returns nil' do
+        expect(helper.photo_image_tag(nil)).to be_nil
+      end
+    end
+  end
+
+  describe '#opt_image_tag' do
+    let(:photo) { Pwb::PropPhoto.new(realty_asset: realty_asset) }
+
+    context 'with external URL' do
+      before { photo.external_url = 'https://cdn.example.com/property.jpg' }
+
+      it 'returns an image tag with the external URL' do
+        result = helper.opt_image_tag(photo, class: 'photo')
+        expect(result).to include('src="https://cdn.example.com/property.jpg"')
+      end
+
+      it 'includes lazy loading by default' do
+        result = helper.opt_image_tag(photo)
+        expect(result).to include('loading="lazy"')
+        expect(result).to include('decoding="async"')
+      end
+
+      it 'uses eager loading when specified' do
+        result = helper.opt_image_tag(photo, eager: true)
+        expect(result).to include('loading="eager"')
+        expect(result).to include('fetchpriority="high"')
+        expect(result).not_to include('decoding="async"')
+      end
+
+      it 'disables lazy loading when lazy: false' do
+        result = helper.opt_image_tag(photo, lazy: false)
+        expect(result).not_to include('loading="lazy"')
+        expect(result).not_to include('decoding="async"')
+      end
+
+      it 'does not override explicitly set loading attribute' do
+        result = helper.opt_image_tag(photo, loading: 'eager')
+        expect(result).to include('loading="eager"')
+      end
+    end
+
+    context 'with nil photo' do
+      it 'returns nil' do
+        expect(helper.opt_image_tag(nil)).to be_nil
+      end
+    end
+  end
+
+  describe '#bg_image' do
+    let(:photo) { Pwb::PropPhoto.new(realty_asset: realty_asset) }
+
+    context 'with external URL' do
+      before { photo.external_url = 'https://cdn.example.com/bg.jpg' }
+
+      it 'returns background-image style with the external URL' do
+        result = helper.bg_image(photo)
+        expect(result).to eq('background-image: url(https://cdn.example.com/bg.jpg);')
+      end
+
+      it 'supports gradient overlay' do
+        result = helper.bg_image(photo, gradient: 'rgba(0,0,0,0.5), rgba(0,0,0,0.3)')
+        expect(result).to include('linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.3))')
+        expect(result).to include('url(https://cdn.example.com/bg.jpg)')
+      end
+    end
+
+    context 'without external URL or attached image' do
+      it 'returns empty string' do
+        result = helper.bg_image(photo)
+        expect(result).to eq('')
+      end
+    end
+  end
+
+  describe '#opt_image_url' do
+    let(:photo) { Pwb::PropPhoto.new(realty_asset: realty_asset) }
+
+    context 'with external URL' do
+      before { photo.external_url = 'https://cdn.example.com/property.jpg' }
+
+      it 'returns the external URL' do
+        expect(helper.opt_image_url(photo)).to eq('https://cdn.example.com/property.jpg')
+      end
+    end
+
+    context 'without external URL or attached image' do
+      it 'returns empty string' do
+        expect(helper.opt_image_url(photo)).to eq('')
+      end
+    end
+  end
+end

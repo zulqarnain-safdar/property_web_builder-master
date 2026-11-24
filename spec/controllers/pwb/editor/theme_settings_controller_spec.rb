@@ -1,0 +1,109 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+module Pwb
+  RSpec.describe Editor::ThemeSettingsController, type: :controller do
+    let!(:website) { FactoryBot.create(:pwb_website) }
+    let(:admin_user) { FactoryBot.create(:pwb_user, :admin, website: website) }
+    let(:regular_user) { FactoryBot.create(:pwb_user, website: website) }
+
+    before do
+      @request.env["devise.mapping"] = ::Devise.mappings[:user]
+      allow(controller).to receive(:current_website).and_return(website)
+      sign_in admin_user, scope: :user
+    end
+
+    describe "GET #show" do
+      it "returns theme settings as JSON" do
+        get :show, format: :json
+        expect(response).to have_http_status(:success)
+
+        json = response.parsed_body
+        expect(json).to have_key("style_variables")
+        expect(json).to have_key("theme_name")
+      end
+
+      it "includes default style variables" do
+        get :show, format: :json
+        json = response.parsed_body
+
+        expect(json["style_variables"]).to have_key("primary_color")
+        expect(json["style_variables"]).to have_key("secondary_color")
+      end
+    end
+
+    describe "PATCH #update" do
+      let(:valid_params) do
+        {
+          style_variables: {
+            primary_color: "#ff0000",
+            secondary_color: "#00ff00",
+            action_color: "#0000ff"
+          }
+        }
+      end
+
+      it "updates the style variables" do
+        patch :update, params: valid_params, format: :json
+        expect(response).to have_http_status(:success)
+
+        json = response.parsed_body
+        expect(json["status"]).to eq("success")
+        expect(json["style_variables"]).to include("primary_color")
+        website.reload
+        expect(website.style_variables_for_theme['default']['primary_color']).to eq("#ff0000")
+      end
+
+      it "merges with existing style variables" do
+        patch :update, params: { style_variables: { primary_color: "#111111", body_style: "siteLayout.boxed", theme: "dark" } }, format: :json
+        expect(response).to have_http_status(:success)
+
+        patch :update, params: { style_variables: { primary_color: "#333333" } }, format: :json
+
+        response.parsed_body
+        expect(response).to have_http_status(:success)
+
+        website.reload
+        expect(website.style_variables_for_theme['default']['primary_color']).to eq("#333333")
+        expect(website.style_variables_for_theme['default']['body_style']).to eq("siteLayout.boxed")
+        expect(website.style_variables_for_theme['default']['theme']).to eq("dark")
+      end
+
+      it "returns success message" do
+        patch :update, params: valid_params, format: :json
+        json = response.parsed_body
+
+        expect(json["message"]).to eq("Theme settings saved successfully")
+      end
+    end
+
+    describe "authentication" do
+      context "when not signed in" do
+        before { sign_out :user }
+
+        it "returns unauthorized for show" do
+          get :show, format: :json
+          expect(response).to have_http_status(:unauthorized)
+        end
+
+        it "returns unauthorized for update" do
+          patch :update, params: { style_variables: { primary_color: "#ff0000" } }, format: :json
+          expect(response).to have_http_status(:unauthorized)
+        end
+      end
+
+      context "when signed in as non-admin" do
+        before do
+          sign_out :user
+          sign_in regular_user, scope: :user
+        end
+
+        it "returns unauthorized for show" do
+          get :show, format: :json
+          expect(response).to have_http_status(:unauthorized)
+        end
+      end
+    end
+  end
+end

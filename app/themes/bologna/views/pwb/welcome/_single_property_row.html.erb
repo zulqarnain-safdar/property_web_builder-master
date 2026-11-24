@@ -1,0 +1,114 @@
+<%# Bologna Theme - Property Listing Section %>
+<%# Modern card design with soft shadows and rounded corners %>
+
+<section class="py-20 bg-warm-gray-50">
+  <div class="container mx-auto px-6">
+    <!-- Section Header -->
+    <div class="flex flex-col md:flex-row md:items-end md:justify-between mb-12">
+      <div class="mb-6 md:mb-0">
+        <span class="inline-block px-4 py-1.5 bg-olive-100 text-olive-600 text-sm font-medium rounded-pill mb-4">
+          <%= rent_or_sale == 'for_sale' ? t('pwb.properties.for_sale', default: 'For Sale') : t('pwb.properties.for_rent', default: 'For Rent') %>
+        </span>
+        <h2 class="font-display text-3xl md:text-4xl font-bold text-warm-gray-900">
+          <%= I18n.t title_key %>
+        </h2>
+        <% if defined?(subtitle) && subtitle.present? %>
+          <p class="text-warm-gray-500 mt-2"><%= subtitle %></p>
+        <% end %>
+      </div>
+      <a href="<%= rent_or_sale == 'for_sale' ? localized_buy_path : localized_rent_path %>"
+         class="inline-flex items-center text-terra-600 font-medium hover:text-terra-700 transition-colors group">
+        <span><%= t('pwb.properties.view_all', default: 'View All Properties') %></span>
+        <%= icon(:arrow_forward, size: :sm, class: "ml-2 group-hover:translate-x-1 transition-transform") %>
+      </a>
+    </div>
+
+    <!-- Property Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <% properties.each_with_index do |property, index| %>
+        <%# Cache each property card - invalidates when property is updated %>
+        <% cache ["property_card/bologna/v1", property.id, rent_or_sale, I18n.locale, property.updated_at], skip_digest: true do %>
+        <article class="group bg-white rounded-softer overflow-hidden shadow-soft hover:shadow-elevated transition-all duration-500 animate-on-scroll flex flex-col h-full"
+                 style="animation-delay: <%= index * 100 %>ms">
+          <!-- Property Image -->
+          <%= link_to property.contextual_show_path(rent_or_sale), class: "block relative overflow-hidden", "aria-label": t("property.view_details_for", title: property.title.presence || property.reference, default: "View details for %{title}") do %>
+            <div class="aspect-[4/3] relative">
+              <%= opt_image_tag((property.ordered_photo 1), quality: "auto",
+                  height: 350, crop: "fill",
+                  class: "w-full h-full object-cover transition-transform duration-700 group-hover:scale-110",
+                  loading: "lazy", use_picture: true,
+                  sizes: "(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw",
+                  alt: property.title.presence || "Property listing") %>
+
+              <!-- Gradient Overlay -->
+              <div class="absolute inset-0 bg-gradient-to-t from-warm-gray-900/40 via-transparent to-transparent"></div>
+
+              <!-- Price Badge -->
+              <div class="absolute bottom-4 left-4">
+                <span class="inline-block px-4 py-2 bg-white/95 backdrop-blur-sm text-terra-600 font-display font-bold text-lg rounded-soft shadow-soft">
+                  <%= property_price(property, rent_or_sale) %>
+                </span>
+              </div>
+
+              <!-- Sale/Rent Badge -->
+              <div class="absolute top-4 right-4">
+                <span class="inline-block px-3 py-1.5 bg-<%= rent_or_sale == 'for_sale' ? 'terra' : 'olive' %>-500 text-white text-xs font-medium uppercase tracking-wide rounded-pill">
+                  <%= rent_or_sale == 'for_sale' ? t('pwb.properties.sale', default: 'Sale') : t('pwb.properties.rent', default: 'Rent') %>
+                </span>
+              </div>
+            </div>
+          <% end %>
+
+          <!-- Property Details -->
+          <div class="p-6 flex flex-col flex-grow">
+            <!-- Title & Location -->
+            <h3 class="font-display font-semibold text-xl text-warm-gray-900 mb-2 line-clamp-1 group-hover:text-terra-600 transition-colors">
+              <%= link_to property.title, property.contextual_show_path(rent_or_sale) %>
+            </h3>
+
+            <% if property.respond_to?(:address_locality) && property.address_locality.present? %>
+              <p class="flex items-center text-warm-gray-500 text-sm mb-4">
+                <%= icon(:location_on, size: :sm, class: "mr-2 text-terra-400") %>
+                <%= property.address_locality %>
+              </p>
+            <% else %>
+              <p class="flex items-center text-warm-gray-500 text-sm mb-4 invisible">
+                <%= icon(:location_on, size: :sm, class: "mr-2 text-terra-400") %>
+                &nbsp;
+              </p>
+            <% end %>
+
+            <!-- Spacer to push features to bottom -->
+            <div class="flex-grow"></div>
+
+            <!-- Divider -->
+            <div class="border-t border-warm-gray-100 my-4"></div>
+
+            <!-- Property Features -->
+            <ul class="flex items-center justify-between text-sm" aria-label="<%= t('pwb.accessibility.property_features', default: 'Property features') %>">
+              <li class="flex items-center text-warm-gray-600" aria-label="<%= t('pwb.accessibility.bedrooms_count', count: property.count_bedrooms, default: '%{count} bedrooms') %>">
+                <span class="w-8 h-8 flex items-center justify-center bg-warm-gray-100 rounded-full mr-2">
+                  <%= icon(:bed, size: :sm, class: "text-terra-500", aria_hidden: true) %>
+                </span>
+                <span><%= format_bedroom_count(property.count_bedrooms) %> <%= property.count_bedrooms == 1 ? t('pwb.properties.bed', default: 'Bed') : t('pwb.properties.beds', default: 'Beds') %></span>
+              </li>
+              <li class="flex items-center text-warm-gray-600" aria-label="<%= t('pwb.accessibility.bathrooms_count', count: property.count_bathrooms, default: '%{count} bathrooms') %>">
+                <span class="w-8 h-8 flex items-center justify-center bg-warm-gray-100 rounded-full mr-2">
+                  <%= icon(:shower, size: :sm, class: "text-terra-500", aria_hidden: true) %>
+                </span>
+                <span><%= format_bathroom_count(property.count_bathrooms) %> <%= property.count_bathrooms == 1 ? t('pwb.properties.bath', default: 'Bath') : t('pwb.properties.baths', default: 'Baths') %></span>
+              </li>
+              <li class="flex items-center text-warm-gray-600" aria-label="<%= t('pwb.accessibility.area_size', area: property.constructed_area, unit: area_unit(property), default: '%{area} %{unit}') %>">
+                <span class="w-8 h-8 flex items-center justify-center bg-warm-gray-100 rounded-full mr-2">
+                  <%= icon(:straighten, size: :sm, class: "text-terra-500", aria_hidden: true) %>
+                </span>
+                <span><%= property.constructed_area %><%= area_unit property %></span>
+              </li>
+            </ul>
+          </div>
+        </article>
+        <% end %> <%# End property card cache %>
+      <% end %>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,161 @@
+<h2 class="text-2xl font-bold text-gray-900 text-center mb-8">
+  Admin Login
+</h2>
+
+<form id="login-form" class="space-y-6">
+  <div>
+    <label for="email" class="block text-sm font-medium text-gray-700">
+      Email Address
+    </label>
+    <div class="mt-1">
+      <input type="email" id="email" placeholder="Enter your email" required autofocus
+             class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+    </div>
+  </div>
+
+  <div>
+    <label for="password" class="block text-sm font-medium text-gray-700">
+      Password
+    </label>
+    <div class="mt-1">
+      <input type="password" id="password" placeholder="Enter your password" required
+             class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+    </div>
+  </div>
+
+  <div class="flex items-center justify-between">
+    <div class="flex items-center">
+      <input id="remember-me" name="remember-me" type="checkbox"
+             class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+      <label for="remember-me" class="ml-2 block text-sm text-gray-700">
+        Remember me
+      </label>
+    </div>
+
+    <div class="text-sm">
+      <%= link_to "Forgot password?", "/pwb_forgot_password",
+          class: "font-medium text-blue-600 hover:text-blue-500" %>
+    </div>
+  </div>
+
+  <div>
+    <button type="submit" id="login-button"
+            class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed">
+      Sign In
+    </button>
+  </div>
+
+  <div id="message"></div>
+</form>
+
+<div class="mt-6 text-center">
+  <p class="text-sm text-gray-600">
+    Don't have an account?
+    <%= link_to "Sign Up", "/pwb_sign_up",
+        class: "font-medium text-blue-600 hover:text-blue-500" %>
+  </p>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+
+<script>
+  // Return URL for redirect after login
+  const returnUrl = '<%= j(@return_url || "/admin") %>';
+
+  // Firebase configuration
+  const firebaseConfig = {
+    apiKey: "<%= ENV['FIREBASE_API_KEY'] %>",
+    authDomain: "<%= ENV['FIREBASE_PROJECT_ID'] %>.firebaseapp.com",
+    projectId: "<%= ENV['FIREBASE_PROJECT_ID'] %>",
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+
+  document.getElementById('login-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const messageDiv = document.getElementById('message');
+    const button = document.getElementById('login-button');
+
+    // Clear previous messages
+    messageDiv.innerHTML = '';
+
+    // Validation
+    if (!email || !password) {
+      messageDiv.innerHTML = '<div class="bg-red-50 border-l-4 border-red-400 p-4 text-red-700 text-sm">Please enter your email and password.</div>';
+      return;
+    }
+
+    // Disable button and show loading
+    button.disabled = true;
+    button.innerHTML = '<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Signing in...';
+
+    // Sign in with Firebase
+    auth.signInWithEmailAndPassword(email, password)
+      .then(function(userCredential) {
+        // User signed in successfully
+        return userCredential.user.getIdToken();
+      })
+      .then(function(accessToken) {
+        // Send token to backend
+        return fetch('/api_public/v1/auth/firebase', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ token: accessToken })
+        });
+      })
+      .then(function(response) {
+        if (response.ok) {
+          window.location.assign(returnUrl);
+        } else {
+          throw new Error('Login failed on server side.');
+        }
+      })
+      .catch(function(error) {
+        let errorMessage = 'An error occurred. Please try again.';
+
+        switch(error.code) {
+          case 'auth/invalid-email':
+            errorMessage = 'Invalid email address.';
+            break;
+          case 'auth/user-disabled':
+            errorMessage = 'This account has been disabled.';
+            break;
+          case 'auth/user-not-found':
+            errorMessage = 'No account found with this email address.';
+            break;
+          case 'auth/wrong-password':
+            errorMessage = 'Incorrect password.';
+            break;
+          case 'auth/invalid-credential':
+            errorMessage = 'Invalid email or password.';
+            break;
+          case 'auth/too-many-requests':
+            errorMessage = 'Too many failed login attempts. Please try again later.';
+            break;
+          default:
+            if (error.message) {
+              errorMessage = error.message;
+            }
+        }
+
+        messageDiv.innerHTML = '<div class="bg-red-50 border-l-4 border-red-400 p-4 text-red-700 text-sm">' + errorMessage + '</div>';
+        button.innerHTML = 'Sign In';
+        button.disabled = false;
+      });
+  });
+
+  // Allow Enter key to submit from password field
+  document.getElementById('password').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      document.getElementById('login-form').dispatchEvent(new Event('submit'));
+    }
+  });
+</script>

@@ -1,0 +1,7 @@
+<div class="page-part-wrapper" data-page-part-key="<%= @page_part_key %>">
+  <% if @is_rails_part %>
+    <%= render partial: "pwb/components/#{@page_part_key}", locals: {} rescue nil %>
+  <% else %>
+    <%== @content_html %>
+  <% end %>
+</div>

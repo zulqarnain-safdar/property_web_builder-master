@@ -1,0 +1,578 @@
+/*
+ * Default Theme Stylesheet for PropertyWebBuilder
+ *
+ * This file provides base styles for the default theme.
+ * Theme-specific CSS variables are injected via custom_styles helper.
+ */
+
+/* ========================================
+   Font Fallbacks for CLS Prevention
+   Size-adjusted fallback fonts to match Google Fonts metrics
+   ======================================== */
+@font-face {
+  font-family: 'Open Sans-fallback';
+  src: local('Arial');
+  size-adjust: 105%;
+  ascent-override: 98%;
+  descent-override: 25%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'Montserrat-fallback';
+  src: local('Arial');
+  size-adjust: 112%;
+  ascent-override: 88%;
+  descent-override: 22%;
+  line-gap-override: 0%;
+}
+
+/* Base theme styles - minimal since Tailwind handles most styling */
+.tnt-body {
+  font-family: var(--pwb-font-primary, 'Open Sans'), 'Open Sans-fallback', sans-serif;
+}
+
+/* Ensure smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Page transitions */
+.page-content {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ==========================================================================
+   PWB Hero Sections (Liquid page parts)
+
+   WYSIWYG Editor Compatibility:
+   - isolation: isolate creates a stacking context boundary
+   - This prevents child z-indexes from escaping and overlapping editor UI
+   - Keep all internal z-indexes low (0-5 range)
+   ========================================================================== */
+.pwb-hero {
+  position: relative;
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  /* Stacking context isolation for WYSIWYG editor compatibility */
+  isolation: isolate;
+}
+
+.pwb-hero--centered {
+  text-align: center;
+}
+
+.pwb-hero--search {
+  min-height: 60vh;
+}
+
+.pwb-hero__bg-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
+}
+
+.pwb-hero__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(17, 24, 39, 0.6) 0%, rgba(17, 24, 39, 0.4) 100%);
+  z-index: 1;
+}
+
+.pwb-hero__content {
+  position: relative;
+  z-index: 2;
+  padding: 2rem 1rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.pwb-hero__pretitle {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 9999px;
+  margin-bottom: 1rem;
+}
+
+.pwb-hero__title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 1rem 0;
+  line-height: 1.2;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.pwb-hero__subtitle {
+  font-size: 1.125rem;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.6;
+  margin: 0 0 2rem 0;
+}
+
+.pwb-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.pwb-hero__search-box {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+@media (min-width: 640px) {
+  .pwb-hero__title {
+    font-size: 3rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .pwb-hero__title {
+    font-size: 3.5rem;
+  }
+}
+
+/* ==========================================================================
+   PWB Container
+   ========================================================================== */
+.pwb-container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* ==========================================================================
+   PWB Buttons
+   ========================================================================== */
+.pwb-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.pwb-btn--primary {
+  background-color: var(--primary-color, #3b82f6);
+  color: #ffffff;
+  border: none;
+}
+
+.pwb-btn--primary:hover {
+  background-color: var(--secondary-color, #2563eb);
+  transform: translateY(-1px);
+}
+
+.pwb-btn--outline {
+  background-color: transparent;
+  color: #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+.pwb-btn--outline:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: #ffffff;
+}
+
+.pwb-btn--lg {
+  padding: 1rem 2rem;
+  font-size: 1.125rem;
+}
+
+/* White button - for use on dark/primary backgrounds */
+.pwb-btn--white {
+  background-color: #ffffff;
+  color: var(--primary-color, #3b82f6);
+  border: none;
+}
+
+.pwb-btn--white:hover {
+  background-color: #f8fafc;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Outline white button - for use on dark/primary backgrounds */
+.pwb-btn--outline-white {
+  background-color: transparent;
+  color: #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+.pwb-btn--outline-white:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: #ffffff;
+}
+
+/* ==========================================================================
+   Accessibility Focus States (WCAG 2.1 AA)
+   ========================================================================== */
+/* Global focus-visible styles for better keyboard navigation */
+.pwb-btn:focus-visible,
+a:focus-visible,
+button:focus-visible,
+[role="button"]:focus-visible {
+  outline: 3px solid #005fcc;
+  outline-offset: 2px;
+}
+
+/* High contrast focus for buttons on dark backgrounds */
+.pwb-hero .pwb-btn:focus-visible,
+.pwb-hero a:focus-visible {
+  outline-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Minimum touch target size (44x44px per WCAG 2.1) */
+.pwb-btn {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Screen reader only utility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ==========================================================================
+   PWB CTA Sections (Call to Action)
+
+   WYSIWYG Editor Compatibility:
+   - isolation: isolate creates a stacking context boundary
+   - Keep all internal z-indexes low (0-2 range)
+   ========================================================================== */
+.pwb-cta {
+  position: relative;
+  isolation: isolate;
+}
+
+.pwb-cta--banner {
+  padding: 4rem 1rem;
+}
+
+.pwb-cta--primary {
+  background-color: var(--primary-color, #3b82f6);
+  color: #ffffff;
+}
+
+.pwb-cta--secondary {
+  background-color: var(--secondary-color, #1e40af);
+  color: #ffffff;
+}
+
+.pwb-cta--dark {
+  background-color: #111827;
+  color: #ffffff;
+}
+
+.pwb-cta__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .pwb-cta__content {
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: left;
+  }
+}
+
+.pwb-cta__text {
+  flex: 1;
+}
+
+.pwb-cta__title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.2;
+}
+
+.pwb-cta__subtitle {
+  font-size: 1.125rem;
+  opacity: 0.9;
+  margin: 0;
+}
+
+.pwb-cta__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+/* CTA Split Layout */
+.pwb-cta--split {
+  min-height: 500px;
+}
+
+.pwb-cta--split .pwb-grid--2col {
+  min-height: inherit;
+}
+
+.pwb-cta__image-side {
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  min-height: 300px;
+}
+
+.pwb-cta__image-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.2);
+  z-index: 0;
+}
+
+.pwb-cta__content-side {
+  display: flex;
+  align-items: center;
+  padding: 3rem 2rem;
+}
+
+.pwb-cta__content-side--primary {
+  background-color: var(--primary-color, #3b82f6);
+  color: #ffffff;
+}
+
+.pwb-cta__content-side--secondary {
+  background-color: var(--secondary-color, #1e40af);
+  color: #ffffff;
+}
+
+.pwb-cta__content-side--dark {
+  background-color: #111827;
+  color: #ffffff;
+}
+
+.pwb-cta__inner {
+  max-width: 500px;
+}
+
+.pwb-cta__pretitle {
+  display: inline-block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.8;
+  margin-bottom: 1rem;
+}
+
+.pwb-cta__description {
+  font-size: 1.125rem;
+  line-height: 1.6;
+  opacity: 0.9;
+  margin: 1rem 0;
+}
+
+.pwb-cta__features {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0;
+}
+
+.pwb-cta__features li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  font-size: 1rem;
+}
+
+.pwb-cta__features li svg,
+.pwb-cta__features li .material-icons {
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+/* High contrast focus for CTA sections */
+.pwb-cta .pwb-btn:focus-visible,
+.pwb-cta a:focus-visible {
+  outline-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.3);
+}
+
+/* ==========================================================================
+   PWB Grid System
+   ========================================================================== */
+.pwb-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.pwb-grid--2col {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .pwb-grid--2col {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.pwb-grid--gap-lg {
+  gap: 3rem;
+}
+
+.pwb-items-center {
+  align-items: center;
+}
+
+/* ==========================================================================
+   PWB Layout Containers (Composable Layouts)
+
+   Container page parts for side-by-side arrangements.
+   These provide the grid structure, child page parts fill the slots.
+
+   WYSIWYG Editor Compatibility:
+   - isolation: isolate creates a stacking context boundary
+   - Keep all internal z-indexes low
+   ========================================================================== */
+.pwb-layout {
+  position: relative;
+  isolation: isolate;
+  padding: 2rem 0;
+}
+
+.pwb-layout__grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+/* Slot containers - ensure children don't overflow */
+.pwb-layout__slot {
+  min-width: 0; /* Prevent grid blowout */
+}
+
+/* Two Column Equal (50/50) */
+.pwb-layout__grid--2col-equal {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .pwb-layout__grid--2col-equal {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Two Column Wide/Narrow (67/33) */
+.pwb-layout__grid--2col-wide-narrow {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .pwb-layout__grid--2col-wide-narrow {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+/* Sidebar Left (25/75) */
+.pwb-layout__grid--sidebar-left {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .pwb-layout__grid--sidebar-left {
+    grid-template-columns: 1fr 3fr;
+  }
+}
+
+/* Sidebar Right (75/25) */
+.pwb-layout__grid--sidebar-right {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .pwb-layout__grid--sidebar-right {
+    grid-template-columns: 3fr 1fr;
+  }
+}
+
+/* Three Column Equal (33/33/33) */
+.pwb-layout__grid--3col-equal {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .pwb-layout__grid--3col-equal {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (min-width: 1024px) {
+  .pwb-layout__grid--3col-equal {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+/* Layout gap variants */
+.pwb-layout__grid--gap-lg {
+  gap: 2.5rem;
+}
+
+.pwb-layout__grid--gap-sm {
+  gap: 1rem;
+}
+
+/* Remove padding from nested page parts within layouts */
+.pwb-layout__slot .pwb-section {
+  padding: 0;
+}
+
+/* Sidebar styling hint - sidebars may want sticky positioning */
+.pwb-layout__slot--sidebar {
+  position: relative;
+}
+
+@media (min-width: 768px) {
+  .pwb-layout__slot--sidebar > *:first-child {
+    position: sticky;
+    top: 1rem;
+  }
+}

@@ -1,0 +1,179 @@
+<% page_title @property_details.title %>
+<%= render '/pwb/props/meta_tags' %>
+<%= render 'pwb/shared/leaflet_assets' %>
+
+<%# Barcelona Theme - Property Detail Page %>
+<%# Mediterranean design with coastal blues and warm accents %>
+
+<!-- Hero Section with Image Gallery -->
+<section class="pwb-hero property-detail-page bg-warm-50">
+  <div class="pwb-container property-detail-container py-8">
+    <!-- Breadcrumb -->
+    <nav class="pwb-breadcrumb mb-6">
+      <ol class="pwb-breadcrumb__list flex items-center space-x-2 text-sm">
+        <li class="pwb-breadcrumb__item">
+          <a href="<%= root_path %>" class="pwb-breadcrumb__link text-warm-500 hover:text-med-600 transition-colors">
+            <%= icon(:home, size: :xs, class: "mr-1") %>
+            <%= t('pwb.breadcrumb.home', default: 'Home') %>
+          </a>
+        </li>
+        <li class="pwb-breadcrumb__item text-warm-400">
+          <%= icon(:chevron_right, size: :xs) %>
+        </li>
+        <li class="pwb-breadcrumb__item">
+          <a href="<%= @property_details.for_sale? ? localized_buy_path : localized_rent_path %>"
+             class="pwb-breadcrumb__link text-warm-500 hover:text-med-600 transition-colors">
+            <%= @property_details.for_sale? ? t('pwb.breadcrumb.buy', default: 'Buy') : t('pwb.breadcrumb.rent', default: 'Rent') %>
+          </a>
+        </li>
+        <li class="pwb-breadcrumb__item text-warm-400">
+          <%= icon(:chevron_right, size: :xs) %>
+        </li>
+        <li class="pwb-breadcrumb__item text-warm-900 font-medium truncate max-w-[200px]">
+          <%= @property_details.title %>
+        </li>
+      </ol>
+    </nav>
+
+    <!-- Property Images -->
+    <div class="mb-8">
+      <%= render '/pwb/props/images_section_carousel' %>
+    </div>
+  </div>
+</section>
+
+<!-- Main Content -->
+<section class="pwb-prop-detail bg-white">
+  <div class="pwb-container property-detail-container py-12">
+    <div class="pwb-prop-detail__layout property-detail-layout">
+      <!-- Left Column - Property Details -->
+      <div class="pwb-prop-detail__main property-detail-main">
+        <!-- Title & Price Card -->
+        <div class="pwb-prop-detail__title-card bg-gradient-to-r from-warm-50 to-white rounded-softer p-8 mb-8 shadow-soft">
+          <div class="flex flex-col md:flex-row md:items-start md:justify-between">
+            <div class="mb-4 md:mb-0 flex-1">
+              <div class="flex items-start justify-between gap-4">
+                <h1 class="pwb-prop-detail__title font-display text-2xl md:text-3xl font-bold text-warm-900 mb-3">
+                  <%= @property_details.title %>
+                </h1>
+                <%# Local Favorite Toggle Button %>
+                <% operation_type = @property_details.for_sale? ? 'for_sale' : 'for_rent' %>
+                <div data-controller="local-favorites"
+                     data-local-favorites-property-ref-value="<%= @property_details.reference %>"
+                     data-local-favorites-property-title-value="<%= @property_details.title.presence || @property_details.reference %>"
+                     data-local-favorites-property-image-value="<%= @property_details.ordered_photo(1)&.image_url %>"
+                     data-local-favorites-property-price-value="<%= property_price(@property_details, operation_type) %>"
+                     data-local-favorites-property-url-value="<%= @property_details.contextual_show_path(operation_type) %>">
+                  <button type="button"
+                          data-local-favorites-target="toggleButton"
+                          data-action="local-favorites#toggle"
+                          class="pwb-prop-detail__fav-btn w-12 h-12 flex items-center justify-center bg-white border border-warm-200 rounded-full shadow-soft hover:shadow-medium hover:border-red-300 transition-all"
+                          aria-label="<%= t('pwb.favorites.toggle', default: 'Save to favorites') %>">
+                    <span data-local-favorites-target="icon" class="text-gray-400 hover:text-red-500">
+                      <%= icon(:favorite_border, size: :md) rescue content_tag(:span, "♡", class: "text-xl") %>
+                    </span>
+                  </button>
+                </div>
+              </div>
+              <% if @property_details.respond_to?(:address_locality) && @property_details.address_locality.present? %>
+                <p class="flex items-center text-warm-500">
+                  <%= icon(:location_on, size: :sm, class: "text-gold-400 mr-2") %>
+                  <%= @property_details.address_locality %>
+                </p>
+              <% end %>
+            </div>
+            <div class="text-left md:text-right">
+              <span class="pwb-prop-detail__status-badge inline-block px-4 py-1.5 bg-<%= @property_details.for_sale? ? 'med' : 'terra' %>-100 text-<%= @property_details.for_sale? ? 'med' : 'terra' %>-600 text-sm font-medium rounded-pill mb-2">
+                <%= @property_details.for_sale? ? t('pwb.properties.for_sale', default: 'For Sale') : t('pwb.properties.for_rent', default: 'For Rent') %>
+              </span>
+              <p class="pwb-prop-detail__price font-display text-3xl font-bold text-med-600">
+                <%= property_price(@property_details, @property_details.for_sale? ? 'for_sale' : 'for_rent') %>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Property Info Grid -->
+        <div class="pwb-prop-detail__info-grid mb-10">
+          <%= render '/pwb/props/prop_info_list' %>
+        </div>
+
+        <!-- Description Section -->
+        <div class="pwb-prop-detail__desc-block mb-10">
+          <div class="flex items-center mb-6">
+            <span class="w-12 h-12 flex items-center justify-center bg-med-100 rounded-full mr-4">
+              <%= icon(:description, size: :md, class: "text-med-600") %>
+            </span>
+            <h2 class="pwb-prop-detail__section-title font-display text-2xl font-bold text-warm-900">
+              <%= t('property.description', default: 'Description') %>
+            </h2>
+          </div>
+          <div class="pwb-prop-detail__desc-content prose prose-warm max-w-none text-warm-600 leading-relaxed">
+            <%== @property_details.description %>
+          </div>
+        </div>
+
+        <!-- Extras Section -->
+        <% if @property_details.extras_for_display.present? %>
+          <div class="pwb-prop-detail__extras mb-10">
+            <div class="flex items-center mb-6">
+              <span class="w-12 h-12 flex items-center justify-center bg-gold-100 rounded-full mr-4">
+                <%= icon(:star, size: :md, class: "text-gold-500") %>
+              </span>
+              <h2 class="pwb-prop-detail__section-title font-display text-2xl font-bold text-warm-900">
+                <%= t('property.extras', default: 'Features & Amenities') %>
+              </h2>
+            </div>
+            <%= render '/pwb/props/extras' %>
+          </div>
+        <% end %>
+
+        <!-- Social Sharing -->
+        <div class="pwb-prop-detail__social border-t border-warm-100 pt-8">
+          <p class="text-warm-500 text-sm mb-4"><%= t('pwb.property.share', default: 'Share this property') %>:</p>
+          <%= render 'pwb/shared/social_sharing', url: request.original_url, title: @property_details.title, icon_style: :phosphor, style: :barcelona %>
+        </div>
+      </div>
+
+      <!-- Right Column - Contact & Sidebar -->
+      <div class="pwb-prop-detail__sidebar property-detail-sidebar">
+        <div class="lg:sticky lg:top-28 space-y-6">
+          <!-- Contact Form Card -->
+          <div class="bg-white rounded-softer shadow-medium p-6 border border-warm-100">
+            <%= render '/pwb/props/request_prop_info' %>
+          </div>
+
+          <!-- Agent Contact Card -->
+          <div class="bg-gradient-to-br from-warm-50 to-warm-100 rounded-softer p-6">
+            <%= render '/pwb/props/prop_contact_info' %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Map Section -->
+<% if @property_details.show_map && @map_markers.present? %>
+  <section class="pwb-prop-detail__map-section property-detail-map bg-warm-50 border-t border-warm-100">
+    <div class="pwb-prop-detail__map-container property-detail-map-inner py-12">
+      <div class="flex items-center mb-8">
+        <span class="w-12 h-12 flex items-center justify-center bg-terra-100 rounded-full mr-4">
+          <%= icon(:map, size: :md, class: "text-terra-500") %>
+        </span>
+        <h2 class="pwb-prop-detail__section-title font-display text-2xl font-bold text-warm-900">
+          <%= t('pwb.property.location', default: 'Location') %>
+        </h2>
+      </div>
+      <div class="rounded-softer overflow-hidden shadow-soft" style="height: 400px;">
+        <div id="property-map"
+             class="w-full h-full"
+             data-controller="map"
+             data-map-target="canvas"
+             data-map-markers-value="<%= @map_markers.to_json %>"
+             data-map-zoom-value="15">
+        </div>
+      </div>
+    </div>
+  </section>
+<% end %>

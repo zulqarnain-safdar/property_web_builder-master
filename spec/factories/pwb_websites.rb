@@ -1,0 +1,212 @@
+# frozen_string_literal: true
+
+# == Schema Information
+#
+# Table name: pwb_websites
+# Database name: primary
+#
+#  id                                  :integer          not null, primary key
+#  admin_config                        :json
+#  analytics_id_type                   :integer
+#  available_currencies                :text             default([]), is an Array
+#  available_themes                    :text             is an Array
+#  client_theme_config                 :jsonb
+#  client_theme_name                   :string
+#  company_display_name                :string
+#  compiled_palette_css                :text
+#  configuration                       :json
+#  custom_domain                       :string
+#  custom_domain_verification_token    :string
+#  custom_domain_verified              :boolean          default(FALSE)
+#  custom_domain_verified_at           :datetime
+#  dark_mode_setting                   :string           default("light_only"), not null
+#  default_admin_locale                :string           default("en-UK")
+#  default_area_unit                   :integer          default("sqmt")
+#  default_client_locale               :string           default("en-UK")
+#  default_currency                    :string           default("EUR")
+#  default_meta_description            :text
+#  default_seo_title                   :string
+#  demo_last_reset_at                  :datetime
+#  demo_mode                           :boolean          default(FALSE), not null
+#  demo_reset_interval                 :interval         default(24 hours)
+#  demo_seed_pack                      :string
+#  email_for_general_contact_form      :string
+#  email_for_property_contact_form     :string
+#  email_verification_token            :string
+#  email_verification_token_expires_at :datetime
+#  email_verified_at                   :datetime
+#  exchange_rates                      :json
+#  external_feed_config                :json
+#  external_feed_enabled               :boolean          default(FALSE), not null
+#  external_feed_provider              :string
+#  external_image_mode                 :boolean          default(FALSE), not null
+#  favicon_url                         :string
+#  flags                               :integer          default(0), not null
+#  google_font_name                    :string
+#  imports_config                      :json
+#  main_logo_url                       :string
+#  maps_api_key                        :string
+#  ntfy_access_token                   :string
+#  ntfy_enabled                        :boolean          default(FALSE), not null
+#  ntfy_notify_inquiries               :boolean          default(TRUE), not null
+#  ntfy_notify_listings                :boolean          default(TRUE), not null
+#  ntfy_notify_security                :boolean          default(TRUE), not null
+#  ntfy_notify_users                   :boolean          default(FALSE), not null
+#  ntfy_server_url                     :string           default("https://ntfy.sh")
+#  ntfy_topic_prefix                   :string
+#  owner_email                         :string
+#  palette_compiled_at                 :datetime
+#  palette_mode                        :string           default("dynamic"), not null
+#  provisioning_completed_at           :datetime
+#  provisioning_error                  :text
+#  provisioning_failed_at              :datetime
+#  provisioning_started_at             :datetime
+#  provisioning_state                  :string           default("live"), not null
+#  raw_css                             :text
+#  realty_assets_count                 :integer          default(0), not null
+#  recaptcha_key                       :string
+#  rendering_mode                      :string           default("rails"), not null
+#  rent_price_options_from             :text             default(["", "250", "500", "750", "1,000", "1,500", "2,500", "5,000"]), is an Array
+#  rent_price_options_till             :text             default(["", "250", "500", "750", "1,000", "1,500", "2,500", "5,000"]), is an Array
+#  sale_price_options_from             :text             default(["", "25,000", "50,000", "75,000", "100,000", "150,000", "250,000", "500,000", "1,000,000", "2,000,000", "5,000,000", "10,000,000"]), is an Array
+#  sale_price_options_till             :text             default(["", "25,000", "50,000", "75,000", "100,000", "150,000", "250,000", "500,000", "1,000,000", "2,000,000", "5,000,000", "10,000,000"]), is an Array
+#  search_config                       :jsonb            not null
+#  search_config_buy                   :json
+#  search_config_landing               :json
+#  search_config_rent                  :json
+#  seed_pack_name                      :string
+#  selected_palette                    :string
+#  shard_name                          :string           default("default")
+#  site_type                           :string
+#  slug                                :string
+#  social_media                        :json
+#  style_variables_for_theme           :json
+#  styles_config                       :json
+#  subdomain                           :string
+#  supported_currencies                :text             default([]), is an Array
+#  supported_locales                   :text             default(["en-UK"]), is an Array
+#  theme_name                          :string
+#  whitelabel_config                   :json
+#  created_at                          :datetime         not null
+#  updated_at                          :datetime         not null
+#  analytics_id                        :string
+#  contact_address_id                  :integer
+#
+# Indexes
+#
+#  index_pwb_websites_on_custom_domain             (custom_domain) UNIQUE WHERE ((custom_domain IS NOT NULL) AND ((custom_domain)::text <> ''::text))
+#  index_pwb_websites_on_dark_mode_setting         (dark_mode_setting)
+#  index_pwb_websites_on_demo_mode_and_shard_name  (demo_mode,shard_name)
+#  index_pwb_websites_on_email_verification_token  (email_verification_token) UNIQUE WHERE (email_verification_token IS NOT NULL)
+#  index_pwb_websites_on_external_feed_enabled     (external_feed_enabled)
+#  index_pwb_websites_on_external_feed_provider    (external_feed_provider)
+#  index_pwb_websites_on_palette_mode              (palette_mode)
+#  index_pwb_websites_on_provisioning_state        (provisioning_state)
+#  index_pwb_websites_on_realty_assets_count       (realty_assets_count)
+#  index_pwb_websites_on_rendering_mode            (rendering_mode)
+#  index_pwb_websites_on_search_config             (search_config) USING gin
+#  index_pwb_websites_on_selected_palette          (selected_palette)
+#  index_pwb_websites_on_site_type                 (site_type)
+#  index_pwb_websites_on_slug                      (slug)
+#  index_pwb_websites_on_subdomain                 (subdomain) UNIQUE
+#
+FactoryBot.define do
+  factory :pwb_website, class: 'Pwb::Website', aliases: [:website] do
+    sequence(:subdomain) { |n| "tenant#{n}" }
+    # NOTE: company_display_name is DEPRECATED - use agency.display_name instead
+    # Keeping nil here so agency.display_name takes priority
+    company_display_name { nil }
+    theme_name { 'default' }
+    default_currency { 'EUR' }
+    default_client_locale { 'en-UK' }
+    default_area_unit { 'sqmt' }
+    supported_locales { ['en-UK'] }
+
+    # Transient attribute to control agency creation
+    transient do
+      skip_agency { false }
+    end
+
+    # Trait for creating a website without an agency (for testing guards)
+    trait :without_agency do
+      transient do
+        skip_agency { true }
+      end
+    end
+
+    # Trait for testing legacy company_display_name fallback
+    trait :with_legacy_company_display_name do
+      company_display_name { 'Legacy Website Company' }
+    end
+
+    after(:create) do |website, evaluator|
+      # Create an agency for the website if not already created
+      # Skip if using :without_agency trait
+      next if evaluator.skip_agency
+
+      if website.agency.blank?
+        agency = Pwb::Agency.create!(
+          company_name: 'Test Company',
+          # display_name is the primary source for the company name shown on the public website
+          display_name: 'Test Company',
+          website: website
+        )
+        website.update(agency: agency)
+      end
+    end
+
+    # ===================
+    # Rendering Mode Traits
+    # ===================
+
+    # Explicit Rails rendering (default behavior)
+    trait :rails_rendering do
+      rendering_mode { 'rails' }
+      client_theme_name { nil }
+      client_theme_config { {} }
+    end
+
+    # Client rendering with Astro (requires a valid client theme)
+    trait :client_rendering do
+      rendering_mode { 'client' }
+      client_theme_name { 'amsterdam' }
+      client_theme_config { {} }
+
+      # Ensure the client theme exists
+      after(:build) do |_website|
+        Pwb::ClientTheme.find_or_create_by!(name: 'amsterdam') do |theme|
+          theme.friendly_name = 'Amsterdam Modern'
+          theme.default_config = { 'primary_color' => '#FF6B35' }
+        end
+      end
+    end
+
+    # Client rendering with custom theme config overrides
+    trait :client_rendering_with_overrides do
+      rendering_mode { 'client' }
+      client_theme_name { 'amsterdam' }
+      client_theme_config { { 'primary_color' => '#00FF00', 'custom_value' => 'test' } }
+
+      after(:build) do |_website|
+        Pwb::ClientTheme.find_or_create_by!(name: 'amsterdam') do |theme|
+          theme.friendly_name = 'Amsterdam Modern'
+          theme.default_config = { 'primary_color' => '#FF6B35' }
+        end
+      end
+    end
+
+    # Provisioned website (rendering mode locked)
+    trait :provisioned_with_content do
+      provisioning_completed_at { 1.day.ago }
+
+      after(:create) do |website|
+        # Create a page content to lock the rendering mode
+        page = Pwb::Page.find_or_create_by!(website: website, slug: 'home')
+        Pwb::PageContent.find_or_create_by!(website: website, page: page, page_part_key: 'hero/hero_simple') do |pc|
+          pc.sort_order = 1
+          pc.visible_on_page = true
+        end
+      end
+    end
+  end
+end

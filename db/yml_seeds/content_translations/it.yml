@@ -1,0 +1,248 @@
+# placeholder - awaiting translation
+---
+it:
+  legal:
+    content_html:
+      main_content:
+        <b> DISCLAIMER</b> </br>
+        The Example RE Internet team strives to provide you with useful, accurate, and timely information on this website. Accordingly, Example RE has attempted to provide accurate information and materials on this website on this website but assumes no responsibility for the accuracy and completeness of that information and materials on this website but assumes no responsibility for the accuracy and completeness of that information or materials. Example RE may change the content of any information or materials available at this webite, or to the products described in them, at any time without notice. However, Example RE makes no commitment to update the information or materials on this website which, as a result, may be out of date. Information and opinions expressed in bulletion boards or other forums are not necessarily those of Example RE. Neither Example RE, nor its officer, directors, employees, agents, distributors, or affiliates are responsible or liable for any loss damage (including, but not limited to, actual, consequential, or punitive), liability, claim, or other injury or cause related to or resulting from any information posted on Example RE’s website. Example RE reserves the right to revise these terms and/or legal restriction at any time. You are responsible for reviewing this page from time to time to ensure compliance with the then-current terms and legal restrictions because they will be binding on you. Certain provisions of these terms and legal restrictions may be superseded by expressly designated legal notices or terms located on particular pages of this website.
+
+
+  privacy:
+    content_html:
+      main_content:
+        <P> <b> Privacy Policy </b> </p> <p>
+        We are committed to the security of your users' data. Therefore, our Privacy Policy sets forth the terms in which Example RE uses and protects information that is provided by its customers. </p> <p>
+        <b>
+        Use Collected Information </b> </p> <p>
+        Our website may collect personal information such as your email address and demographic information. Also, when necessary, specific information may be required to process an order or make a delivery or billing.
+        Example RE will not sell, cede or distribute personal information that is collected without your consent, unless required by a court with a court order.
+        </p> 
+        <p><b>Links to Third Parties </b> </p> <p>
+        This website may contain links to other sites that may be of interest to you. Once you click on these links and leave our page, we no longer have control over the site to which you are redirected and therefore we are not responsible for the terms or privacy or protection of your data on those other third sites. These sites are subject to their own privacy policies so it is recommended that you consult them to confirm that you agree with them.
+        </p> 
+
+
+  sell:
+    content_html:
+      main_content:
+        <h2>Sell Your Property with Us</h2>
+        Our commitment to you is to uphold the highest standards of professionalism while helping you make your best real estate decisions. You want to sell your property with full confidence. In doing so, you deserve our very best. Our goal at Example Real Estate is to provide you with exceptional service while meeting your needs at each step of the selling process. 
+        <h2>Regional Expertise
+        </h2>
+        Our clients and our business affiliates will tell you, no listings in our market region of Birmingham receive more exposure to buyers than those listed with Example Real Estate. Our Internet-based marketing, print advertising, and collateral marketing efforts allow our listings unequaled exposure to buyers who are looking for real estate in Birmingham. The strength of our online marketing, print advertising, and direct broker contacts drive significant traffic to our website, which provides detailed information on all of our property listings.
+        <h2>Ready to Help You
+        </h2>
+        Our Qualified Brokerage Professionals and Staff at Example Real Estate have the experience, the knowledge and the discretion to represent your property throughout Birmingham. Our team of dedicated and professional brokers and staff are committed to providing extraordinary service. You may be assured that Example RE provides the tools and assists your broker in marketing your property efficiently and expertly to local, regional and national markets. It takes more than a sign on your home or property to attract buyers. We create a complete marketing plan to meet your needs.
+
+  home:
+    landing_hero:
+      landing_title_a:
+        El mejor inmobiliario en Springfield
+      landing_content_a: >
+        <ul class="list-carousel">
+          <li><span class="hero-check-icon" aria-hidden="true"></span>Nuestro equipo está formado por profesionales</li>
+          <li><span class="hero-check-icon" aria-hidden="true"></span>Encontraremos lo mejor para usted</li>
+        </ul>
+      landing_img:
+        db/example_images/carousel_villa_with_pool.jpg
+
+    content_html:
+      main_content: <p><b>Important notice:</b>&nbsp; We are offering free property evaluations this month only.  Call us now to take advantage of this special offer.</p>
+
+    about_us_services:
+      title_a: Trova la tua casa
+      content_a: <p>Spiegaci esattamente cosa stai cercando e faremo del nostro meglio per trovare quella proprietà ideale che soddisfi le tue esigenze.</p>
+      title_b: Agenti immobiliari professionisti
+      content_b: <p>Siamo agenti immobiliari professionisti. Ti aiuteremo con tutte le pratiche e ti faremo risparmiare denaro lungo il percorso.</p>
+      title_c: Vendi la tua proprietà
+      content_c: <p>Se hai bisogno di vendere la tua proprietà, contattaci. Con la nostra esperienza nel settore e nella zona locale, lo faremo nel modo più rapido e semplice.</p>
+
+    heroes/hero_centered:
+      pretitle: Benvenuto in Example Real Estate
+      title: Trova la Casa dei Tuoi Sogni
+      subtitle: >
+        Siamo dedicati ad aiutarti a trovare la proprietà perfetta.
+        Che tu stia comprando, vendendo o affittando, il nostro team di esperti è qui per guidarti in ogni passo.
+      cta_text: Sfoglia Proprietà
+      cta_link: /buy
+      cta_secondary_text: Contattaci
+      cta_secondary_link: /contact-us
+      background_image: db/example_images/carousel_villa_with_pool.jpg
+
+    features/feature_grid_3col:
+      section_pretitle: I Nostri Servizi
+      section_title: Cosa Offriamo
+      section_subtitle: Servizi immobiliari completi su misura per le tue esigenze
+      feature_1_icon: home
+      feature_1_title: Trova la Tua Casa
+      feature_1_description: >
+        Dicci esattamente cosa stai cercando e troveremo quella proprietà ideale
+        che soddisfi tutte le tue esigenze e il tuo budget.
+      feature_1_link: /buy
+      feature_2_icon: person
+      feature_2_title: Agenti Professionisti
+      feature_2_description: >
+        I nostri agenti esperti gestiscono tutte le pratiche e le trattative,
+        facendoti risparmiare tempo e denaro durante tutto il processo.
+      feature_2_link: /about-us
+      feature_3_icon: attach_money
+      feature_3_title: Vendi la Tua Proprietà
+      feature_3_description: >
+        Ottieni il miglior prezzo per la tua proprietà con le nostre strategie di marketing collaudate
+        e la nostra vasta rete di acquirenti qualificati.
+      feature_3_link: /contact-us
+
+    cta/cta_banner:
+      title: Pronto a Trovare la Tua Casa Perfetta?
+      subtitle: Contattaci oggi per una consulenza gratuita e lasciaci aiutarti a navigare il mercato immobiliare con fiducia.
+      button_text: Inizia
+      button_link: /contact-us
+      button_style: primary
+      secondary_button_text: Vedi Proprietà
+      secondary_button_link: /buy
+      style: primary
+
+    stats/stats_counter:
+      section_title: Il Nostro Track Record
+      section_subtitle: Numeri che parlano da soli
+      stat_1_value: 500
+      stat_1_label: Proprietà Vendute
+      stat_1_prefix: ""
+      stat_1_suffix: +
+      stat_2_value: 98
+      stat_2_label: Soddisfazione Cliente
+      stat_2_suffix: "%"
+      stat_3_value: 15
+      stat_3_label: Anni di Esperienza
+      stat_4_value: 50
+      stat_4_label: Agenti Esperti
+      style: light
+
+    testimonials/testimonial_carousel:
+      section_title: Cosa Dicono i Nostri Clienti
+      section_subtitle: Non fidarti solo della nostra parola
+      testimonial_1_text: >
+        Example Real Estate ha reso la nostra esperienza di acquisto casa fluida e senza stress.
+        Il loro team è stato professionale, competente e sempre disponibile a rispondere alle nostre domande.
+        Altamente raccomandato!
+      testimonial_1_name: Maria Rossi
+      testimonial_1_role: Acquirente di Casa
+      testimonial_1_image: "https://ui-avatars.com/api/?name=Maria+Rossi&background=4f46e5&color=fff&size=128"
+      testimonial_2_text: >
+        Abbiamo venduto la nostra proprietà in sole 3 settimane grazie al loro eccellente marketing e
+        capacità di negoziazione. Hanno ottenuto un prezzo superiore a quello che chiedevamo!
+      testimonial_2_name: Marco Bianchi
+      testimonial_2_role: Venditore di Proprietà
+      testimonial_2_image: "https://ui-avatars.com/api/?name=Marco+Bianchi&background=059669&color=fff&size=128"
+      testimonial_3_text: >
+        Come acquirenti alla prima esperienza, eravamo nervosi per il processo. Il team di Example RE
+        ci ha guidato in ogni passo e ha trovato la nostra casa dei sogni entro il nostro budget.
+      testimonial_3_name: Anna e Luca Verdi
+      testimonial_3_role: Acquirenti alla Prima Esperienza
+      testimonial_3_image: "https://ui-avatars.com/api/?name=Anna+Luca&background=dc2626&color=fff&size=128"
+
+  about-us:
+    content_html:
+      main_content: <p><b>Avviso importante:</b>&nbsp; Offriamo valutazioni immobiliari gratuite solo questo mese. Chiamaci ora per approfittare di questa offerta speciale.</p>
+    our_agency:
+      title_a:
+        Chi Siamo
+      content_a:
+        <p>Siamo agenti immobiliari professionisti con molti anni di esperienza nel fornire un ottimo servizio
+        ai nostri clienti.</p>
+      our_agency_img:
+        db/example_images/carousel_grass.jpg
+
+    teams/team_grid:
+      section_title: Incontra il Nostro Team
+      section_subtitle: Professionisti dedicati impegnati nel tuo successo
+      member_1_name: Giovanni Rossi
+      member_1_role: Agente Senior
+      member_1_image: "db/seeds/packs/netherlands_urban/images/team_director.jpg"
+      member_1_bio: >
+        Giovanni ha oltre 15 anni di esperienza nel settore immobiliare e ha aiutato centinaia
+        di famiglie a trovare la loro casa perfetta.
+      member_1_email: giovanni@example.com
+      member_1_linkedin: ""
+      member_2_name: Elena Bianchi
+      member_2_role: Consulente Immobiliare
+      member_2_image: "db/seeds/packs/netherlands_urban/images/team_agent_female.jpg"
+      member_2_bio: >
+        Elena è specializzata in proprietà di lusso e porta un occhio attento ai dettagli
+        in ogni transazione.
+      member_3_name: Roberto Verdi
+      member_3_role: Direttore Vendite
+      member_3_image: "db/seeds/packs/netherlands_urban/images/team_agent_male.jpg"
+      member_3_bio: >
+        Roberto guida il nostro team di vendita con competenza in immobili commerciali e residenziali.
+      member_4_name: Laura Marino
+      member_4_role: Relazioni con i Clienti
+      member_4_image: "db/seeds/packs/netherlands_urban/images/team_assistant.jpg"
+      member_4_bio: >
+        Laura garantisce che ogni cliente riceva un servizio e un supporto eccezionali durante il loro percorso.
+
+  contact-us:
+    content_html:
+      main_content: <p><b>Ci piacerebbe sentirti!</b> Contatta il nostro team per qualsiasi domanda su acquisto, vendita o affitto di proprietà.</p>
+
+    cta/cta_split_image:
+      pretitle: Contattaci
+      title: Inizia il Tuo Viaggio Immobiliare
+      description: >
+        Che tu stia cercando di acquistare la tua prima casa, vendere una proprietà o investire in immobili,
+        il nostro team esperto è qui per aiutarti. Contattaci oggi per una consulenza gratuita e senza impegno.
+      features: >
+        <ul>
+          <li>Valutazioni immobiliari gratuite</li>
+          <li>Consulenza esperta di mercato</li>
+          <li>Servizio personalizzato</li>
+          <li>Disponibile 7 giorni su 7</li>
+        </ul>
+      image: db/example_images/carousel_grass.jpg
+      bg_style: light
+
+  sell:
+    content_html:
+      main_content:
+        <h2>Vendi la Tua Proprietà con Noi</h2>
+        Il nostro impegno nei tuoi confronti è quello di mantenere i più alti standard di professionalità aiutandoti a prendere le migliori decisioni immobiliari. Vuoi vendere la tua proprietà con piena fiducia. Nel farlo, meriti il nostro meglio. Il nostro obiettivo presso Example Real Estate è fornirti un servizio eccezionale soddisfacendo le tue esigenze in ogni fase del processo di vendita.
+        <h2>Competenza Regionale
+        </h2>
+        I nostri clienti e i nostri affiliati commerciali ti diranno che nessun annuncio nella nostra regione di mercato riceve più visibilità agli acquirenti di quelli elencati con Example Real Estate. Il nostro marketing basato su Internet, la pubblicità stampata e gli sforzi di marketing collaterale consentono ai nostri annunci un'esposizione senza pari agli acquirenti che cercano immobili.
+        <h2>Pronti ad Aiutarti
+        </h2>
+        I nostri professionisti di intermediazione qualificati e il personale di Example Real Estate hanno l'esperienza, la conoscenza e la discrezione per rappresentare la tua proprietà. Il nostro team di broker dedicati e professionisti è impegnato a fornire un servizio straordinario.
+
+    faqs/faq_accordion:
+      section_title: Domande Frequenti
+      section_subtitle: Tutto ciò che devi sapere sulla vendita della tua proprietà
+      faq_1_question: Quanto tempo ci vuole per vendere una proprietà?
+      faq_1_answer: >
+        <p>Il tempo per vendere una proprietà varia a seconda delle condizioni di mercato, della posizione e del prezzo.
+        In media, le proprietà nella nostra zona si vendono entro 30-90 giorni. Ti forniremo una tempistica realistica
+        basata sulla tua proprietà specifica.</p>
+      faq_2_question: Quali commissioni sono coinvolte nella vendita?
+      faq_2_answer: >
+        <p>La nostra commissione è competitiva con il mercato. Discuteremo tutte le commissioni in anticipo, inclusa
+        la commissione dell'agente, le spese legali e le eventuali tasse applicabili. Non ci sono costi nascosti.</p>
+      faq_3_question: Devo fare riparazioni prima di vendere?
+      faq_3_answer: >
+        <p>Non necessariamente. Valuteremo la tua proprietà e ti consiglieremo quali riparazioni, se necessarie,
+        fornirebbero un buon ritorno sull'investimento. A volte piccoli aggiornamenti estetici possono aumentare
+        significativamente il prezzo di vendita.</p>
+      faq_4_question: Come determinate il prezzo richiesto?
+      faq_4_answer: >
+        <p>Conduciamo un'analisi di mercato completa, confrontando la tua proprietà con proprietà simili vendute
+        di recente nella zona. Consideriamo posizione, condizioni, dimensioni e tendenze di mercato attuali
+        per raccomandare un prezzo richiesto ottimale.</p>
+      faq_5_question: Posso vendere continuando a vivere nella proprietà?
+      faq_5_answer: >
+        <p>Assolutamente! Molti dei nostri clienti continuano a vivere nelle loro case durante il processo di vendita.
+        Coordineremo le visite in orari comodi e forniremo consigli per mantenere la tua casa pronta
+        per le visite.</p>
+      faq_6_question: Cosa succede dopo aver accettato un'offerta?
+      faq_6_answer: >
+        <p>Una volta accettata un'offerta, gestiamo le pratiche e coordiniamo con avvocati,
+        periti e l'agente dell'acquirente. Ti terremo informato ad ogni passo fino al completamento.</p>
+

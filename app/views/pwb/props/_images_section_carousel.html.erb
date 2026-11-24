@@ -1,0 +1,60 @@
+<div class="product-gallery">
+  <div id="propCarousel" class="carousel carousel-1 slide" data-ride="carousel" data-interval="<%= @carousel_speed %>">
+    <ol class="carousel-indicators">
+      <% @property_details.prop_photos.each.with_index do |photo, index| %>
+        <li data-target="#propCarousel" data-slide-to="<%= index %>" class=""></li>
+      <% end %>
+    </ol>
+    <div class="carousel-inner">
+      <% @property_details.prop_photos.each.with_index do |photo, index| %>
+        <div class="item item-dark <%= "active" if index == 0 %>">
+          <%= opt_image_tag((photo ), :quality => "auto", height: 600, crop: "scale", class: "",
+              alt: @property_details.title.presence || "Property photo",
+              loading: index == 0 ? "eager" : "lazy",
+              use_picture: true,
+              fetchpriority: index == 0 ? "high" : nil) %>
+          <% if property_price(@property_details, @operation_type) %>
+            <div class="ribbon dark fondo_accion">
+              <span>
+                <%= property_price(@property_details, @operation_type) %>
+              </span>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+    <!-- Controls -->
+    <a class="left carousel-control" href="#propCarousel" data-slide="prev">
+      <%= icon(:chevron_left, size: :lg) %>
+    </a>
+    <a class="right carousel-control" href="#propCarousel" data-slide="next">
+      <%= icon(:chevron_right, size: :lg) %>
+    </a>
+  </div>
+  <div class="thumbnail-images" style="display:none;">
+    <%# properties_carousel_footer @property_details.prop_photos %>
+  </div>
+  <div class="wp-block property list no-border">
+    <div class="wp-block-content clearfix">
+      <div class="wp-block-footer style2">
+        <ul class="aux-info">
+          <li><%= icon(:fullscreen) %>
+            <%= @property_details.constructed_area %><%= area_unit @property_details %>
+          </li>
+          <li><%= icon(:bed) %>
+            <%= format_bedroom_count(@property_details.count_bedrooms) %>
+          </li>
+          <li><%= icon(:shower) %>
+            <%= format_bathroom_count(@property_details.count_bathrooms) %>
+          </li>
+          <li>
+            <% if @property_details.has_garage %>
+              <%= icon(:directions_car) %>
+              <%= @property_details.count_garages %>
+            <% end %>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

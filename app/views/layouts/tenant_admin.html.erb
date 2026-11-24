@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="csrf-param" content="authenticity_token" />
+  <meta name="csrf-token" content="<%= form_authenticity_token %>" />
+
+  <title>Tenant Admin Dashboard - PropertyWebBuilder</title>
+  <%= favicon_tags %>
+
+  <!-- Tailwind CSS (compiled) -->
+  <%= stylesheet_link_tag "tailwind-default", "data-turbo-track": "reload" %>
+
+  <!-- Alpine.js for mobile menu toggle -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <!-- Flowbite JavaScript for UI components -->
+  <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js"></script>
+
+  <!-- Stimulus.js via importmap -->
+  <%= javascript_importmap_tags %>
+</head>
+
+<body class="bg-gray-50" data-controller="keyboard">
+  <div x-data="{ sidebarOpen: false }" class="flex h-screen overflow-hidden">
+    <!-- Mobile sidebar backdrop -->
+    <div x-show="sidebarOpen"
+         x-transition:enter="transition-opacity ease-linear duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition-opacity ease-linear duration-300"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed inset-0 bg-gray-600 bg-opacity-75 z-20 md:hidden"
+         @click="sidebarOpen = false">
+    </div>
+
+    <!-- Sidebar -->
+    <%= render 'layouts/tenant_admin/navigation' %>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <!-- Header -->
+      <%= render 'layouts/tenant_admin/header' %>
+
+      <!-- Content Area -->
+      <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-4 md:p-6">
+        <%= render 'layouts/tenant_admin/flash' %>
+        <%= yield %>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<%# Bologna Theme - Minimal Modern Header %>
+<header class="pwb-header fixed top-0 left-0 right-0 z-50 bg-white shadow-soft transition-all duration-300">
+  <nav class="pwb-nav container mx-auto px-6 py-4">
+    <div class="flex items-center justify-between">
+
+      <%# Logo - Clean and Simple %>
+      <a href="<%= root_path %>" class="pwb-header__logo-link flex items-center space-x-3 group">
+        <% if @current_website.logo_url.present? %>
+          <img src="<%= @current_website.logo_url %>"
+               class="pwb-header__logo-img h-10 w-auto transition-transform duration-300 group-hover:scale-105"
+               alt="<%= company_display_name %>"
+               loading="eager" fetchpriority="high">
+        <% else %>
+          <div class="flex items-center space-x-2">
+            <div class="w-10 h-10 bg-gradient-to-br from-pwb-primary-400 to-pwb-primary-600 rounded-soft flex items-center justify-center">
+              <%= icon(:home, size: :md, class: "text-white") %>
+            </div>
+            <span class="pwb-header__logo-text font-display font-semibold text-xl text-warm-gray-900 hidden sm:block">
+              <%= company_display_name %>
+            </span>
+          </div>
+        <% end %>
+      </a>
+
+      <%# Desktop Navigation - Horizontal Pills %>
+      <div class="hidden lg:flex items-center space-x-1">
+        <% @current_website.links.ordered_visible_top_nav.each do |page| %>
+          <% next if page.slug == "top_nav_admin" %>
+          <% target_path = nil %>
+          <% begin %>
+            <% if page.link_path.present? %>
+              <% target_path = main_app.send(page.link_path, page.link_path_params, { locale: locale }) %>
+            <% elsif page.link_url.present? %>
+              <% target_path = page.link_url %>
+            <% end %>
+          <% rescue StandardError %>
+          <% end %>
+          <% if target_path %>
+            <a href="<%= target_path %>"
+               class="pwb-nav__menu-link px-4 py-2 text-sm font-medium text-warm-gray-600 hover:text-pwb-primary hover:bg-pwb-primary-50 rounded-pill transition-all duration-200">
+              <%= page.link_title %>
+            </a>
+          <% end %>
+        <% end %>
+      </div>
+
+      <%# Right Side Actions %>
+      <div class="flex items-center space-x-3">
+        <%# Language Switcher - Compact %>
+        <% if @current_website.is_multilingual && not_devise %>
+          <div class="relative hidden md:block">
+            <button type="button"
+                    class="flex items-center space-x-1 px-3 py-2 text-sm text-warm-gray-500 hover:text-warm-gray-700 rounded-soft hover:bg-warm-gray-100 transition-colors"
+                    data-dropdown-toggle="language-dropdown">
+              <%= icon(:language, size: :sm) %>
+              <span class="uppercase text-xs font-medium"><%= I18n.locale %></span>
+              <%= icon(:keyboard_arrow_down, size: :xs) %>
+            </button>
+            <div id="language-dropdown"
+                 class="hidden absolute right-0 mt-2 w-40 bg-white rounded-soft shadow-elevated border border-warm-gray-100 py-2 z-50">
+              <% @current_website.supported_locales_with_variants.uniq { |l| l["locale"] }.each do |locale_with_var| %>
+                <% is_selected = locale.to_s == locale_with_var["locale"] %>
+                <%= link_to params.permit(:locale).merge({locale: locale_with_var["locale"]}),
+                    class: "block px-4 py-2 text-sm text-warm-gray-600 hover:bg-pwb-primary-50 hover:text-pwb-primary transition-colors #{is_selected ? 'bg-pwb-primary-50 text-pwb-primary' : ''}" do %>
+                  <%= t("admin.#{locale_with_var['locale']}", default: locale_with_var["locale"].to_s.upcase) %>
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+
+        <%# User Menu or Login %>
+        <% if user_signed_in? %>
+          <div class="relative">
+            <button type="button"
+                    class="w-10 h-10 bg-pwb-secondary-100 text-pwb-secondary-600 rounded-full flex items-center justify-center hover:bg-pwb-secondary-200 transition-colors"
+                    data-dropdown-toggle="user-dropdown">
+              <%= icon(:person, size: :sm) %>
+            </button>
+            <div id="user-dropdown"
+                 class="hidden absolute right-0 mt-2 w-56 bg-white rounded-soft shadow-elevated border border-warm-gray-100 py-2 z-50">
+              <div class="px-4 py-3 border-b border-warm-gray-100">
+                <p class="text-sm font-medium text-warm-gray-900"><%= current_user.email %></p>
+                <p class="text-xs text-warm-gray-500">Signed in</p>
+              </div>
+              <a href="<%= edit_user_registration_path %>" class="flex items-center px-4 py-2.5 text-sm text-warm-gray-600 hover:bg-pwb-primary-50 hover:text-pwb-primary">
+                <%= icon(:account_circle, size: :sm, class: "mr-3") %>
+                Account Settings
+              </a>
+              <div class="border-t border-warm-gray-100 mt-1 pt-1">
+                <%= link_to destroy_user_session_path, method: :delete, class: "flex items-center px-4 py-2.5 text-sm text-red-600 hover:bg-red-50" do %>
+                  <%= icon(:logout, size: :sm, class: "mr-3") %>
+                  Sign Out
+                <% end %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <%# Mobile Menu Button %>
+        <button type="button"
+                class="pwb-header__mobile-toggle lg:hidden min-w-[44px] min-h-[44px] w-10 h-10 bg-warm-gray-100 text-warm-gray-600 rounded-soft flex items-center justify-center hover:bg-warm-gray-200 focus-visible:ring-2 focus-visible:ring-pwb-primary transition-colors"
+                data-collapse-toggle="navbar-main"
+                aria-controls="navbar-main"
+                aria-expanded="false"
+                aria-label="<%= t('pwb.accessibility.open_main_menu', default: 'Open main navigation') %>">
+          <%= icon(:menu, size: :md, aria_hidden: true) %>
+        </button>
+      </div>
+    </div>
+
+    <%# Mobile Navigation - Slide Down %>
+    <div class="hidden lg:hidden mt-4 pb-4" id="navbar-main">
+      <div class="bg-white rounded-soft shadow-soft border border-warm-gray-100 overflow-hidden">
+        <% @current_website.links.ordered_visible_top_nav.each do |page| %>
+          <% next if page.slug == "top_nav_admin" %>
+          <% target_path = nil %>
+          <% begin %>
+            <% if page.link_path.present? %>
+              <% target_path = main_app.send(page.link_path, page.link_path_params, { locale: locale }) %>
+            <% elsif page.link_url.present? %>
+              <% target_path = page.link_url %>
+            <% end %>
+          <% rescue StandardError %>
+          <% end %>
+          <% if target_path %>
+            <a href="<%= target_path %>"
+               class="pwb-nav__menu-link flex items-center px-5 py-3 text-warm-gray-600 hover:bg-pwb-primary-50 hover:text-pwb-primary border-b border-warm-gray-50 last:border-b-0 transition-colors">
+              <%= page.link_title %>
+            </a>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<%# Spacer for fixed header %>
+<div class="h-20"></div>

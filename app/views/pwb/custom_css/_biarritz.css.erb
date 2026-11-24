@@ -1,0 +1,497 @@
+/* Custom CSS for Biarritz Theme - Coastal French Basque Style */
+/* This file is rendered as a partial by the custom_styles helper */
+
+<%# Include base CSS variables with dark mode support %>
+<%= render partial: '/pwb/custom_css/base_variables', locals: {} %>
+
+<%#
+  Biarritz Theme Color Mapping:
+  - primary_color -> Ocean (deep blue) - main brand color
+  - secondary_color -> Sand (warm amber) - accent/highlights
+  - accent_color -> Sunset (golden) - tertiary accents
+  - background_color -> Page background
+  - text_color -> Primary text color
+  - footer_bg_color -> Footer background
+  - footer_text_color -> Footer text
+%>
+
+/* WCAG AA Compliant Color System - Using Palette Variables */
+:root {
+  /* Primary Ocean Colors - Mapped to PWB Standard Variables */
+  --biarritz-ocean: var(--pwb-primary-color);
+  --biarritz-sand: var(--pwb-secondary-color);
+  --biarritz-sunset: var(--pwb-accent-color);
+  --biarritz-bg: var(--pwb-background-color);
+  --biarritz-text: var(--pwb-text-color);
+
+  /* Derived Ocean shades - Mapped to PWB Dynamic Shades */
+  --ocean-darker: var(--pwb-primary-800);
+  --ocean-dark: var(--pwb-primary-700);
+  --ocean-primary: var(--pwb-primary-color);
+  --ocean-light: var(--pwb-primary-100);
+
+  /* Derived Sand shades - Mapped to PWB Dynamic Shades */
+  --sand-dark: var(--pwb-secondary-700);
+  --sand-primary: var(--pwb-secondary-color);
+  --sand-light: var(--pwb-secondary-100);
+
+  /* Derived Sunset shades - Mapped to PWB Dynamic Shades */
+  --sunset-dark: var(--pwb-accent-700);
+  --sunset-primary: var(--pwb-accent-color);
+  --sunset-light: var(--pwb-accent-100);
+
+  /* Neutral colors - derived from text color */
+  --neutral-900: var(--pwb-text-color);
+  --neutral-800: color-mix(in srgb, var(--pwb-text-color) 85%, white);
+  --neutral-700: color-mix(in srgb, var(--pwb-text-color) 65%, white);
+  --neutral-200: color-mix(in srgb, var(--pwb-text-color) 15%, white);
+  --neutral-100: color-mix(in srgb, var(--pwb-background-color) 95%, var(--pwb-text-color));
+  --neutral-50: var(--pwb-background-color);
+
+  --danger-red: #B91C1C;       /* Red for destructive actions */
+  --light-gray-text: #D4D4D8;  /* Light gray for footer text */
+
+  /* Header/Footer Semantic Colors */
+  --header-bg: var(--ocean-darker);
+  --header-border: var(--ocean-dark);
+  --header-text: white;
+  --header-hover-text: var(--sand-light);
+  --header-icon-bg: var(--ocean-dark);
+  --header-icon-hover-bg: var(--sand-primary);
+  --header-lang-active-bg: var(--sand-primary);
+  --header-lang-hover-bg: var(--ocean-dark);
+
+  --nav-bg: white;
+  --nav-border-accent: var(--sand-primary);
+  --nav-text: var(--neutral-900);
+  --nav-text-hover: var(--ocean-dark);
+  --nav-active-bg: var(--ocean-light);
+  --nav-active-text: var(--ocean-dark);
+  --nav-icon-bg: var(--ocean-primary);
+  --nav-focus-ring: var(--ocean-primary);
+
+  /* Footer colors - from palette */
+  --footer-bg: var(--pwb-footer-background-color);
+  --footer-text: var(--pwb-footer-text-color);
+  /* WCAG AA: Improved footer contrast ratios for 4.5:1+ */
+  --footer-text-muted: color-mix(in srgb, var(--pwb-footer-text-color) 85%, transparent);
+  --footer-link-color: color-mix(in srgb, var(--pwb-footer-text-color) 90%, transparent);
+  --footer-link-hover: var(--sand-light);
+  --footer-border: var(--ocean-dark);
+  --footer-icon-bg: var(--ocean-dark);
+  --footer-icon-hover-bg: var(--sand-primary);
+  --footer-pwb-link: var(--sand-light);
+  --footer-pwb-link-hover: var(--sand-primary);
+
+  /* Semantic Colors - Guaranteed Contrast */
+  --color-primary: var(--ocean-dark);
+  --color-primary-hover: var(--ocean-darker);
+  --color-secondary: var(--sand-dark);
+  --color-accent: var(--sunset-dark);
+
+  --color-text-primary: var(--neutral-900);
+  --color-text-secondary: var(--neutral-800);
+  --color-text-muted: var(--neutral-700);
+  --color-text-on-dark: #FFFFFF;
+  --color-text-on-primary: #FFFFFF;
+
+  --color-bg-page: var(--neutral-50);
+  --color-bg-card: #FFFFFF;
+  --color-bg-muted: var(--neutral-100);
+  --color-bg-ocean: var(--ocean-primary);
+  --color-bg-sand: var(--sand-light);
+
+  --color-border: var(--neutral-200);
+  --color-border-accent: var(--sand-primary);
+
+  /* Action Colors - from palette */
+  --action-color: <%= @current_website.style_variables["action_color"] || "var(--sand-primary)" %>;
+
+  /* Typography - from palette */
+  --font-primary: <%= @current_website.style_variables["font_primary"] || 'system-ui, -apple-system, "Open Sans", sans-serif' %>;
+  --font-heading: <%= @current_website.style_variables["font_secondary"] || @current_website.style_variables["font_heading"] || 'Georgia, "Playfair Display", serif' %>;
+
+  /* Spacing & Layout */
+  --border-radius: <%= @current_website.style_variables["border_radius"] || "0.75rem" %>;
+  --border-radius-sm: 0.5rem;
+  --border-radius-lg: 1rem;
+  --container-padding: <%= @current_website.style_variables["container_padding"] || "1rem" %>;
+
+  /* Shadows - using primary color for tinted shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  --shadow-ocean: 0 10px 25px -5px color-mix(in srgb, <%= @current_website.style_variables["primary_color"] || "#0369A1" %> 15%, transparent);
+}
+
+/* Base Theme Styles */
+.biarritz-theme {
+  font-family: var(--font-primary);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-page);
+  line-height: 1.6;
+}
+
+/* Typography - Elegant Hierarchy */
+.biarritz-theme h1,
+.biarritz-theme h2,
+.biarritz-theme h3,
+.biarritz-theme h4,
+.biarritz-theme h5,
+.biarritz-theme h6 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--color-text-primary);
+}
+
+.biarritz-theme h1 { font-size: 2.5rem; }
+.biarritz-theme h2 { font-size: 2rem; }
+.biarritz-theme h3 { font-size: 1.5rem; }
+
+/* High Contrast Utilities */
+.bg-ocean-primary {
+  background-color: var(--ocean-primary) !important;
+  color: var(--color-text-on-dark) !important;
+}
+
+.bg-ocean-dark {
+  background-color: var(--ocean-dark) !important;
+  color: var(--color-text-on-dark) !important;
+}
+
+.text-ocean {
+  color: var(--ocean-dark) !important;
+}
+
+.text-sand {
+  color: var(--sand-dark) !important;
+}
+
+.border-sand {
+  border-color: var(--color-border-accent) !important;
+}
+
+/* Coastal Buttons - High Contrast */
+.btn-ocean {
+  background-color: var(--ocean-primary);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--border-radius-sm);
+  font-weight: 600;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.btn-ocean:hover {
+  background-color: var(--ocean-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-ocean);
+}
+
+.btn-sand {
+  background-color: var(--sand-primary);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--border-radius-sm);
+  font-weight: 600;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.btn-sand:hover {
+  background-color: var(--sand-dark);
+  transform: translateY(-1px);
+}
+
+/* Coastal Cards */
+.card-coastal {
+  background: white;
+  border-radius: var(--border-radius);
+  border-top: 4px solid var(--sand-primary);
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s ease;
+}
+
+.card-coastal:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Wave Divider */
+.wave-divider {
+  position: relative;
+  overflow: hidden;
+}
+
+.wave-divider svg {
+  display: block;
+  width: 100%;
+  height: 60px;
+}
+
+/* Ensure all links have sufficient contrast */
+.biarritz-theme a {
+  color: var(--ocean-dark);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.biarritz-theme a:hover {
+  color: var(--color-primary-hover);
+  text-decoration: underline;
+}
+
+/* Navigation Links - High Contrast */
+.nav-link {
+  color: var(--neutral-900);
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.nav-link:hover {
+  color: var(--ocean-dark);
+}
+
+/* Accessibility: Focus States */
+.biarritz-theme *:focus {
+  outline: 2px solid var(--ocean-primary);
+  outline-offset: 2px;
+}
+
+.biarritz-theme button:focus,
+.biarritz-theme a:focus {
+  outline: 2px solid var(--ocean-primary);
+  outline-offset: 2px;
+}
+
+/* ============================================
+   HEADER/NAVIGATION STYLES (CSS Variable Based)
+   ============================================ */
+
+/* Header Links */
+.biarritz-header-link {
+  color: var(--header-text);
+}
+.biarritz-header-link:hover {
+  color: var(--header-hover-text);
+}
+
+/* Language Switcher */
+.biarritz-lang-link {
+  color: var(--header-text);
+}
+.biarritz-lang-link:hover {
+  background-color: var(--header-lang-hover-bg);
+}
+.biarritz-lang-link.biarritz-lang-active {
+  background-color: var(--header-lang-active-bg);
+  color: var(--header-text);
+}
+
+/* Logo Text */
+.biarritz-logo-text {
+  color: var(--nav-text);
+}
+.group:hover .biarritz-logo-text {
+  color: var(--nav-text-hover);
+}
+
+/* Mobile Menu Button */
+.biarritz-mobile-menu {
+  color: var(--nav-text);
+}
+.biarritz-mobile-menu:hover {
+  background-color: var(--neutral-100);
+}
+.biarritz-mobile-menu:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--nav-focus-ring);
+}
+
+/* Navigation Links */
+.biarritz-nav-link {
+  color: var(--nav-text);
+}
+.biarritz-nav-link:hover {
+  background-color: var(--neutral-100);
+  color: var(--nav-text-hover);
+}
+.biarritz-nav-link.biarritz-nav-active {
+  background-color: var(--nav-active-bg);
+  color: var(--nav-active-text);
+}
+
+/* Dropdown Menu */
+.biarritz-dropdown-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--nav-focus-ring);
+}
+.biarritz-dropdown-menu {
+  border-color: var(--neutral-200);
+}
+.biarritz-dropdown-item {
+  color: var(--nav-text);
+}
+.biarritz-dropdown-item:hover {
+  background-color: var(--nav-active-bg);
+  color: var(--nav-active-text);
+}
+.biarritz-dropdown-divider {
+  border-color: var(--neutral-200);
+}
+.biarritz-signout-link {
+  color: var(--danger-red);
+}
+.biarritz-signout-link:hover {
+  background-color: #fef2f2;
+}
+
+/* Accent Wave */
+.biarritz-accent-wave {
+  background: linear-gradient(to right, var(--ocean-primary), var(--sand-primary), var(--sunset-primary));
+}
+
+/* ============================================
+   FOOTER STYLES (CSS Variable Based)
+   ============================================ */
+
+/* Footer Wave SVG */
+.biarritz-footer-wave {
+  color: var(--footer-bg);
+}
+
+/* Footer Links */
+.biarritz-footer-link {
+  color: var(--footer-text);
+}
+.biarritz-footer-link:hover {
+  color: var(--footer-link-hover);
+}
+
+/* Footer Icon Containers */
+.biarritz-footer-icon {
+  background-color: var(--footer-icon-bg);
+}
+.biarritz-footer-icon:hover,
+.group:hover .biarritz-footer-icon {
+  background-color: var(--footer-icon-hover-bg);
+}
+
+/* Footer Social Icons */
+.biarritz-social-icon {
+  background-color: var(--footer-icon-bg);
+  color: var(--footer-text);
+}
+.biarritz-social-icon:hover {
+  background-color: var(--footer-icon-hover-bg);
+  transform: scale(1.1);
+}
+.biarritz-social-icon:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--footer-link-hover), 0 0 0 4px var(--footer-bg);
+}
+
+/* Footer Text */
+.biarritz-footer-text-muted {
+  color: var(--footer-text-muted);
+}
+.biarritz-footer-text-muted:hover {
+  color: var(--footer-link-hover);
+}
+
+/* Footer Divider */
+.biarritz-footer-divider {
+  border-color: var(--footer-border);
+}
+
+/* Footer PWB Attribution */
+.biarritz-pwb-link {
+  color: var(--footer-pwb-link);
+}
+.biarritz-pwb-link:hover {
+  color: var(--footer-pwb-link-hover);
+}
+
+/* ============================================
+   DARK MODE SUPPORT
+   ============================================ */
+
+<%
+  dark_colors = @current_website&.dark_mode_enabled? ? (@current_website.dark_mode_colors || {}) : {}
+  dark_bg = dark_colors["background_color"] || "#121212"
+  dark_text = dark_colors["text_color"] || "#e8e8e8"
+  dark_ocean = dark_colors["primary_color"] || "#38bdf8"
+  dark_sand = dark_colors["secondary_color"] || "#fbbf24"
+%>
+
+<% if @current_website&.dark_mode_enabled? %>
+/* Auto dark mode */
+@media (prefers-color-scheme: dark) {
+  .pwb-auto-dark.biarritz-theme,
+  .pwb-auto-dark .biarritz-theme {
+    --color-bg-page: <%= dark_bg %>;
+    --color-text-primary: <%= dark_text %>;
+    --neutral-50: <%= dark_bg %>;
+    --neutral-900: <%= dark_text %>;
+    background-color: var(--color-bg-page);
+    color: var(--color-text-primary);
+  }
+}
+
+/* Forced dark mode */
+.pwb-dark.biarritz-theme,
+.pwb-dark .biarritz-theme,
+html.pwb-dark .biarritz-theme {
+  --color-bg-page: <%= dark_bg %>;
+  --color-text-primary: <%= dark_text %>;
+  --neutral-50: <%= dark_bg %>;
+  --neutral-900: <%= dark_text %>;
+  --color-bg-card: color-mix(in srgb, <%= dark_bg %> 85%, white);
+  background-color: var(--color-bg-page);
+  color: var(--color-text-primary);
+}
+
+.pwb-dark .biarritz-theme h1,
+.pwb-dark .biarritz-theme h2,
+.pwb-dark .biarritz-theme h3,
+.pwb-dark .biarritz-theme h4,
+.pwb-dark .biarritz-theme h5,
+.pwb-dark .biarritz-theme h6,
+html.pwb-dark .biarritz-theme h1,
+html.pwb-dark .biarritz-theme h2,
+html.pwb-dark .biarritz-theme h3,
+html.pwb-dark .biarritz-theme h4,
+html.pwb-dark .biarritz-theme h5,
+html.pwb-dark .biarritz-theme h6 {
+  color: <%= dark_text %>;
+}
+
+.pwb-dark .biarritz-theme .card-coastal,
+.pwb-dark .biarritz-theme .card,
+html.pwb-dark .biarritz-theme .card-coastal,
+html.pwb-dark .biarritz-theme .card {
+  background: color-mix(in srgb, <%= dark_bg %> 85%, white);
+}
+
+.pwb-dark .bg-white,
+html.pwb-dark .bg-white {
+  background-color: color-mix(in srgb, <%= dark_bg %> 85%, white) !important;
+}
+
+.pwb-dark .text-gray-900,
+.pwb-dark .text-gray-800,
+.pwb-dark .text-gray-700,
+html.pwb-dark .text-gray-900,
+html.pwb-dark .text-gray-800,
+html.pwb-dark .text-gray-700 {
+  color: <%= dark_text %> !important;
+}
+
+.pwb-dark .border-gray-200,
+.pwb-dark .border-gray-300,
+html.pwb-dark .border-gray-200,
+html.pwb-dark .border-gray-300 {
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+<% end %>

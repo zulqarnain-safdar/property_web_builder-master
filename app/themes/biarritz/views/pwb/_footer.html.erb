@@ -1,0 +1,135 @@
+<!-- Biarritz Theme Footer - High Contrast Coastal Design -->
+<!-- Colors use CSS variables from _biarritz.css.erb for palette consistency -->
+
+<!-- Wave Divider - Decorative transition from content to footer -->
+<div class="relative">
+  <svg class="biarritz-footer-wave w-full h-16 md:h-20" viewBox="0 0 1200 120" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" fill="currentColor"/>
+  </svg>
+</div>
+
+<!-- Main Footer - Dark Ocean Background with White Text -->
+<footer class="pwb-footer text-white" style="background-color: var(--footer-bg);" role="contentinfo">
+  <div class="pwb-container container mx-auto px-4 py-12">
+
+    <div class="pwb-footer__grid grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+
+      <!-- Company Info Column -->
+      <div class="pwb-footer__company-info">
+        <h4 class="text-2xl font-bold text-white mb-6" style="font-family: 'Playfair Display', Georgia, serif;">
+          <%= company_display_name %>
+        </h4>
+        <ul class="space-y-4">
+          <% if @current_agency.phone_number_primary.present? %>
+            <li>
+              <a href="tel:<%= @current_agency.phone_number_primary %>"
+                 class="biarritz-footer-link flex items-center transition-colors group">
+                <span class="biarritz-footer-icon w-10 h-10 flex items-center justify-center rounded-lg mr-3 transition-colors">
+                  <%= icon(:phone) %>
+                </span>
+                <span class="font-medium"><%= @current_agency.phone_number_primary %></span>
+              </a>
+            </li>
+          <% end %>
+
+          <% if @current_agency.email_primary.present? %>
+            <li>
+              <a href="mailto:<%= @current_agency.email_primary %>"
+                 class="biarritz-footer-link flex items-center transition-colors group">
+                <span class="biarritz-footer-icon w-10 h-10 flex items-center justify-center rounded-lg mr-3 transition-colors">
+                  <%= icon(:email) %>
+                </span>
+                <span class="font-medium"><%= @current_agency.email_primary %></span>
+              </a>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+
+      <!-- Social Media Column -->
+      <nav class="pwb-footer__social-nav flex flex-col items-center justify-center" aria-label="Social media links">
+        <h5 class="text-xl font-semibold text-white mb-6">Follow Us</h5>
+        <div class="flex flex-wrap justify-center gap-3">
+          <%
+            social_links = []
+            social_links << {url: @current_website.social_media_facebook, icon: 'facebook', label: 'Facebook'} if @current_website.respond_to?(:social_media_facebook) && @current_website.social_media_facebook.present?
+            social_links << {url: @current_website.social_media_twitter, icon: 'twitter', label: 'Twitter'} if @current_website.respond_to?(:social_media_twitter) && @current_website.social_media_twitter.present?
+            social_links << {url: @current_website.social_media_instagram, icon: 'instagram', label: 'Instagram'} if @current_website.respond_to?(:social_media_instagram) && @current_website.social_media_instagram.present?
+            social_links << {url: @current_website.social_media_linkedin, icon: 'linkedin', label: 'LinkedIn'} if @current_website.respond_to?(:social_media_linkedin) && @current_website.social_media_linkedin.present?
+            social_links << {url: @current_website.social_media_youtube, icon: 'youtube', label: 'YouTube'} if @current_website.respond_to?(:social_media_youtube) && @current_website.social_media_youtube.present?
+            social_links << {url: @current_website.social_media_whatsapp, icon: 'whatsapp', label: 'WhatsApp'} if @current_website.respond_to?(:social_media_whatsapp) && @current_website.social_media_whatsapp.present?
+          %>
+
+          <% social_links.each do |social| %>
+            <a href="<%= social[:url] %>"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="biarritz-social-icon w-12 h-12 flex items-center justify-center rounded-lg transition-all"
+               aria-label="Follow us on <%= social[:label] %>">
+              <%= brand_icon(social[:icon] == 'twitter' ? :x : social[:icon].to_sym, size: 20) %>
+            </a>
+          <% end %>
+        </div>
+      </nav>
+
+      <!-- Extra Content / Registration Info -->
+      <div class="pwb-footer__extra-content text-white">
+        <% if @footer_content.present? %>
+          <div class="prose prose-invert max-w-none">
+            <%== @footer_content.raw %>
+          </div>
+        <% else %>
+          <h5 class="text-xl font-semibold text-white mb-4">About Us</h5>
+          <p class="biarritz-footer-text-muted leading-relaxed">
+            Your trusted partner in finding the perfect coastal property.
+          </p>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="biarritz-footer-divider border-t-2 my-8"></div>
+
+    <!-- Bottom Bar - Footer Links & Copyright -->
+    <div class="pwb-footer__bottom-bar flex flex-col md:flex-row justify-between items-center text-sm">
+
+      <!-- Footer Navigation Links -->
+      <nav class="flex flex-wrap justify-center gap-6 mb-6 md:mb-0" aria-label="Footer navigation">
+        <% @current_website.links.ordered_visible_footer.each do |page| %>
+          <% target_path = nil %>
+          <% begin %>
+            <% if page.link_path.present? %>
+              <% target_path = main_app.send(page.link_path, page.link_path_params, { locale: locale }) %>
+            <% elsif page.link_url.present? %>
+              <% target_path = page.link_url %>
+            <% end %>
+          <% rescue StandardError %>
+          <% end %>
+          <% if target_path %>
+            <%= link_to page.link_title, target_path,
+                class: "biarritz-footer-text-muted transition-colors font-medium" %>
+          <% end %>
+        <% end %>
+        <%= link_to I18n.t("signIn"), "/pwb_login",
+            class: "biarritz-footer-text-muted transition-colors font-medium" %>
+      </nav>
+
+      <!-- Copyright & Attribution -->
+      <div class="biarritz-footer-text-muted text-center md:text-right">
+        <p class="mb-2">
+          © <%= Time.current.year %> <%= company_display_name %>.
+          All rights reserved.
+        </p>
+        <p class="text-xs">
+          Powered by
+          <a href="https://www.propertywebbuilder.com"
+             class="biarritz-pwb-link font-semibold transition-colors"
+             target="_blank"
+             rel="noopener noreferrer">
+            PropertyWebBuilder
+          </a>
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,256 @@
+---
+openapi: 3.0.1
+info:
+  title: API V1
+  version: v1
+paths:
+  "/api/v1/agency":
+    get:
+      summary: Retrieves agency details
+      tags:
+      - Agency
+      responses:
+        '200':
+          description: agency details found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  agency:
+                    type: object
+                  website:
+                    type: object
+                  primary_address:
+                    type: object
+                  setup:
+                    type: object
+    put:
+      summary: Updates agency details
+      tags:
+      - Agency
+      parameters: []
+      responses:
+        '200':
+          description: agency updated
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                agency:
+                  type: object
+                  properties:
+                    company_name:
+                      type: string
+                    display_name:
+                      type: string
+                    email_primary:
+                      type: string
+                    phone_number_primary:
+                      type: string
+                    social_media:
+                      type: object
+  "/api/v1/website":
+    put:
+      summary: Updates website details
+      tags:
+      - Website
+      parameters: []
+      responses:
+        '200':
+          description: website updated
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                website:
+                  type: object
+                  properties:
+                    company_name:
+                      type: string
+                    display_name:
+                      type: string
+                    theme_name:
+                      type: string
+                    default_currency:
+                      type: string
+                    social_media:
+                      type: object
+  "/api/v1/pages/{page_name}":
+    get:
+      summary: Retrieves a page
+      tags:
+      - Pages
+      parameters:
+      - name: page_name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: page found
+  "/api/v1/pages":
+    put:
+      summary: Updates a page
+      tags:
+      - Pages
+      parameters: []
+      responses:
+        '200':
+          description: page updated
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                page:
+                  type: object
+                  properties:
+                    slug:
+                      type: string
+                    visible:
+                      type: boolean
+  "/api/v1/translations/list/{locale}":
+    get:
+      summary: Retrieves translations list
+      tags:
+      - Translations
+      parameters:
+      - name: locale
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: translations list found
+  "/api/v1/translations/batch/{batch_key}":
+    get:
+      summary: Retrieves translations by batch
+      tags:
+      - Translations
+      parameters:
+      - name: batch_key
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: translations batch found
+  "/api/v1/properties/bulk_create":
+    post:
+      summary: Bulk creates properties
+      tags:
+      - Properties
+      parameters: []
+      responses:
+        '200':
+          description: properties created
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                propertiesJSON:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      reference:
+                        type: string
+                      title:
+                        type: string
+                      price_sale_current_cents:
+                        type: integer
+  "/api/v1/properties/{id}/photo":
+    post:
+      summary: Adds a photo to a property
+      tags:
+      - Properties
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: photo added
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: file
+  "/api/v1/web-contents":
+    get:
+      summary: Retrieves web contents
+      tags:
+      - Web Contents
+      responses:
+        '200':
+          description: web contents found
+  "/api/v1/links":
+    get:
+      summary: Retrieves links
+      tags:
+      - Links
+      responses:
+        '200':
+          description: links found
+    put:
+      summary: Bulk updates links
+      tags:
+      - Links
+      parameters: []
+      responses:
+        '200':
+          description: links updated
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+  "/api/v1/themes":
+    get:
+      summary: Retrieves themes
+      tags:
+      - Themes
+      responses:
+        '200':
+          description: themes found
+  "/api/v1/mls":
+    get:
+      summary: Retrieves MLS info
+      tags:
+      - MLS
+      responses:
+        '200':
+          description: mls info found
+  "/api/v1/select_values":
+    get:
+      summary: Retrieves select values
+      tags:
+      - Select Values
+      parameters:
+      - name: field_names
+        in: query
+        schema:
+          type: string
+      responses:
+        '200':
+          description: select values found
+servers:
+- url: https://{defaultHost}
+  variables:
+    defaultHost:
+      default: www.example.com

@@ -1,0 +1,4 @@
+theme: jekyll-theme-cayman
+title: PropertyWebBuilder Documentation
+description: Modern, open-source platform for creating real estate websites with Rails 8.
+show_downloads: true
